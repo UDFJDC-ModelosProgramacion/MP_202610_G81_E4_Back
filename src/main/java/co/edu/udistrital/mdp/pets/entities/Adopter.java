@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class Adopter extends User {
     
     @Column(name = "adopter_id", unique = true)
@@ -47,26 +49,26 @@ public class Adopter extends User {
     }
     
     public void requestAdoption(Integer petId) {
-        System.out.println("Adopter " + getLastName() + " has requested to adopt pet with ID: " + petId);
+        log.info("Adopter {} has requested to adopt pet with ID: {}", getName(), petId);
     }
     
     public void startTrialCoexistence(Integer petId) {
-        System.out.println("Starting trial coexistence with pet ID: " + petId);
+        log.info("Starting trial coexistence with pet ID: {}", petId);
     }
     
     public void confirmAdoption(Integer petId) {
-        System.out.println("Adoption confirmed for pet ID: " + petId);
+        log.info("Adoption confirmed for pet ID: {}", petId);
     }
     
     public void returnPet(Integer petId) {
-        System.out.println("Returning pet ID: " + petId);
+        log.warn("Returning pet ID: {}", petId);
     }
     
     public void updatePetInfo(Integer petId) {
-        System.out.println("Updating information for pet ID: " + petId);
+        log.info("Updating information for pet ID: {}", petId);
     }
     
     public void leaveReview(Integer petId, String comment) {
-        System.out.println("Review left for pet ID: " + petId);
+        log.info("Review left for pet ID: {}", petId);
     }
 }

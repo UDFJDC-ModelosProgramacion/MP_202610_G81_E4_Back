@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class Veterinarian extends User {
     
     @Column(name = "veterinarian_id", unique = true)
@@ -41,26 +43,26 @@ public class Veterinarian extends User {
     }
     
     public void registerMedicalEvent(Integer petId, String event) {
-        System.out.println("Medical event registered for pet ID: " + petId);
+        log.info("Medical event registered for pet ID: {}", petId);
     }
     
     public void applyVaccine(Integer petId, String vaccine) {
-        System.out.println("Vaccine " + vaccine + " applied to pet ID: " + petId);
+        log.info("Vaccine {} applied to pet ID: {}", vaccine, petId);
     }
     
     public void performFollowUp(Integer adoptionId) {
-        System.out.println("Performing follow-up for adoption ID: " + adoptionId);
+        log.info("Performing follow-up for adoption ID: {}", adoptionId);
     }
     
     public void updateVaccinationRecord(Integer petId) {
-        System.out.println("Vaccination record updated for pet ID: " + petId);
+        log.info("Vaccination record updated for pet ID: {}", petId);
     }
     
     public void scheduleCheckup(Integer adoptionId) {
-        System.out.println("Checkup scheduled for adoption ID: " + adoptionId);
+        log.info("Checkup scheduled for adoption ID: {}", adoptionId);
     }
     
     public void viewAssignedPets() {
-        System.out.println("Showing pets assigned to veterinarian " + getLastName());
+        log.info("Showing pets assigned to veterinarian {}", getName());
     }
 }

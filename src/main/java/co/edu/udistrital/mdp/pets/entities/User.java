@@ -4,37 +4,39 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public abstract class User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Integer idUsuario;
+    @Column(name = "user_id")
+    private Integer userId;
     
     @Column(nullable = false, length = 100)
-    private String nombre;
+    private String name;
     
     @Column(nullable = false, unique = true, length = 100)
     private String email;
     
     @Column(length = 20)
-    private String telefono;
+    private String phone;
     
-    public void iniciarSesion() {
-        System.out.println("Usuario " + nombre + " ha iniciado sesión");
+    public void login() {
+        log.info("User {} has logged in", name);
     }
     
-    public void cerrarSesion() {
-        System.out.println("Usuario " + nombre + " ha cerrado sesión");
+    public void logout() {
+        log.info("User {} has logged out", name);
     }
     
-    public void actualizarPerfil() {
-        System.out.println("Perfil de " + nombre + " actualizado");
+    public void updateProfile() {
+        log.info("Profile of {} updated", name);
     }
 }
