@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class Message {
     
     @Id
@@ -53,19 +55,19 @@ public class Message {
     }
     
     public void send() {
-        System.out.println("Message sent: " + subject);
+        log.info("Message sent: {}", subject);
     }
     
     public void markAsRead() {
         this.isRead = true;
-        System.out.println("Message marked as read");
+        log.debug("Message marked as read");
     }
     
     public void delete() {
-        System.out.println("Message ID: " + messageId + " deleted");
+        log.info("Message ID: {} deleted", messageId);
     }
     
     public void reply(String response) {
-        System.out.println("Replying to message: " + subject);
+        log.info("Replying to message: {}", subject);
     }
 }

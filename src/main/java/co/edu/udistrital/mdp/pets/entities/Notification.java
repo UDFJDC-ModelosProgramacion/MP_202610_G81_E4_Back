@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class Notification {
     
     @Id
@@ -50,19 +52,19 @@ public class Notification {
     }
     
     public void create() {
-        System.out.println("Notification created: " + notificationType);
+        log.info("Notification created: {}", notificationType);
     }
     
     public void send() {
-        System.out.println("Sending notification to user ID: " + userId);
+        log.info("Sending notification to user ID: {}", userId);
     }
     
     public void markAsRead() {
         this.isRead = true;
-        System.out.println("Notification marked as read");
+        log.debug("Notification marked as read");
     }
     
     public void delete() {
-        System.out.println("Notification ID: " + notificationId + " deleted");
+        log.info("Notification ID: {} deleted", notificationId);
     }
 }
