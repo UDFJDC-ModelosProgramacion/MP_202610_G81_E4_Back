@@ -13,7 +13,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 
 @Entity
-@Table(name = "ReviewEntity")
+@Table(name = "REVIEW_ENTITY")
 @Data
 public class ReviewEntity extends BaseEntity {
     private int review;
