@@ -16,9 +16,8 @@ import  java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "AdoptionEntity")
+@Table(name = "ADOPTION_ENTITY")
 @Data
-
 public class AdoptionEntity extends BaseEntity {
     private int adoption;
     private int pet;

@@ -14,7 +14,7 @@ import  java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "ShelterEventEntity")
+@Table(name = "SHELTER_EVENT_ENTITY")
 @Data
 public class ShelterEventEntity extends BaseEntity {
     private int event;

@@ -12,7 +12,7 @@ import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 
 @Entity
-@Table(name = "ShelterEntity")
+@Table(name = "SHELTER_ENTITY")
 @Data
 public class ShelterEntity extends BaseEntity {
     private int shelter;

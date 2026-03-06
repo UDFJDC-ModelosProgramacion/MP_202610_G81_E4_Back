@@ -12,7 +12,7 @@ import  java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "TrialStayEntity")
+@Table(name = "TRIAL_STAY_ENTITY")
 @Data
 public class TrialStayEntity extends BaseEntity {
     private int trial;
