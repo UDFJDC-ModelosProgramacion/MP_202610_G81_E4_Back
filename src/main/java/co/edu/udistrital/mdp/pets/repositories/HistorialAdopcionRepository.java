@@ -1,15 +1,15 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import co.edu.udistrital.mdp.pets.entities.HistorialAdopcion;
+import co.edu.udistrital.mdp.pets.entities.AdoptionHistoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface HistorialAdopcionRepository extends JpaRepository<HistorialAdopcion, Integer> {
+public interface HistorialAdopcionRepository extends JpaRepository<AdoptionHistoryEntity, Integer> {
 
-    List<HistorialAdopcion> findByIdMascota(int idMascota);
+    List<AdoptionHistoryEntity> findByIdMascota(int idMascota);
 
-    List<HistorialAdopcion> findByTipo(String tipo);
+    List<AdoptionHistoryEntity> findByTipo(String tipo);
 }
