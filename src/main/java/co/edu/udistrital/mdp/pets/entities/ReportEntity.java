@@ -18,6 +18,7 @@ public class ReportEntity extends BaseEntity {
     @Temporal(TemporalType.DATE)
     private Date generationDate;
 
+    
     @ManyToOne
     @JoinColumn(name = "Shelter_id")
     private ShelterEntity shelter;

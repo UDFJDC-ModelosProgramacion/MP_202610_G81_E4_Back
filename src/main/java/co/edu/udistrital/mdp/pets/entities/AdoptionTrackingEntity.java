@@ -2,19 +2,22 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Table(name = "ADOPTION_TRACKING_ENTITY")
+@Table(name = "adoption_trackings")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class AdoptionTrackingEntity extends BaseEntity {
 
     private String frequency;
     private String notes;
-    @Temporal(TemporalType.DATE)
-    private Date nextReview;
+    private LocalDate nextReview; // Cambiado de Date a LocalDate
 
-    @ManyToOne
-    @JoinColumn(name = "Adoption_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
     private AdoptionEntity adoption;
 }

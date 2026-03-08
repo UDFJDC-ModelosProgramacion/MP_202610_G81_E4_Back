@@ -8,6 +8,7 @@ import java.util.List;
 @Entity
 
 public class PetEntity extends BaseEntity{
+
     private String name;
     private String species;
     private String breed;
@@ -26,4 +27,8 @@ public class PetEntity extends BaseEntity{
     private String status;
     @OneToMany(mappedBy = "pet")
     private List<VaccinationRecordEntity> vaccinationRecords;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelter_id")
+    private ShelterEntity shelter;
 }

@@ -49,6 +49,7 @@ public class VeterinarianEntity extends UserEntity {
     @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
     private List<VaccineEntity> vaccines = new ArrayList<>();
     
+    
     @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
     private List<AdoptionTrackingEntity> adoptionFollowUps = new ArrayList<>();
     

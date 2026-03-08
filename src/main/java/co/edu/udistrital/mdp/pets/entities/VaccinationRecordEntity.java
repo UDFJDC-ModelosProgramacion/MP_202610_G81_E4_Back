@@ -11,6 +11,7 @@ public class VaccinationRecordEntity extends BaseEntity{
     @ManyToOne
     private PetEntity pet;
 
+    
     @OneToMany(mappedBy = "vaccinationRecord")
     private List<VaccineEntity> vaccines;
 

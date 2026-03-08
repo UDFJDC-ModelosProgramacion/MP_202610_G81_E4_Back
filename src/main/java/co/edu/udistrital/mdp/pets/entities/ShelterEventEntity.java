@@ -17,6 +17,7 @@ import java.util.Date;
 @Table(name = "SHELTER_EVENT_ENTITY")
 @Data
 public class ShelterEventEntity extends BaseEntity {
+    
     private int event;
     private String eventType;
     private String title;
@@ -25,6 +26,7 @@ public class ShelterEventEntity extends BaseEntity {
     private String location;
     private int maxCapacity;
     private int registeredCount;
+
 
     @ManyToOne
     @JoinColumn(name = "Shelter_id")

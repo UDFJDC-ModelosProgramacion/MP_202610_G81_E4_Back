@@ -35,11 +35,13 @@ public class NotificationEntity extends BaseEntity {
     
     @Column(name = "related_entity", length = 100)
     private String relatedEntity;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false) // Mantén solo esto
     private UserEntity user;
     
+
+
     @PrePersist
     protected void onCreate() {
         if (timestamp == null) {

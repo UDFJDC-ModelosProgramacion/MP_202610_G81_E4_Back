@@ -18,6 +18,7 @@ public class VaccineEntity extends BaseEntity {
 
     private String observations;
 
+    
     @ManyToOne
     private VaccinationRecordEntity vaccinationRecord;
 }

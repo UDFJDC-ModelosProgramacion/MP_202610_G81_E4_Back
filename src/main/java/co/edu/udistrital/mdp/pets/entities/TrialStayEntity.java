@@ -24,7 +24,7 @@ public class TrialStayEntity extends BaseEntity {
     private int durationDays;
     private String result;
     private String observations;
-
+    
     @ManyToOne
     @JoinColumn(name = "pet_id")
     @PodamExclude
