@@ -2,24 +2,19 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import lombok.Data;
 
 @Entity
 @Table(name = "seguimiento_adopcion")
-public class SeguimientoAdopcion {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idSeguimiento;
-
-    @ManyToOne
-    @JoinColumn(name = "idAdopcion", nullable = false)
-    private Adopcion adopcion;
+@Data
+public class SeguimientoAdopcion extends BaseEntity {
 
     private String frecuencia;
-
     private String notas;
-
     @Temporal(TemporalType.DATE)
     private Date proximaRevision;
 
+    @ManyToOne
+    @JoinColumn(name = "Adoption_id")
+    private AdoptionEntity adoption;
 }
