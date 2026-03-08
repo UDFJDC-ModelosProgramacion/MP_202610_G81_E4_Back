@@ -1,35 +1,34 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
-import  java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "TRIAL_STAY_ENTITY")
+@Table(name = "trial_stays")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class TrialStayEntity extends BaseEntity {
-    private int trial;
-    private int adoption;
-    private Date startDate;
-    private Date endDate;
-    private int durationDays;
+    
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String result;
+    
+    @Column(columnDefinition = "TEXT")
     private String observations;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     @PodamExclude
     private PetEntity pet;
 
-    
-    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
+    private AdoptionEntity adoption;
 }
+
+    
+    
+

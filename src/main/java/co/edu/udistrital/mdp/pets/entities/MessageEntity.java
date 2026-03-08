@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "messages")
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class MessageEntity extends BaseEntity {
      
     private String senderType;

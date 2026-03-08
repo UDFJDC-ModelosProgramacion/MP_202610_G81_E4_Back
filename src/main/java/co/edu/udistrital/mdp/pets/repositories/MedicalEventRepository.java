@@ -1,10 +1,21 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import co.edu.udistrital.mdp.pets.entities.MedicalEventEntity;
+import co.edu.udistrital.mdp.pets.entities.PetEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.time.LocalDate;
+import java.util.List;
 
+@Repository
 public interface MedicalEventRepository extends JpaRepository<MedicalEventEntity, Long> {
 
     
-} 
+    List<MedicalEventEntity> findByPet(PetEntity pet);
+
+    List<MedicalEventEntity> findByEventType(String eventType);
+
+    List<MedicalEventEntity> findByEventDateBetween(LocalDate startDate, LocalDate endDate);
+
+    List<MedicalEventEntity> findByDiagnosisContainingIgnoreCase(String diagnosis);
+}

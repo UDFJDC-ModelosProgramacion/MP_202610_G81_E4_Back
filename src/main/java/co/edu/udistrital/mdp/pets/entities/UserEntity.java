@@ -1,3 +1,4 @@
+
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
@@ -22,7 +23,6 @@ public abstract class UserEntity extends BaseEntity {
     
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-    
     
     @Column(length = 20)
     private String phone;

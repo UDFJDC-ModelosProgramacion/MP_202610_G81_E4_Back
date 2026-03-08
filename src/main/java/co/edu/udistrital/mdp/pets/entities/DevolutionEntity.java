@@ -3,9 +3,7 @@ package co.edu.udistrital.mdp.pets.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "devolutions")

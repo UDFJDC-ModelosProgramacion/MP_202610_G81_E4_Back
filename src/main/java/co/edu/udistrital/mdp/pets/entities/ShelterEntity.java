@@ -36,19 +36,21 @@ public class ShelterEntity extends BaseEntity {
     @Column(name = "video_url")
     private List<String> videos = new ArrayList<>();
 
+    // Relación con Mascotas
     @PodamExclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetEntity> pets = new ArrayList<>();
 
+    // Relación con Veterinarios
     @PodamExclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
-    private List<ShelterEventEntity> events = new ArrayList<>();
+    private List<VeterinarianEntity> veterinarians = new ArrayList<>();
 
+    // Relación con Eventos
     @PodamExclude
-    @OneToMany(mappedBy = "shelter")
-    private List<AdoptionEntity> adoptions = new ArrayList<>();
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShelterEventEntity> events = new ArrayList<>();
 }
-
 
     
 

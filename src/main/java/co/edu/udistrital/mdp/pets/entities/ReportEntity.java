@@ -2,24 +2,29 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "REPORT_ENTITY")
+@Table(name = "reports")
 @Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReportEntity extends BaseEntity {
 
     private String reportType;
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
-    private String data;
-    @Temporal(TemporalType.DATE)
-    private Date generationDate;
-
+    private LocalDate startDate;
+    private LocalDate endDate;
     
-    @ManyToOne
-    @JoinColumn(name = "Shelter_id")
+    @Column(columnDefinition = "TEXT")
+    private String data;
+    
+    private LocalDate generationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelter_id")
     private ShelterEntity shelter;
 }
