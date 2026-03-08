@@ -2,39 +2,30 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Integer idUsuario;
+public abstract class User extends BaseEntity {
     
     @Column(nullable = false, length = 100)
-    private String nombre;
+    private String name;
     
     @Column(nullable = false, unique = true, length = 100)
     private String email;
     
     @Column(length = 20)
-    private String telefono;
+    private String phone;
     
-    public void iniciarSesion() {
-        System.out.println("Usuario " + nombre + " ha iniciado sesión");
-    }
-    
-    public void cerrarSesion() {
-        System.out.println("Usuario " + nombre + " ha cerrado sesión");
-    }
-    
-    public void actualizarPerfil() {
-        System.out.println("Perfil de " + nombre + " actualizado");
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 }
