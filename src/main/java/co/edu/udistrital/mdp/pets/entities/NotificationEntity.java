@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
@@ -9,17 +10,13 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "notifications")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+public class NotificationEntity extends BaseEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notification_id")
-    private Integer notificationId;
-    
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private Long userId;
     
     @Column(name = "user_type", nullable = false, length = 50)
     private String userType;
@@ -39,6 +36,10 @@ public class Notification {
     @Column(name = "related_entity", length = 100)
     private String relatedEntity;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+    
     @PrePersist
     protected void onCreate() {
         if (timestamp == null) {
@@ -47,22 +48,5 @@ public class Notification {
         if (isRead == null) {
             isRead = false;
         }
-    }
-    
-    public void create() {
-        System.out.println("Notification created: " + notificationType);
-    }
-    
-    public void send() {
-        System.out.println("Sending notification to user ID: " + userId);
-    }
-    
-    public void markAsRead() {
-        this.isRead = true;
-        System.out.println("Notification marked as read");
-    }
-    
-    public void delete() {
-        System.out.println("Notification ID: " + notificationId + " deleted");
     }
 }

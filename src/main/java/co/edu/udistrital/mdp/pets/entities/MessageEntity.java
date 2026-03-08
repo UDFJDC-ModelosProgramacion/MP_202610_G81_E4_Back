@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
@@ -9,23 +10,19 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "messages")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class MessageEntity extends BaseEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
-    private Integer messageId;
-    
-    @Column(name = "sender_id", nullable = false)
-    private Integer senderId;
+    @Column(name = "sender_id", insertable = false, updatable = false)
+    private Long senderId;
     
     @Column(name = "sender_type", nullable = false, length = 50)
     private String senderType;
     
-    @Column(name = "recipient_id", nullable = false)
-    private Integer recipientId;
+    @Column(name = "recipient_id", insertable = false, updatable = false)
+    private Long recipientId;
     
     @Column(name = "recipient_type", nullable = false, length = 50)
     private String recipientType;
@@ -42,6 +39,14 @@ public class Message {
     @Column(nullable = false)
     private Boolean isRead = false;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private UserEntity sender;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient_id")
+    private UserEntity recipient;
+    
     @PrePersist
     protected void onCreate() {
         if (timestamp == null) {
@@ -50,22 +55,5 @@ public class Message {
         if (isRead == null) {
             isRead = false;
         }
-    }
-    
-    public void send() {
-        System.out.println("Message sent: " + subject);
-    }
-    
-    public void markAsRead() {
-        this.isRead = true;
-        System.out.println("Message marked as read");
-    }
-    
-    public void delete() {
-        System.out.println("Message ID: " + messageId + " deleted");
-    }
-    
-    public void reply(String response) {
-        System.out.println("Replying to message: " + subject);
     }
 }
