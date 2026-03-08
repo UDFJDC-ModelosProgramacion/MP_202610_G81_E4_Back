@@ -15,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User extends BaseEntity {
+public abstract class UserEntity extends BaseEntity {
     
     @Column(nullable = false, length = 100)
     private String name;
@@ -27,5 +27,5 @@ public abstract class User extends BaseEntity {
     private String phone;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
+    private List<NotificationEntity> notifications = new ArrayList<>();
 }

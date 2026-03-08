@@ -1,22 +1,22 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import co.edu.udistrital.mdp.pets.entities.Notification;
+import co.edu.udistrital.mdp.pets.entities.NotificationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
     
-    List<Notification> findByUserId(Long userId);
+    List<NotificationEntity> findByUserId(Long userId);
     
-    List<Notification> findByUserIdAndIsRead(Long userId, Boolean isRead);
+    List<NotificationEntity> findByUserIdAndIsRead(Long userId, Boolean isRead);
     
-    List<Notification> findByUserIdOrderByTimestampDesc(Long userId);
+    List<NotificationEntity> findByUserIdOrderByTimestampDesc(Long userId);
     
-    List<Notification> findByNotificationType(String notificationType);
+    List<NotificationEntity> findByNotificationType(String notificationType);
     
-    List<Notification> findByUserIdAndNotificationType(Long userId, String notificationType);
+    List<NotificationEntity> findByUserIdAndNotificationType(Long userId, String notificationType);
     
     long countByUserIdAndIsRead(Long userId, Boolean isRead);
     

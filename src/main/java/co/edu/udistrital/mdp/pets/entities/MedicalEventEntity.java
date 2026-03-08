@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class MedicalEvent extends BaseEntity{
+public class MedicalEventEntity extends BaseEntity{
     private String eventType;
 
     private LocalDate eventDate;

@@ -2,10 +2,10 @@ package co.edu.udistrital.mdp.pets.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import co.edu.udistrital.mdp.pets.entities.VaccinationRecord;
+import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
 
 
-public interface VaccinationRecordRepository extends JpaRepository<VaccinationRecord, Long> {
+public interface VaccinationRecordRepository extends JpaRepository<VaccinationRecordEntity, Long> {
 
     
 } 

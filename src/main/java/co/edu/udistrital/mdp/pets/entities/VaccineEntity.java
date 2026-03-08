@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class Vaccine extends BaseEntity {
+public class VaccineEntity extends BaseEntity {
     private String vaccineName;
 
     private LocalDate applicationDate;
@@ -19,5 +19,5 @@ public class Vaccine extends BaseEntity {
     private String observations;
 
     @ManyToOne
-    private VaccinationRecord vaccinationRecord;
+    private VaccinationRecordEntity vaccinationRecord;
 }

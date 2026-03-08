@@ -1,21 +1,21 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import co.edu.udistrital.mdp.pets.entities.Veterinarian;
+import co.edu.udistrital.mdp.pets.entities.VeterinarianEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
 @Repository
-public interface VeterinarianRepository extends JpaRepository<Veterinarian, Long> {
+public interface VeterinarianRepository extends JpaRepository<VeterinarianEntity, Long> {
     
-    Optional<Veterinarian> findByEmail(String email);
+    Optional<VeterinarianEntity> findByEmail(String email);
     
-    Optional<Veterinarian> findByVeterinarianId(Long veterinarianId);
+    Optional<VeterinarianEntity> findByVeterinarianId(Long veterinarianId);
     
-    List<Veterinarian> findByShelterId(Long shelterId);
+    List<VeterinarianEntity> findByShelterId(Long shelterId);
     
-    List<Veterinarian> findByAvailability(String availability);
+    List<VeterinarianEntity> findByAvailability(String availability);
     
     boolean existsByEmail(String email);
 }

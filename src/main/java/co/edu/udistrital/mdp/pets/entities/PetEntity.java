@@ -25,5 +25,5 @@ public class PetEntity extends BaseEntity{
 
     private String status;
     @OneToMany(mappedBy = "pet")
-    private List<VaccinationRecord> vaccinationRecords;
+    private List<VaccinationRecordEntity> vaccinationRecords;
 }

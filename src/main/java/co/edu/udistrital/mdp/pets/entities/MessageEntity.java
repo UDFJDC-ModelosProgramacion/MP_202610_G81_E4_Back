@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message extends BaseEntity {
+public class MessageEntity extends BaseEntity {
     
     @Column(name = "sender_id", insertable = false, updatable = false)
     private Long senderId;
@@ -39,17 +39,13 @@ public class Message extends BaseEntity {
     @Column(nullable = false)
     private Boolean isRead = false;
     
-    // ==================== RELACIONES ====================
-    
-    // Relación con Usuario como remitente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private User sender;
+    private UserEntity sender;
     
-    // Relación con Usuario como destinatario
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
-    private User recipient;
+    private UserEntity recipient;
     
     @PrePersist
     protected void onCreate() {

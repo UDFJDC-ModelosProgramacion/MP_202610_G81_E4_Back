@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class AdoptionRequest extends BaseEntity{
+public class AdoptionRequestEntity extends BaseEntity{
     private LocalDate requestDate;
 
     private String status;

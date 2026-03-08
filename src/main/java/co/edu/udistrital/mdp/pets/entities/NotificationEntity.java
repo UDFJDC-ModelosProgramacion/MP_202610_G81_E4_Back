@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification extends BaseEntity {
+public class NotificationEntity extends BaseEntity {
     
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
@@ -36,12 +36,9 @@ public class Notification extends BaseEntity {
     @Column(name = "related_entity", length = 100)
     private String relatedEntity;
     
-    // ==================== RELACIONES ====================
-    
-    // Relación con Usuario
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
     
     @PrePersist
     protected void onCreate() {
