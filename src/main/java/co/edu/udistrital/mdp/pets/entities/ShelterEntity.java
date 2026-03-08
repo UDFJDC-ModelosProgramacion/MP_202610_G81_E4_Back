@@ -1,42 +1,54 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import uk.co.jemos.podam.common.PodamExclude;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "SHELTER_ENTITY")
+@Table(name = "shelters")
 @Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShelterEntity extends BaseEntity {
-    private int shelter;
+
     private String name;
     private String city;
     private String address;
     private String phone;
     private String email;
-    private String[] photos;
-    private String[] videos;
-    private String description; 
+    
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "ShelterEvent_id")
-    @PodamExclude 
-    private ShelterEventEntity shelterEvent;
+    @ElementCollection
+    @CollectionTable(name = "shelter_photos", joinColumns = @JoinColumn(name = "shelter_id"))
+    @Column(name = "photo_url")
+    private List<String> photos = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn (name = "Adoption_id")
+    @ElementCollection
+    @CollectionTable(name = "shelter_videos", joinColumns = @JoinColumn(name = "shelter_id"))
+    @Column(name = "video_url")
+    private List<String> videos = new ArrayList<>();
+
     @PodamExclude
-    private AdoptionEntity adoption; 
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PetEntity> pets = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "Pet_id")
     @PodamExclude
-    private PetEntity pet;
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
+    private List<ShelterEventEntity> events = new ArrayList<>();
+
+    @PodamExclude
+    @OneToMany(mappedBy = "shelter")
+    private List<AdoptionEntity> adoptions = new ArrayList<>();
+}
 
 
     
-}
+
