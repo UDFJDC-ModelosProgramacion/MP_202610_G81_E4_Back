@@ -30,4 +30,7 @@ public class ShelterEventEntity extends BaseEntity {
     @JoinColumn(name = "Shelter_id")
     @PodamExclude 
     private ShelterEntity shelter;
+
+    
 }
+

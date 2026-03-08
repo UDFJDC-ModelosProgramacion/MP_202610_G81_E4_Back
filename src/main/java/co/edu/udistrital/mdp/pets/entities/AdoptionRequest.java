@@ -18,6 +18,6 @@ public class AdoptionRequest extends BaseEntity{
     private List<String> documents;
 
     @ManyToOne
-    private Pet pet;
+    private PetEntity pet;
     
 }

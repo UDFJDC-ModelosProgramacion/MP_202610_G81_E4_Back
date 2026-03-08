@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 public class VaccinationRecord extends BaseEntity{
     @ManyToOne
-    private Pet pet;
+    private PetEntity pet;
 
     @OneToMany(mappedBy = "vaccinationRecord")
     private List<Vaccine> vaccines;

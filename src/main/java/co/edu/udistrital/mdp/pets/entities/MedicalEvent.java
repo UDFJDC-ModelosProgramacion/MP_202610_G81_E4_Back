@@ -22,5 +22,5 @@ public class MedicalEvent extends BaseEntity{
     private List<String> attachments;
 
     @ManyToOne
-    private Pet pet;
+    private PetEntity pet;
 }
