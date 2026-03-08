@@ -17,7 +17,7 @@ import java.util.List;
 public class Adopter extends User {
     
     @Column(name = "adopter_id", unique = true)
-    private Integer adopterId;
+    private Long adopterId;
     
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -39,34 +39,29 @@ public class Adopter extends User {
     @Column(name = "preference")
     private List<String> preferences = new ArrayList<>();
     
-    public void addPreference(String preference) {
-        if (this.preferences == null) {
-            this.preferences = new ArrayList<>();
-        }
-        this.preferences.add(preference);
-    }
+    // ==================== RELACIONES ====================
     
-    public void requestAdoption(Integer petId) {
-        System.out.println("Adopter " + getLastName() + " has requested to adopt pet with ID: " + petId);
-    }
+    // Relación con SolicitudAdopcion (Grupo 2)
+    // Descomenta cuando exista la entidad AdoptionRequest
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<AdoptionRequest> adoptionRequests = new ArrayList<>();
+    */
     
-    public void startTrialCoexistence(Integer petId) {
-        System.out.println("Starting trial coexistence with pet ID: " + petId);
-    }
+    // Relación con Adopcion (Grupo 3)
+    // Descomenta cuando exista la entidad Adoption
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<Adoption> adoptions = new ArrayList<>();
+    */
     
-    public void confirmAdoption(Integer petId) {
-        System.out.println("Adoption confirmed for pet ID: " + petId);
-    }
+    // Relación con Reseña (Grupo 3)
+    // Descomenta cuando exista la entidad Review
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+    */
     
-    public void returnPet(Integer petId) {
-        System.out.println("Returning pet ID: " + petId);
-    }
-    
-    public void updatePetInfo(Integer petId) {
-        System.out.println("Updating information for pet ID: " + petId);
-    }
-    
-    public void leaveReview(Integer petId, String comment) {
-        System.out.println("Review left for pet ID: " + petId);
-    }
+    // Relación con Mensaje como remitente/destinatario
+    // Ya manejado por senderId/recipientId en Message
 }
