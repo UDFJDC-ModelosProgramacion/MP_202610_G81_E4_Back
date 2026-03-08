@@ -1,18 +1,18 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import java.util.Date;
 import lombok.Data;
+import java.util.Date;
 
 @Entity
-@Table(name = "seguimiento_adopcion")
+@Table(name = "ADOPTION_TRACKING_ENTITY")
 @Data
-public class SeguimientoAdopcion extends BaseEntity {
+public class AdoptionTrackingEntity extends BaseEntity {
 
-    private String frecuencia;
-    private String notas;
+    private String frequency;
+    private String notes;
     @Temporal(TemporalType.DATE)
-    private Date proximaRevision;
+    private Date nextReview;
 
     @ManyToOne
     @JoinColumn(name = "Adoption_id")

@@ -1,6 +1,6 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import co.edu.udistrital.mdp.pets.entities.Reporte;
+import co.edu.udistrital.mdp.pets.entities.ReportEntity;
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReporteRepository extends JpaRepository<Reporte, Integer> {
+public interface ReporteRepository extends JpaRepository<ReportEntity, Integer> {
 
-    List<Reporte> findByShelter(ShelterEntity shelter);
+    List<ReportEntity> findByShelter(ShelterEntity shelter);
 
-    List<Reporte> findByTipoReporte(String tipoReporte);
+    List<ReportEntity> findByReportType(String reportType);
 }

@@ -1,19 +1,18 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import java.util.Date;
 import lombok.Data;
+import java.util.Date;
 
 @Entity
-@Table(name = "devolucion")
+@Table(name = "ADOPTION_HISTORY_ENTITY")
 @Data
-public class Devolucion extends BaseEntity {
+public class AdoptionHistoryEntity extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
-    private Date fechaDevolucion;
-    private String motivo;
-    private String descripcionDetallada;
-    private String estadoMascota;
+    private Date date;
+    private String reason;
+    private String detail;
 
     @ManyToOne
     @JoinColumn(name = "Adoption_id")

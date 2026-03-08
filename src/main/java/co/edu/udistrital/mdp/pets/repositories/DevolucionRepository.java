@@ -1,6 +1,6 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
-import co.edu.udistrital.mdp.pets.entities.Devolucion;
+import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
 import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DevolucionRepository extends JpaRepository<Devolucion, Integer> {
+public interface DevolucionRepository extends JpaRepository<DevolutionEntity, Integer> {
 
-    List<Devolucion> findByAdoption(AdoptionEntity adoption);
+    List<DevolutionEntity> findByAdoption(AdoptionEntity adoption);
 
-    List<Devolucion> findByMotivo(String motivo);
+    List<DevolutionEntity> findByReason(String reason);
 }

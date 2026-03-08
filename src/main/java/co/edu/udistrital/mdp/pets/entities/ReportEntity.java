@@ -1,22 +1,22 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import java.util.Date;
 import lombok.Data;
+import java.util.Date;
 
 @Entity
-@Table(name = "reporte")
+@Table(name = "REPORT_ENTITY")
 @Data
-public class Reporte extends BaseEntity {
+public class ReportEntity extends BaseEntity {
 
-    private String tipoReporte;
+    private String reportType;
     @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
+    private Date startDate;
     @Temporal(TemporalType.DATE)
-    private Date fechaFin;
-    private String datos;
+    private Date endDate;
+    private String data;
     @Temporal(TemporalType.DATE)
-    private Date fechaGeneracion;
+    private Date generationDate;
 
     @ManyToOne
     @JoinColumn(name = "Shelter_id")
