@@ -11,13 +11,12 @@ public interface AdopterRepository extends JpaRepository<AdopterEntity, Long> {
     
     Optional<AdopterEntity> findByEmail(String email);
     
-    Optional<AdopterEntity> findByAdopterId(Long adopterId);
+    // Búsqueda por el ID de negocio (Cédula/Documento)
+    Optional<AdopterEntity> findByAdopterIdBusiness(Long adopterIdBusiness);
     
     List<AdopterEntity> findByHousingType(String housingType);
     
     List<AdopterEntity> findByHasChildren(Boolean hasChildren);
-    
-    List<AdopterEntity> findByHasOtherPets(Boolean hasOtherPets);
     
     boolean existsByEmail(String email);
 }

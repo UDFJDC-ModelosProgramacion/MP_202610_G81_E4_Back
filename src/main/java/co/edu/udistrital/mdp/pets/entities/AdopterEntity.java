@@ -16,8 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class AdopterEntity extends UserEntity {
 
-    @Column(name = "adopter_id", unique = true)
-    private Long adopterId;
+    // adopterId como identificador de negocio (ej. cédula), no como Primary Key
+    @Column(name = "adopter_id_business", unique = true)
+    private Long adopterIdBusiness;
     
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -35,16 +36,10 @@ public class AdopterEntity extends UserEntity {
     private Boolean hasOtherPets;
     
     @ElementCollection
-    @CollectionTable(name = "adopter_preferences", joinColumns = @JoinColumn(name = "adopter_id_ref"))
+    @CollectionTable(name = "adopter_preferences", joinColumns = @JoinColumn(name = "adopter_id"))
     @Column(name = "preference")
     private List<String> preferences = new ArrayList<>();
 
     @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdoptionRequestEntity> adoptionRequests = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AdoptionEntity> adoptions = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewEntity> reviews = new ArrayList<>();
 }

@@ -39,8 +39,6 @@ public class NotificationEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false) // Mantén solo esto
     private UserEntity user;
-    
-
 
     @PrePersist
     protected void onCreate() {

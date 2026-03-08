@@ -2,17 +2,20 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import java.util.ArrayList;
 import java.util.List;
 
-
-@Data
 @Entity
-public class VaccinationRecordEntity extends BaseEntity{
-    @ManyToOne
+@Table(name = "vaccination_records")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class VaccinationRecordEntity extends BaseEntity {
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id")
     private PetEntity pet;
 
-    
-    @OneToMany(mappedBy = "vaccinationRecord")
-    private List<VaccineEntity> vaccines;
-
+    @OneToMany(mappedBy = "vaccinationRecord", cascade = CascadeType.ALL)
+    private List<VaccineEntity> vaccines = new ArrayList<>();
 }
