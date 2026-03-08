@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
 public class Adopter extends User {
     
     @Column(name = "adopter_id", unique = true)
-    private Integer adopterId;
+    private Long adopterId;
     
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -41,34 +39,29 @@ public class Adopter extends User {
     @Column(name = "preference")
     private List<String> preferences = new ArrayList<>();
     
-    public void addPreference(String preference) {
-        if (this.preferences == null) {
-            this.preferences = new ArrayList<>();
-        }
-        this.preferences.add(preference);
-    }
+    // ==================== RELACIONES ====================
     
-    public void requestAdoption(Integer petId) {
-        log.info("Adopter {} has requested to adopt pet with ID: {}", getName(), petId);
-    }
+    // Relación con SolicitudAdopcion (Grupo 2)
+    // Descomenta cuando exista la entidad AdoptionRequest
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<AdoptionRequest> adoptionRequests = new ArrayList<>();
+    */
     
-    public void startTrialCoexistence(Integer petId) {
-        log.info("Starting trial coexistence with pet ID: {}", petId);
-    }
+    // Relación con Adopcion (Grupo 3)
+    // Descomenta cuando exista la entidad Adoption
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<Adoption> adoptions = new ArrayList<>();
+    */
     
-    public void confirmAdoption(Integer petId) {
-        log.info("Adoption confirmed for pet ID: {}", petId);
-    }
+    // Relación con Reseña (Grupo 3)
+    // Descomenta cuando exista la entidad Review
+    /*
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+    */
     
-    public void returnPet(Integer petId) {
-        log.warn("Returning pet ID: {}", petId);
-    }
-    
-    public void updatePetInfo(Integer petId) {
-        log.info("Updating information for pet ID: {}", petId);
-    }
-    
-    public void leaveReview(Integer petId, String comment) {
-        log.info("Review left for pet ID: {}", petId);
-    }
+    // Relación con Mensaje como remitente/destinatario
+    // Ya manejado por senderId/recipientId en Message
 }

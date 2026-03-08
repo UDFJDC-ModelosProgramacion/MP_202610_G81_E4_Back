@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
 public class Veterinarian extends User {
     
     @Column(name = "veterinarian_id", unique = true)
-    private Integer veterinarianId;
+    private Long veterinarianId;
     
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -32,37 +30,44 @@ public class Veterinarian extends User {
     @Column(length = 100)
     private String availability;
     
-    @Column(name = "shelter_id")
-    private Integer shelterId;
+    @Column(name = "shelter_id", insertable = false, updatable = false)
+    private Long shelterId;
     
-    public void addSpecialty(String specialty) {
-        if (this.specialties == null) {
-            this.specialties = new ArrayList<>();
-        }
-        this.specialties.add(specialty);
-    }
+    // ==================== RELACIONES ====================
     
-    public void registerMedicalEvent(Integer petId, String event) {
-        log.info("Medical event registered for pet ID: {}", petId);
-    }
+    // Relación con Refugio (Grupo 3)
+    // Descomenta cuando exista la entidad Shelter
+    /*
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelter_id")
+    private Shelter shelter;
+    */
     
-    public void applyVaccine(Integer petId, String vaccine) {
-        log.info("Vaccine {} applied to pet ID: {}", vaccine, petId);
-    }
+    // Relación con Adopcion (Grupo 3)
+    // Descomenta cuando exista la entidad Adoption
+    /*
+    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+    private List<Adoption> adoptions = new ArrayList<>();
+    */
     
-    public void performFollowUp(Integer adoptionId) {
-        log.info("Performing follow-up for adoption ID: {}", adoptionId);
-    }
+    // Relación con EventoMedico (Grupo 2)
+    // Descomenta cuando exista la entidad MedicalEvent
+    /*
+    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+    private List<MedicalEvent> medicalEvents = new ArrayList<>();
+    */
     
-    public void updateVaccinationRecord(Integer petId) {
-        log.info("Vaccination record updated for pet ID: {}", petId);
-    }
+    // Relación con Vacuna (Grupo 2)
+    // Descomenta cuando exista la entidad Vaccine
+    /*
+    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+    private List<Vaccine> vaccines = new ArrayList<>();
+    */
     
-    public void scheduleCheckup(Integer adoptionId) {
-        log.info("Checkup scheduled for adoption ID: {}", adoptionId);
-    }
-    
-    public void viewAssignedPets() {
-        log.info("Showing pets assigned to veterinarian {}", getName());
-    }
+    // Relación con SeguimientoAdopcion (Grupo 4)
+    // Descomenta cuando exista la entidad AdoptionFollowUp
+    /*
+    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+    private List<AdoptionFollowUp> adoptionFollowUps = new ArrayList<>();
+    */
 }
