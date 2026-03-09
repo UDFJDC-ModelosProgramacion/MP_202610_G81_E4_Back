@@ -5,8 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,22 +25,25 @@ public class PetEntity extends BaseEntity {
     private String sex;
     private String size;
     private String temperament;
-    
+
     @Column(columnDefinition = "TEXT")
     private String specialNeeds;
 
     @ElementCollection
-    private List<String> photos = new ArrayList<>();
-    
+    private List<String> photos;
+
     @Column(columnDefinition = "TEXT")
     private String arrivalHistory;
 
     private LocalDate arrivalDate;
+
     private String status;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
-    private List<VaccinationRecordEntity> vaccinationRecords = new ArrayList<>();
+    private List<VaccinationRecordEntity> vaccinationRecords;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shelter_id")
     private ShelterEntity shelter;

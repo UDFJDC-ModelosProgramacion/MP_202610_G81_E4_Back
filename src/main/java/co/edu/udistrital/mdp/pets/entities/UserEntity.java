@@ -1,4 +1,3 @@
-
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
@@ -6,7 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.ArrayList;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
@@ -17,16 +17,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class UserEntity extends BaseEntity {
-    
+
     @Column(nullable = false, length = 100)
     private String name;
-    
+
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-    
+
     @Column(length = 20)
     private String phone;
-    
+
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NotificationEntity> notifications = new ArrayList<>();
+    private List<NotificationEntity> notifications;
 }
