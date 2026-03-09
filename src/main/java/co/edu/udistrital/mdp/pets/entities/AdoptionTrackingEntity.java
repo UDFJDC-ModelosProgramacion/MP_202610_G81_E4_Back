@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Entity
 @Table(name = "adoption_trackings")
@@ -15,7 +15,7 @@ public class AdoptionTrackingEntity extends BaseEntity {
 
     private String frequency;
     private String notes;
-    private LocalDate nextReview; // Cambiado de Date a LocalDate
+    private LocalDate nextReview; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adoption_id")
