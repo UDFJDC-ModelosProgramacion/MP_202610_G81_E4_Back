@@ -5,15 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
-import  java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Entity
 @Table(name = "adoptions")
