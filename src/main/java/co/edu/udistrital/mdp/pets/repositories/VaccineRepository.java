@@ -10,9 +10,5 @@ import java.util.List;
 
 @Repository
 public interface VaccineRepository extends JpaRepository<VaccineEntity, Long> {
-
-    List<VaccineEntity> findByApplicationDateBetween(LocalDate start, LocalDate end);
-
-    @Query("SELECT v FROM VaccineEntity v WHERE v.nextApplicationDate <= :reminderDate")
-    List<VaccineEntity> findUpcomingVaccinations(@Param("reminderDate") LocalDate reminderDate);
+    
 }

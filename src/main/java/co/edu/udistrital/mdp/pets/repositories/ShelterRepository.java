@@ -11,12 +11,4 @@ import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 @Repository
 public interface ShelterRepository extends JpaRepository<ShelterEntity, Long> {
     
-    // Buscar refugios por ciudad
-    List<ShelterEntity> findByCityIgnoreCase(String city);
-    
-    // Buscar por nombre exacto
-    Optional<ShelterEntity> findByName(String name);
-    
-    // Verificar si existe un refugio por email
-    boolean existsByEmail(String email);
 }

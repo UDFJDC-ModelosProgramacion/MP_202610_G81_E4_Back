@@ -9,8 +9,4 @@ import java.util.List;
 
 @Repository
 public interface AdoptionTrackingRepository extends JpaRepository<AdoptionTrackingEntity, Long> {
-
-    List<AdoptionTrackingEntity> findByAdoption(AdoptionEntity adoption);
-
-    List<AdoptionTrackingEntity> findByNextReviewLessThanEqual(LocalDate date);
 }

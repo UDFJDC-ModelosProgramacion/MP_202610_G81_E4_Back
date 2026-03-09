@@ -33,7 +33,7 @@ public class AdoptionEntity extends BaseEntity {
     @JoinColumn(name = "adopter_id")
     private AdopterEntity adopter;
 
-    @OneToOne(fetch = FetchType.LAZY) // Generalmente es 1 a 1
+    @OneToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "trial_stay_id")
     @PodamExclude 
     private TrialStayEntity trialStay;
@@ -41,5 +41,11 @@ public class AdoptionEntity extends BaseEntity {
     @OneToOne(mappedBy = "adoption", cascade = CascadeType.ALL)
     @PodamExclude
     private ReviewEntity review;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinarian_id")
+    private VeterinarianEntity veterinarian;
+
+
 }
     

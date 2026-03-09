@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdopterEntity extends UserEntity {
+public class AdopterEntity extends BaseEntity {
 
     // adopterId como identificador de negocio (ej. cédula), no como Primary Key
     @Column(name = "adopter_id_business", unique = true)

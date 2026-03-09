@@ -9,13 +9,4 @@ import java.util.List;
 
 @Repository
 public interface MedicalEventRepository extends JpaRepository<MedicalEventEntity, Long> {
-
-    
-    List<MedicalEventEntity> findByPet(PetEntity pet);
-
-    List<MedicalEventEntity> findByEventType(String eventType);
-
-    List<MedicalEventEntity> findByEventDateBetween(LocalDate startDate, LocalDate endDate);
-
-    List<MedicalEventEntity> findByDiagnosisContainingIgnoreCase(String diagnosis);
 }

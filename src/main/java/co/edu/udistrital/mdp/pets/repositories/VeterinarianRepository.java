@@ -9,9 +9,4 @@ import java.util.Optional;
 @Repository
 public interface VeterinarianRepository extends JpaRepository<VeterinarianEntity, Long> {
     
-    Optional<VeterinarianEntity> findByEmail(String email);
-    
-    List<VeterinarianEntity> findByShelterIdAndAvailability(Long shelterId, String availability);
-    
-    List<VeterinarianEntity> findBySpecialtiesContaining(String specialty);
 }
