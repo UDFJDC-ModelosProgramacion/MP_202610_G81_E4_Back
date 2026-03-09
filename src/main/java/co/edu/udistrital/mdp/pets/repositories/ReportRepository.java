@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<ReportEntity, Long> {
 
-    List<ReportEntity> findByShelter(ShelterEntity shelter);
-
-    List<ReportEntity> findByReportType(String reportType);
 }

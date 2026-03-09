@@ -9,11 +9,5 @@ import java.util.List;
 
 @Repository
 public interface PetRepository extends JpaRepository<PetEntity, Long> {
-  
-    List<PetEntity> findByStatus(String status);
-  
-    List<PetEntity> findBySpeciesAndSex(String species, String sex);
-
-    @Query("SELECT p FROM PetEntity p WHERE p.vaccinationRecords IS EMPTY")
-    List<PetEntity> findPetsWithoutVaccinationHistory();
+   
 }

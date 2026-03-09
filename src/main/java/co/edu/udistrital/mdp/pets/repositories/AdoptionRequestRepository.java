@@ -7,7 +7,4 @@ import java.util.List;
 
 public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequestEntity, Long> {
 
-    List<AdoptionRequestEntity> findByStatus(String status);
-    
-    List<AdoptionRequestEntity> findByAdopter(AdopterEntity adopter);
 }

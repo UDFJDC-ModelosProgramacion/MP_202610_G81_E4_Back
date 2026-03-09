@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface VaccinationRecordRepository extends JpaRepository<VaccinationRecordEntity, Long> {
-    
-    Optional<VaccinationRecordEntity> findByPet(PetEntity pet);
+
+
 }

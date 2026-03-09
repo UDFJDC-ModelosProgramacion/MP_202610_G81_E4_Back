@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface TrialStayRepository extends JpaRepository<TrialStayEntity, Long> {
 
-    List<TrialStayEntity> findByEndDate(LocalDate endDate);
-
-    List<TrialStayEntity> findByResult(String result);
 }

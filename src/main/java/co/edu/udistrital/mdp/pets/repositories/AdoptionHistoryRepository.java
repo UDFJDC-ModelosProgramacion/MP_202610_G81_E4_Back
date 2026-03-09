@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface AdoptionHistoryRepository extends JpaRepository<AdoptionHistoryEntity, Long> {
     
-    List<AdoptionHistoryEntity> findByAdoption(AdoptionEntity adoption);
-
-    List<AdoptionHistoryEntity> findByReasonContainingIgnoreCase(String reason);
 }
