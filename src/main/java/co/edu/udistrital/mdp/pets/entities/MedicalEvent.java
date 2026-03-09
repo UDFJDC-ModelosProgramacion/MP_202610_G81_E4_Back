@@ -23,4 +23,8 @@ public class MedicalEvent extends BaseEntity{
 
     @ManyToOne
     private PetEntity pet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinarian_id")
+    private VeterinarianEntity veterinarian;
 }
