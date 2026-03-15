@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AdoptionService {
     @Autowired
     private AdoptionRepository adoptionRepository;
-
     public AdoptionEntity createAdoption (AdoptionEntity adoption){
         log.info("Creating Adoption");
         if (adoption == null){

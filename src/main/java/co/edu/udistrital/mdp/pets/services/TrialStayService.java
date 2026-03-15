@@ -1,23 +1,18 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.EntityNotFoundException;
-
 import co.edu.udistrital.mdp.pets.repositories.TrialStayRepository;
 import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
 
 @Slf4j
 @Service
 public class TrialStayService {
-
     @Autowired
     private TrialStayRepository trialStayRepository;
-
     public TrialStayEntity createTrialStay(TrialStayEntity trialStay) {
         log.info("Creating TrialStay");
         if (trialStay == null) {
