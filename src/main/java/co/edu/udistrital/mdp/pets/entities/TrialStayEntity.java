@@ -15,10 +15,10 @@ public class TrialStayEntity extends BaseEntity {
     private LocalDate startDate;
     private LocalDate endDate;
     private String result;
-    
+
     @Column(columnDefinition = "TEXT")
     private String observations;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     @PodamExclude
@@ -28,6 +28,7 @@ public class TrialStayEntity extends BaseEntity {
     @JoinColumn(name = "adoption_id")
     private AdoptionEntity adoption;
 }
+
 
     
     
