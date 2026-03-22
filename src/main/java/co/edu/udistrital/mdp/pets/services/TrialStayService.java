@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.EntityNotFoundException;
 
 import co.edu.udistrital.mdp.pets.repositories.TrialStayRepository;
+import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
 
 @Slf4j
@@ -29,7 +30,9 @@ public class TrialStayService {
         if (trialStay.getAdoption() == null) {
             throw new IllegalArgumentException("Adoption process cannot be null");
         }
-        return trialStayRepository.save(trialStay);
+        TrialStayEntity savedTrialStay = trialStayRepository.save(trialStay);
+        log.info("TrialStay created with id: {}", savedTrialStay.getId());
+        return savedTrialStay;
     }
     public TrialStayEntity searchTrialStay(Long id) {
         log.info("Searching TrialStay with id: {}", id);
@@ -41,7 +44,6 @@ public class TrialStayService {
     }
     public TrialStayEntity updateTrialStay(Long id, TrialStayEntity trialStay) {
         log.info("Updating TrialStay with id: {}", id);
-
         TrialStayEntity existing = trialStayRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
         if (trialStay.getStartDate() == null || trialStay.getEndDate() == null) {
@@ -53,7 +55,10 @@ public class TrialStayService {
         existing.setObservations(trialStay.getObservations());
         existing.setPet(trialStay.getPet());
         existing.setAdoption(trialStay.getAdoption());
-        return trialStayRepository.save(existing);
+        
+        TrialStayEntity updatedTrialStay = trialStayRepository.save(existing);
+        log.info("TrialStay updated with id: {}", updatedTrialStay.getId());
+        return updatedTrialStay;
     }
     public void deleteTrialStay(Long id) {
         log.info("Deleting TrialStay with id: {}", id);

@@ -1,0 +1,66 @@
+$kind: http-request
+description: >-
+  # Delete Shelter
+
+
+  ## Overview
+
+
+  Permanently removes a shelter from the system. This operation deletes the
+  shelter record and may cascade to related entities depending on the system
+  configuration.
+
+
+  ## Request Details
+
+
+  - **Method**: `DELETE`
+
+  - **Endpoint**: `/delete/{id}`
+
+  - **Content-Type**: Not required for DELETE requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the shelter to delete |
+
+
+  ## Response
+
+
+  ### Success Response (204 No Content)
+
+
+  No response body is returned on successful deletion.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 204 | Success - Shelter deleted successfully |
+
+  | 404 | Not Found - No shelter exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Cascade Deletion Warning
+
+
+  ⚠️ **Important**: Deleting a shelter may affect related entities such as
+  reviews, events, and adoption records. Ensure you understand the cascade
+  behavior before performing this operation. Consider archiving instead of
+  deleting if you need to maintain historical records.
+url: "{{base_url}}/delete/{{ultimo_id_shelter}}"
+method: DELETE
+order: 4000

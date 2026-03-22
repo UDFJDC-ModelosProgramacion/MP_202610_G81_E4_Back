@@ -1,0 +1,135 @@
+$kind: http-request
+description: >-
+  # Create Trial Stay
+
+
+  ## Overview
+
+
+  Creates a new trial stay record for a potential adoption. This endpoint
+  initiates a trial period where a potential adopter can temporarily care for a
+  pet before making a final adoption decision.
+
+
+  ## Request Details
+
+
+  - **Method**: `POST`
+
+  - **Endpoint**: `/create`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `petId` | Long | Yes | The unique identifier of the pet for the trial stay |
+
+  | `adopterId` | Long | Yes | The unique identifier of the potential adopter |
+
+  | `startDate` | Date | Yes | The start date of the trial period |
+
+  | `endDate` | Date | Yes | The planned end date of the trial period |
+
+  | `status` | String | No | Current status of the trial stay (defaults to
+  "PENDING") |
+
+  | `notes` | String | No | Additional notes or special instructions |
+
+
+  ## Response
+
+
+  ### Success Response (201 Created)
+
+
+  Returns the newly created trial stay object with its assigned ID:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "petId": 15,
+    "adopterId": 20,
+    "startDate": "2024-01-20",
+    "endDate": "2024-02-03",
+    "status": "PENDING",
+    "notes": "First-time adopter, requires follow-up"
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 201 | Created - Trial stay successfully created |
+
+  | 400 | Bad Request - Invalid or missing required fields |
+
+  | 409 | Conflict - Trial stay already exists or pet unavailable |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Operations on Associations
+
+
+  This endpoint creates relationships between the trial stay, the pet, and the
+  adopter. Ensure that both the pet and adopter exist in the system and that the
+  pet is available for trial adoption.
+
+
+  ## Resource Representation
+
+
+  The trial stay resource tracks the temporary placement of pets with potential
+  adopters, allowing shelters to monitor trial periods and make informed
+  decisions about final adoptions.
+url: "{{base_url}}/create"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \     \"startDate\":\"22 de marzo\",\r
+
+    \     \"endDate\": \"23 de marzo\",\r
+
+    \     \"result\": \"aprobado\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
+
+      const respuesta = pm.response.json();\r
+
+      \r
+
+      // 2. Extraer el ID (ajusta 'id' según cómo se llame en tu Entity de
+      Java)\r
+
+      const idGenerado = respuesta.id;\r
+
+      \r
+
+      // 3. Guardar el ID en una variable de entorno\r
+
+      pm.environment.set(\"ultimo_id_trial_stay\", idGenerado);\r
+
+      \r
+
+      console.log(\"ID guardado correctamente: \" + idGenerado);"
+    language: text/javascript
+order: 4000

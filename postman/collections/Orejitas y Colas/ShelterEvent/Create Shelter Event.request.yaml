@@ -1,0 +1,155 @@
+$kind: http-request
+description: >-
+  # Create Shelter Event
+
+
+  ## Overview
+
+
+  Creates a new shelter event such as adoption drives, fundraisers, volunteer
+  days, or community outreach activities. This endpoint allows shelters to
+  organize and promote events to engage with the community.
+
+
+  ## Request Details
+
+
+  - **Method**: `POST`
+
+  - **Endpoint**: `/create`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `shelterId` | Long | Yes | The unique identifier of the shelter hosting the
+  event |
+
+  | `eventName` | String | Yes | Name of the event |
+
+  | `eventType` | String | Yes | Type of event (e.g., "ADOPTION_DRIVE",
+  "FUNDRAISER", "VOLUNTEER_DAY") |
+
+  | `eventDate` | Date | Yes | Date when the event will take place |
+
+  | `startTime` | Time | No | Start time of the event |
+
+  | `endTime` | Time | No | End time of the event |
+
+  | `location` | String | No | Specific location or address for the event |
+
+  | `description` | String | No | Detailed description of the event |
+
+  | `maxParticipants` | Integer | No | Maximum number of participants allowed |
+
+
+  ## Response
+
+
+  ### Success Response (201 Created)
+
+
+  Returns the newly created shelter event object with its assigned ID:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "shelterId": 5,
+    "eventName": "Spring Adoption Fair",
+    "eventType": "ADOPTION_DRIVE",
+    "eventDate": "2024-03-15",
+    "startTime": "10:00:00",
+    "endTime": "16:00:00",
+    "location": "Central Park Pavilion",
+    "description": "Meet adoptable pets and learn about our shelter",
+    "maxParticipants": 100
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 201 | Created - Shelter event successfully created |
+
+  | 400 | Bad Request - Invalid or missing required fields |
+
+  | 409 | Conflict - Event already exists or scheduling conflict |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Operations on Associations
+
+
+  This endpoint creates a relationship between the event and the shelter. Ensure
+  that the shelter exists in the system before creating an event.
+
+
+  ## Resource Representation
+
+
+  The shelter event resource enables community engagement and helps shelters
+  organize activities that promote pet adoption and raise awareness about animal
+  welfare.
+url: "{{base_url}}/create"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"eventCode\": 101,\r
+
+    \    \"eventType\": \"Adopción Masiva\",\r
+
+    \    \"title\": \"Feria de Perros Senior\",\r
+
+    \    \"description\": \"Evento para promover la adopción de perros mayores
+    de 7 años.\",\r
+
+    \    \"eventDate\": \"25 de marzo\",\r
+
+    \    \"location\": \"Parque Simón Bolívar\",\r
+
+    \    \"maxCapacity\": 50,\r
+
+    \    \"registeredCount\": 0\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
+
+      const respuesta = pm.response.json();\r
+
+      \r
+
+      // 2. Extraer el ID (ajusta 'id' según cómo se llame en tu Entity de
+      Java)\r
+
+      const idGenerado = respuesta.id;\r
+
+      \r
+
+      // 3. Guardar el ID en una variable de entorno\r
+
+      pm.environment.set(\"ultimo_id_shelter_event\", idGenerado);\r
+
+      \r
+
+      console.log(\"ID guardado correctamente: \" + idGenerado);"
+    language: text/javascript
+order: 1000

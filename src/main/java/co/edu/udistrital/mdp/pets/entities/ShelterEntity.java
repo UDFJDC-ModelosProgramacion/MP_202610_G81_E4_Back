@@ -1,10 +1,7 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import uk.co.jemos.podam.common.PodamExclude;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ public class ShelterEntity extends BaseEntity {
     private String address;
     private String phone;
     private String email;
-    
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

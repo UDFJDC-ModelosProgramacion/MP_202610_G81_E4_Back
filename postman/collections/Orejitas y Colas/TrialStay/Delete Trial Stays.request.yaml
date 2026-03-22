@@ -1,0 +1,65 @@
+$kind: http-request
+description: >-
+  # Delete Trial Stay
+
+
+  ## Overview
+
+
+  Permanently removes a trial stay record from the system. This operation
+  deletes the trial stay record and removes it from the adoption tracking
+  history.
+
+
+  ## Request Details
+
+
+  - **Method**: `DELETE`
+
+  - **Endpoint**: `/delete/{id}`
+
+  - **Content-Type**: Not required for DELETE requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the trial stay to delete |
+
+
+  ## Response
+
+
+  ### Success Response (204 No Content)
+
+
+  No response body is returned on successful deletion.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 204 | Success - Trial stay deleted successfully |
+
+  | 404 | Not Found - No trial stay exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Cascade Deletion Warning
+
+
+  ⚠️ **Important**: Deleting a trial stay will remove the record from the
+  adoption tracking system. Consider updating the status to "CANCELLED" instead
+  of deleting if you need to maintain historical records for reporting purposes.
+url: "{{base_url}}/delete/{{ultimo_id_trial_stay}}"
+method: GET
+order: 1000

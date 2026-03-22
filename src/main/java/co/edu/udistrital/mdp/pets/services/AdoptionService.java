@@ -26,7 +26,9 @@ public class AdoptionService {
         if (adoption.getAdoptionDate()==null){
             throw new IllegalArgumentException("Adoption date cannot be null");
         }
-        return adoptionRepository.save(adoption);
+        AdoptionEntity savedAdoption = adoptionRepository.save(adoption);
+        log.info("Adoption created with id: {}", savedAdoption.getId());
+        return savedAdoption;
     }
     public AdoptionEntity searchAdoption(Long id) {
         log.info("Searching Adoption with id: {}", id);
@@ -49,7 +51,12 @@ public class AdoptionService {
         }
         AdoptionEntity existing = adoptionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Adoption not found"));
         existing.setStatus(adoption.getStatus());
-        return adoptionRepository.save(existing);
+            existing.setAdoptionDate(adoption.getAdoptionDate());
+            existing.setPet(adoption.getPet());
+            existing.setAdopter(adoption.getAdopter());
+        AdoptionEntity updatedAdoption = adoptionRepository.save(existing);
+        log.info("Adoption updated with id: {}", updatedAdoption.getId());
+        return updatedAdoption;
     }
     public void deleteAdoption(Long id) {
         log.info("Deleting Adoption with id: {}", id);

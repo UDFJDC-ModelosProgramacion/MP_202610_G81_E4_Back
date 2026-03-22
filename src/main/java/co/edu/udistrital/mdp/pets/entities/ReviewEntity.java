@@ -18,7 +18,6 @@ public class ReviewEntity extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String comments;
-    
     private Integer rating;
     private LocalDateTime reviewDate;
 

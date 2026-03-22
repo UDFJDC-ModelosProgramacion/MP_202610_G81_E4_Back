@@ -1,0 +1,80 @@
+$kind: http-request
+description: >-
+  # Search Adoption
+
+
+  ## Overview
+
+
+  Retrieves detailed information about a specific adoption by its unique
+  identifier. This endpoint returns comprehensive adoption data including pet
+  information, adopter details, dates, and adoption status.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the adoption to retrieve |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON object containing the complete adoption information:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "petId": 15,
+    "adopterId": 20,
+    "adoptionDate": "2024-02-05",
+    "adoptionFee": 150.00,
+    "status": "COMPLETED",
+    "notes": "Successful trial stay led to adoption",
+    "trialStayId": 5
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Adoption found and returned |
+
+  | 404 | Not Found - No adoption exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  The adoption resource includes all attributes defined in the Adoption entity,
+  providing a complete view of the adoption record and its current status.
+url: "{{base_url}}/search/{{ultimo_id_adoption}}"
+method: GET
+order: 2000

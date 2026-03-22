@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
+import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import jakarta.persistence.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.repositories.ReviewRepository;
 
@@ -29,7 +30,9 @@ public class ReviewService {
         if (review.getAdopter() == null) {
             throw new IllegalArgumentException("Adopter cannot be null");
         }
-        return reviewRepository.save(review);
+        ReviewEntity savedReview = reviewRepository.save(review);
+        log.info("Review created with id: {}", savedReview.getId());
+        return savedReview;
     }
     public ReviewEntity searchReview(Long id) {
         log.info("Searching review with id: {}", id);
@@ -52,7 +55,12 @@ public class ReviewService {
         }
         ReviewEntity existing = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not found"));
         existing.setComments(review.getComments());
-        return reviewRepository.save(existing);
+        existing.setRating(review.getRating());
+        existing.setReviewDate(review.getReviewDate());
+        
+        ReviewEntity updatedReview = reviewRepository.save(existing);
+        log.info("Review updated with id: {}", updatedReview.getId());
+        return updatedReview;
     }
     public void deleteReview(Long id, Long adopterId, boolean isAdmin) {
         log.info("Deleting review with id: {}", id);

@@ -1,0 +1,100 @@
+$kind: http-request
+description: >-
+  # Update Adoption
+
+
+  ## Overview
+
+
+  Updates an existing adoption record's information. This endpoint allows
+  modification of adoption details such as status, fees, and notes. Commonly
+  used to track post-adoption follow-ups or update adoption records.
+
+
+  ## Request Details
+
+
+  - **Method**: `PUT`
+
+  - **Endpoint**: `/update/{id}`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the adoption to update |
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `adoptionDate` | Date | No | Updated adoption date |
+
+  | `adoptionFee` | Decimal | No | Updated adoption fee amount |
+
+  | `status` | String | No | Updated status (e.g., "COMPLETED", "RETURNED",
+  "PENDING") |
+
+  | `notes` | String | No | Updated notes or observations |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns the updated adoption object with all current values.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Adoption updated successfully |
+
+  | 400 | Bad Request - Invalid data provided |
+
+  | 404 | Not Found - No adoption exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Partial Update Notes
+
+
+  This endpoint supports partial updates. You only need to include the fields
+  you want to modify in the request body. All other fields will retain their
+  current values. Note that pet and adopter associations typically cannot be
+  changed after creation.
+url: "{{base_url}}/update/{{ultimo_id_adoption}}"
+method: PUT
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3001234567\",\r
+
+    \    \"email\": \"contacto@orejitas.com\"\r
+
+    }"
+order: 4000

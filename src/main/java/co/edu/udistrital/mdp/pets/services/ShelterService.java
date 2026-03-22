@@ -33,7 +33,9 @@ public class ShelterService {
         if (shelter.getEmail() == null || shelter.getEmail().isEmpty()) {
             throw new IllegalArgumentException("Shelter email is required");
         }
-        return shelterRepository.save(shelter);
+        ShelterEntity savedShelter = shelterRepository.save(shelter);
+        log.info("Shelter created with id: {}", savedShelter.getId());
+        return savedShelter;
     }
     public ShelterEntity searchShelter(Long id) {
         log.info("Searching shelter with id: {}", id);
@@ -42,11 +44,6 @@ public class ShelterService {
         }
         return shelterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
-    }
-    public List<ShelterEntity> searchShelters() {
-        log.info("Searching all shelters");
-
-        return shelterRepository.findAll();
     }
     public ShelterEntity updateShelter(Long id, ShelterEntity shelter) {
         log.info("Updating shelter with id: {}", id);
@@ -62,10 +59,9 @@ public class ShelterService {
         existing.setAddress(shelter.getAddress());
         existing.setPhone(shelter.getPhone());
         existing.setEmail(shelter.getEmail());
-        existing.setDescription(shelter.getDescription());
-        existing.setPhotos(shelter.getPhotos());
-        existing.setVideos(shelter.getVideos());
-        return shelterRepository.save(existing);
+        ShelterEntity updatedShelter = shelterRepository.save(existing);
+        log.info("Shelter updated with id: {}", updatedShelter.getId());
+        return updatedShelter;
     }
     public void deleteShelter(Long id) {
         log.info("Deleting shelter with id: {}", id);

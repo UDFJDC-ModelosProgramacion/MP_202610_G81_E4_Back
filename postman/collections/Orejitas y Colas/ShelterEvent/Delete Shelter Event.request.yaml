@@ -1,0 +1,65 @@
+$kind: http-request
+description: >-
+  # Delete Shelter Event
+
+
+  ## Overview
+
+
+  Permanently removes a shelter event from the system. This operation deletes
+  the event record and removes it from the shelter's event calendar.
+
+
+  ## Request Details
+
+
+  - **Method**: `DELETE`
+
+  - **Endpoint**: `/delete/{id}`
+
+  - **Content-Type**: Not required for DELETE requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the shelter event to delete |
+
+
+  ## Response
+
+
+  ### Success Response (204 No Content)
+
+
+  No response body is returned on successful deletion.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 204 | Success - Shelter event deleted successfully |
+
+  | 404 | Not Found - No shelter event exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Cascade Deletion Warning
+
+
+  ⚠️ **Important**: Deleting a shelter event will remove all associated
+  registrations and participation records. Consider cancelling the event and
+  updating its status instead of deleting if you need to maintain historical
+  records or notify registered participants.
+url: "{{base_url}}/delete/{{ultimo_id_shelter_event}}"
+method: GET
+order: 5000
