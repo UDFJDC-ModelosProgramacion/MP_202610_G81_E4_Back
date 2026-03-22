@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShelterEventRepository extends JpaRepository<ShelterEventEntity, Long> {
+    Optional<ShelterEventEntity> findByEventCode(Integer eventCode);
     
 }

@@ -1,0 +1,64 @@
+$kind: http-request
+description: >-
+  # Delete Review
+
+
+  ## Overview
+
+
+  Permanently removes a review from the system. This operation deletes the
+  review record and removes it from the shelter's feedback history.
+
+
+  ## Request Details
+
+
+  - **Method**: `DELETE`
+
+  - **Endpoint**: `/delete/{id}`
+
+  - **Content-Type**: Not required for DELETE requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the review to delete |
+
+
+  ## Response
+
+
+  ### Success Response (204 No Content)
+
+
+  No response body is returned on successful deletion.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 204 | Success - Review deleted successfully |
+
+  | 404 | Not Found - No review exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Cascade Deletion Warning
+
+
+  ⚠️ **Important**: Deleting a review will affect the shelter's overall rating
+  and feedback statistics. This operation should be used carefully and typically
+  only for inappropriate content or at the user's request.
+url: "{{base_url}}//delete/{{ultimo_id_review}}"
+method: DELETE
+order: 4000

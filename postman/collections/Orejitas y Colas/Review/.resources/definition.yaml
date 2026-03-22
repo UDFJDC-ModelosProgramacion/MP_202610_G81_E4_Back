@@ -1,0 +1,7 @@
+$kind: collection
+description: This folder contains the complete CRUD operations for managing
+  review records in the Orejitas y Colas system. It includes endpoints to create
+  new reviewa, search for existing reviews by ID, update review information, and
+  delete review records. All requests use the {{base_url}} environment variable
+  and {{ultimo_id_review}} for operations requiring a review identifier.
+order: 2000

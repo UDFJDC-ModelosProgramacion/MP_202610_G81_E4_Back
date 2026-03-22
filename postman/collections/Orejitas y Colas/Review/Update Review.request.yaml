@@ -1,0 +1,82 @@
+$kind: http-request
+description: >-
+  # Update Review
+
+
+  ## Overview
+
+
+  Updates an existing review's information. This endpoint allows modification of
+  review details such as rating and comment text. Typically used when a user
+  wants to revise their feedback.
+
+
+  ## Request Details
+
+
+  - **Method**: `PUT`
+
+  - **Endpoint**: `/update/{id}`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the review to update |
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `rating` | Integer | No | Updated rating score (typically 1-5) |
+
+  | `comment` | String | No | Updated review text and feedback |
+
+  | `reviewDate` | Date | No | Updated review date |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns the updated review object with all current values.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Review updated successfully |
+
+  | 400 | Bad Request - Invalid data provided |
+
+  | 404 | Not Found - No review exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Partial Update Notes
+
+
+  This endpoint supports partial updates. You only need to include the fields
+  you want to modify in the request body. All other fields will retain their
+  current values. Note that shelter and user associations typically cannot be
+  changed after creation.
+url: "{{base_url}}/update/{{ultimo_id_review}}"
+method: PUT
+order: 3000

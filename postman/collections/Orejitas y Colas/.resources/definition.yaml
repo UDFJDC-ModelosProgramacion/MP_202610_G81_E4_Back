@@ -1,0 +1,87 @@
+$kind: collection
+description: >-
+  # Orejitas y Colas API
+
+
+  ## Overview
+
+
+  The **Orejitas y Colas** API is a comprehensive platform for managing animal
+  shelter operations, facilitating pet adoptions, and connecting shelters with
+  potential adopters. This RESTful API provides complete functionality for
+  shelter management, community engagement, and adoption workflows.
+
+
+  ## Main Resources
+
+
+  This collection manages five core resources:
+
+
+  ### 🏠 Shelter
+
+  Manage animal shelter information including registration, details, and shelter
+  profiles. Operations include creating new shelters, searching for existing
+  ones, updating shelter information, and removing shelters from the system.
+
+
+  ### ⭐ Review
+
+  Handle user reviews and ratings for shelters. Allows users to share their
+  experiences, rate shelters, and provide feedback to help others make informed
+  decisions about shelter interactions.
+
+
+  ### 🐾 Trial Stay
+
+  Coordinate trial adoption periods where potential adopters can temporarily
+  care for pets before making a final adoption decision. Manage trial stay
+  requests, track their status, and monitor outcomes.
+
+
+  ### 📅 Shelter Event
+
+  Organize and manage shelter events such as adoption drives, fundraisers,
+  volunteer days, and community outreach activities. Track event details,
+  schedules, and participation.
+
+
+  ### 💝 Adoption
+
+  Process and manage pet adoption records from application through completion.
+  Track adoption status, maintain adoption history, and manage the relationship
+  between adopters and pets.
+
+
+  ## Available Operations
+
+
+  Each resource supports standard CRUD operations:
+
+
+  - **Create**: Add new records to the system
+
+  - **Search**: Retrieve specific records by ID or query multiple records
+
+  - **Update**: Modify existing record information
+
+  - **Delete**: Remove records from the system
+
+
+  ## Base URL
+
+
+  All requests use the `{{base_url}}` variable. Configure this in your
+  environment to point to your API instance.
+
+
+  ## Getting Started
+
+
+  1. Set up your environment with the appropriate `base_url` value
+
+  2. Configure any required authentication credentials
+
+  3. Start with the Shelter endpoints to register or search for shelters
+
+  4. Explore other resources based on your workflow needs

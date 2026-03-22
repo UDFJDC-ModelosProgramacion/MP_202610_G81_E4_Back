@@ -21,8 +21,7 @@ public class AdoptionEntity extends BaseEntity {
     
     private LocalDate adoptionDate;
     private String status;
-    private boolean trialPeriod; 
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     private PetEntity pet;

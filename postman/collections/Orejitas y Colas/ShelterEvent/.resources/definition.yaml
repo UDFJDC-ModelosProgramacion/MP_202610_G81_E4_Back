@@ -1,0 +1,8 @@
+$kind: collection
+description: This folder contains the complete CRUD operations for managing
+  shelter events records in the Orejitas y Colas system. It includes endpoints
+  to create new shelter events, search for existing shelter events by ID, update
+  shelter event information, and delete shelter event records. All requests use
+  the {{base_url}} environment variable and {{ultimo_id_shelter_event}} for
+  operations requiring a shelter event identifier.
+order: 4000

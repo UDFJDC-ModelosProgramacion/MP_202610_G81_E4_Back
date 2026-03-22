@@ -1,0 +1,108 @@
+$kind: http-request
+description: >-
+  # Update Shelter Event
+
+
+  ## Overview
+
+
+  Updates an existing shelter event's information. This endpoint allows
+  modification of event details such as date, time, location, and description.
+  Commonly used when event plans change or additional details need to be added.
+
+
+  ## Request Details
+
+
+  - **Method**: `PUT`
+
+  - **Endpoint**: `/update/{id}`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the shelter event to update |
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `eventName` | String | No | Updated name of the event |
+
+  | `eventType` | String | No | Updated type of event |
+
+  | `eventDate` | Date | No | Updated date when the event will take place |
+
+  | `startTime` | Time | No | Updated start time of the event |
+
+  | `endTime` | Time | No | Updated end time of the event |
+
+  | `location` | String | No | Updated location or address for the event |
+
+  | `description` | String | No | Updated detailed description of the event |
+
+  | `maxParticipants` | Integer | No | Updated maximum number of participants
+  allowed |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns the updated shelter event object with all current values.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Shelter event updated successfully |
+
+  | 400 | Bad Request - Invalid data provided |
+
+  | 404 | Not Found - No shelter event exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Partial Update Notes
+
+
+  This endpoint supports partial updates. You only need to include the fields
+  you want to modify in the request body. All other fields will retain their
+  current values. Note that the shelter association typically cannot be changed
+  after creation.
+url: "{{base_url}}/update/{{ultimo_id_shelter_event}}"
+method: PUT
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3001234567\",\r
+
+    \    \"email\": \"contacto@orejitas.com\"\r
+
+    }"
+order: 3000

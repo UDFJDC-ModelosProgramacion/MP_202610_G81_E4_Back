@@ -1,0 +1,82 @@
+$kind: http-request
+description: >-
+  # Delete Adoption
+
+
+  ## Overview
+
+
+  Permanently removes an adoption record from the system. This operation deletes
+  the adoption record and should be used with caution as it affects historical
+  adoption data.
+
+
+  ## Request Details
+
+
+  - **Method**: `DELETE`
+
+  - **Endpoint**: `/delete/{id}`
+
+  - **Content-Type**: Not required for DELETE requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the adoption to delete |
+
+
+  ## Response
+
+
+  ### Success Response (204 No Content)
+
+
+  No response body is returned on successful deletion.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 204 | Success - Adoption deleted successfully |
+
+  | 404 | Not Found - No adoption exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Cascade Deletion Warning
+
+
+  ⚠️ **Important**: Deleting an adoption record will remove important historical
+  data about pet placements. Consider updating the status to "CANCELLED" or
+  "RETURNED" instead of deleting if you need to maintain records for reporting,
+  compliance, or follow-up purposes. Deletion should only be used for erroneous
+  entries.
+url: "{{base_url}}/delete/{{ultimo_id_adoption}}"
+method: PUT
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3001234567\",\r
+
+    \    \"email\": \"contacto@orejitas.com\"\r
+
+    }"
+order: 5000

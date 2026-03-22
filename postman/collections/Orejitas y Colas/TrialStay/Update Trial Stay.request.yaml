@@ -1,0 +1,100 @@
+$kind: http-request
+description: >-
+  # Update Trial Stay
+
+
+  ## Overview
+
+
+  Updates an existing trial stay's information. This endpoint allows
+  modification of trial stay details such as dates, status, and notes. Commonly
+  used to track progress and update the outcome of trial periods.
+
+
+  ## Request Details
+
+
+  - **Method**: `PUT`
+
+  - **Endpoint**: `/update/{id}`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the trial stay to update |
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `startDate` | Date | No | Updated start date of the trial period |
+
+  | `endDate` | Date | No | Updated end date of the trial period |
+
+  | `status` | String | No | Updated status (e.g., "ACTIVE", "COMPLETED",
+  "CANCELLED") |
+
+  | `notes` | String | No | Updated notes or observations |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns the updated trial stay object with all current values.
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Trial stay updated successfully |
+
+  | 400 | Bad Request - Invalid data provided |
+
+  | 404 | Not Found - No trial stay exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Partial Update Notes
+
+
+  This endpoint supports partial updates. You only need to include the fields
+  you want to modify in the request body. All other fields will retain their
+  current values. Note that pet and adopter associations typically cannot be
+  changed after creation.
+url: "{{base_url}}/update/{{ultimo_id_trial_stay}}"
+method: PUT
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3001234567\",\r
+
+    \    \"email\": \"contacto@orejitas.com\"\r
+
+    }"
+order: 2000

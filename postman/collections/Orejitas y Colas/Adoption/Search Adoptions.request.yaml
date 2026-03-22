@@ -1,0 +1,95 @@
+$kind: http-request
+description: >-
+  # Search Adoptions
+
+
+  ## Overview
+
+
+  Retrieves a list of adoptions, typically filtered by criteria such as pet ID,
+  adopter ID, or status. This endpoint allows querying multiple adoption records
+  to track adoption history and analyze placement success.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The identifier used to filter adoptions (e.g., pet ID or
+  adopter ID) |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON array containing adoption information:
+
+
+  ```json
+
+  [
+    {
+      "id": 1,
+      "petId": 15,
+      "adopterId": 20,
+      "adoptionDate": "2024-02-05",
+      "adoptionFee": 150.00,
+      "status": "COMPLETED",
+      "notes": "Successful trial stay led to adoption",
+      "trialStayId": 5
+    },
+    {
+      "id": 2,
+      "petId": 18,
+      "adopterId": 20,
+      "adoptionDate": "2024-03-10",
+      "adoptionFee": 175.00,
+      "status": "COMPLETED",
+      "notes": "Second adoption by same family",
+      "trialStayId": null
+    }
+  ]
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Adoptions found and returned |
+
+  | 404 | Not Found - No adoptions found matching the criteria |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  This endpoint provides access to multiple adoption records, enabling shelters
+  to track their success in placing animals, analyze adoption trends, and
+  maintain comprehensive adoption histories for reporting and follow-up
+  purposes.
+url: "{{base_url}}/search/{{ultimo_id_adoption}}"
+method: GET
+order: 3000

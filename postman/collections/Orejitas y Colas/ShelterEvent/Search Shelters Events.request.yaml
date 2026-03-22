@@ -1,0 +1,98 @@
+$kind: http-request
+description: >-
+  # Search Shelter Events
+
+
+  ## Overview
+
+
+  Retrieves a list of shelter events, typically filtered by criteria such as
+  shelter ID, event type, or date range. This endpoint allows querying multiple
+  event records to view upcoming activities and past events.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The identifier used to filter shelter events (e.g.,
+  shelter ID) |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON array containing shelter event information:
+
+
+  ```json
+
+  [
+    {
+      "id": 1,
+      "shelterId": 5,
+      "eventName": "Spring Adoption Fair",
+      "eventType": "ADOPTION_DRIVE",
+      "eventDate": "2024-03-15",
+      "startTime": "10:00:00",
+      "endTime": "16:00:00",
+      "location": "Central Park Pavilion",
+      "description": "Meet adoptable pets and learn about our shelter",
+      "maxParticipants": 100
+    },
+    {
+      "id": 2,
+      "shelterId": 5,
+      "eventName": "Volunteer Orientation",
+      "eventType": "VOLUNTEER_DAY",
+      "eventDate": "2024-03-22",
+      "startTime": "14:00:00",
+      "endTime": "17:00:00",
+      "location": "Shelter Main Building",
+      "description": "Learn how to become a shelter volunteer",
+      "maxParticipants": 20
+    }
+  ]
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Shelter events found and returned |
+
+  | 404 | Not Found - No shelter events found matching the criteria |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  This endpoint provides access to multiple shelter event records, enabling
+  shelters to manage their event calendar, promote upcoming activities, and
+  track community engagement initiatives.
+url: "{{base_url}}/search/{{ultimo_id_shelter_event}}"
+method: GET
+order: 4000

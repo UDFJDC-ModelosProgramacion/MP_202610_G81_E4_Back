@@ -1,0 +1,137 @@
+$kind: http-request
+description: >-
+  # Create Adoption
+
+
+  ## Overview
+
+
+  Creates a new adoption record to finalize the adoption process. This endpoint
+  records the permanent placement of a pet with an adopter, completing the
+  adoption workflow.
+
+
+  ## Request Details
+
+
+  - **Method**: `POST`
+
+  - **Endpoint**: `/create`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `petId` | Long | Yes | The unique identifier of the pet being adopted |
+
+  | `adopterId` | Long | Yes | The unique identifier of the adopter |
+
+  | `adoptionDate` | Date | Yes | The date when the adoption is finalized |
+
+  | `adoptionFee` | Decimal | No | The adoption fee amount |
+
+  | `status` | String | No | Current status of the adoption (defaults to
+  "COMPLETED") |
+
+  | `notes` | String | No | Additional notes or special conditions |
+
+  | `trialStayId` | Long | No | Reference to a previous trial stay if applicable
+  |
+
+
+  ## Response
+
+
+  ### Success Response (201 Created)
+
+
+  Returns the newly created adoption object with its assigned ID:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "petId": 15,
+    "adopterId": 20,
+    "adoptionDate": "2024-02-05",
+    "adoptionFee": 150.00,
+    "status": "COMPLETED",
+    "notes": "Successful trial stay led to adoption",
+    "trialStayId": 5
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 201 | Created - Adoption successfully created |
+
+  | 400 | Bad Request - Invalid or missing required fields |
+
+  | 409 | Conflict - Adoption already exists or pet unavailable |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Operations on Associations
+
+
+  This endpoint creates relationships between the adoption, the pet, and the
+  adopter. It may also reference a previous trial stay. Ensure that both the pet
+  and adopter exist in the system and that the pet is available for adoption.
+
+
+  ## Resource Representation
+
+
+  The adoption resource represents the final step in the adoption process,
+  creating a permanent record of the pet's placement with its new family and
+  completing the shelter's mission of finding homes for animals.
+url: "{{base_url}}/create"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"adoptionDate\":\"24 de marzo\",\r
+
+    \    \"status\":\"adoptado\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
+
+      const respuesta = pm.response.json();\r
+
+      \r
+
+      // 2. Extraer el ID (ajusta 'id' según cómo se llame en tu Entity de
+      Java)\r
+
+      const idGenerado = respuesta.id;\r
+
+      \r
+
+      // 3. Guardar el ID en una variable de entorno\r
+
+      pm.environment.set(\"ultimo_id_adoption\", idGenerado);\r
+
+      \r
+
+      console.log(\"ID guardado correctamente: \" + idGenerado);"
+    language: text/javascript
+order: 1000

@@ -19,7 +19,7 @@ public class ShelterEventEntity extends BaseEntity {
     
     @Column(name = "event_code")
     private Integer eventCode;
-    
+
     private String eventType;
     private String title;
     
