@@ -12,6 +12,7 @@ import java.util.List;
 @Table(name = "medical_events")
 @EqualsAndHashCode(callSuper = true)
 public class MedicalEventEntity extends BaseEntity {
+
     private String eventType;
     private LocalDate eventDate;
     private String description;
@@ -24,4 +25,8 @@ public class MedicalEventEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinarian_id")
+    private VeterinarianEntity veterinarian;
 }

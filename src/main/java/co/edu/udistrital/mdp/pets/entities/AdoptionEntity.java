@@ -12,6 +12,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "adoptions")
 @Data

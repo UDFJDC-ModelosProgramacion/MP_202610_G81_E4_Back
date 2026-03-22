@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
+
 @Data
 @Entity
 @Table(name = "adoption_requests")
