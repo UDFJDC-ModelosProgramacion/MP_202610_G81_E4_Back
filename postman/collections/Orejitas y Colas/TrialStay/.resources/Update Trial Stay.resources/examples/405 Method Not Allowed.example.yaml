@@ -1,0 +1,26 @@
+$kind: http-example
+request:
+  url: http://localhost:8080/api/trial-stay
+  method: PUT
+  body:
+    type: text
+    content: "{\r
+
+      \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+
+      \    \"city\": \"Bogotá\",\r
+
+      \    \"address\": \"Calle 123 #45-67\",\r
+
+      \    \"phone\": \"3001234567\",\r
+
+      \    \"email\": \"contacto@orejitas.com\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: text
+    content: ""
+order: 1000

@@ -1,0 +1,20 @@
+$kind: http-example
+request:
+  url: http://localhost:8080/api/reviews
+  method: POST
+  body:
+    type: json
+    content: "{\r
+
+      \    \"comments\":\" Que refugio tan lindo\",\r
+
+      \    \"rating\":\"rating de 5\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: text
+    content: ""
+order: 1000

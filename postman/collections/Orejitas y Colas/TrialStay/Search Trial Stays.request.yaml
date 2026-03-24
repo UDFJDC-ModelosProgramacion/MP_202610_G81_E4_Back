@@ -87,6 +87,7 @@ description: >-
   This endpoint provides access to multiple trial stay records, enabling
   shelters to monitor ongoing trial periods, track success rates, and manage the
   trial adoption process effectively.
-url: "{{base_url}}/search/{{ultimo_id_trial_stay}}"
+url: http://localhost:8080/api/trial-stays
 method: GET
+examples: ./.resources/Search Trial Stays.resources/examples
 order: 5000

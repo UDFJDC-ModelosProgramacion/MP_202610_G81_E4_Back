@@ -73,6 +73,7 @@ description: >-
 
   The review resource includes all attributes defined in the Review entity,
   providing complete feedback information including ratings and user comments.
-url: "{{base_url}}/search/{{ultimo_id_review}}"
+url: http://localhost:8080/api/reviews
 method: GET
+examples: ./.resources/Search  Review.resources/examples
 order: 2000
