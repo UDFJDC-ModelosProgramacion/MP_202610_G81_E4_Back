@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.pets.services;
+package co.edu.udistrital.mdp.ZZZ.services;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.udistrital.mdp.pets.entities.Message;
 import co.edu.udistrital.mdp.pets.repositories.MessageRepository;
+import co.edu.udistrital.mdp.pets.services.MessageService;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceTest {

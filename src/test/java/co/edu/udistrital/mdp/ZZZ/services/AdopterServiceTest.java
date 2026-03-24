@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.pets.services;
+package co.edu.udistrital.mdp.ZZZ.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import co.edu.udistrital.mdp.pets.entities.Adopter;
 import co.edu.udistrital.mdp.pets.repositories.AdopterRepository;
+import co.edu.udistrital.mdp.pets.services.AdopterService;
 
 @ExtendWith(MockitoExtension.class)
 class AdopterServiceTest {
