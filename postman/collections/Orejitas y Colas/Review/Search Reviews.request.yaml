@@ -84,6 +84,7 @@ description: >-
 
   This endpoint provides access to multiple review records, enabling analysis of
   shelter performance, user satisfaction trends, and overall feedback patterns.
-url: "{{base_url}}/search/{{ultimo_id_review}}"
+url: http://localhost:8080/api/reviews
 method: GET
+examples: ./.resources/Search Reviews.resources/examples
 order: 5000

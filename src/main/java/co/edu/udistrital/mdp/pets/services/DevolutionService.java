@@ -1,63 +1,69 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
-import co.edu.udistrital.mdp.pets.repositories.DevolucionRepository;
+import co.edu.udistrital.mdp.pets.repositories.DevolutionRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
 
+import java.util.List;
+
+@Slf4j
 @Service
 public class DevolutionService {
 
     @Autowired
-    private DevolucionRepository repository;
+    private DevolutionRepository repository;
 
-    // Crear
+    /**
+     * Crea una devolución verificando que no exista una previa para la misma adopción.
+     */
     public DevolutionEntity createDevolution(DevolutionEntity devolution) {
-        if (devolution.getAdoption() == null)
-            throw new IllegalArgumentException("La devolución debe tener una adopción asociada");
-        if (devolution.getReason() == null || devolution.getReason().isEmpty())
-            throw new IllegalArgumentException("El motivo no puede ser nulo o vacío");
+        log.info("Creating devolution for adoption: {}", devolution.getAdoption());
+
+        if (devolution.getAdoption() == null) {
+            throw new IllegalArgumentException("Devolution must be linked to an adoption.");
+        }
+        
+        if (devolution.getReason() == null || devolution.getReason().isEmpty()) {
+            throw new IllegalArgumentException("Reason cannot be empty.");
+        }
+
+        // Validación de duplicados usando el método de tu Repositorio
         List<DevolutionEntity> existing = repository.findByAdoption(devolution.getAdoption());
-        if (!existing.isEmpty())
-            throw new IllegalArgumentException("Ya existe una devolución para esta adopción");
+        if (!existing.isEmpty()) {
+            throw new IllegalArgumentException("A devolution already exists for this adoption.");
+        }
+
         return repository.save(devolution);
     }
 
-    // Obtener todos
+    public DevolutionEntity getDevolution(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Devolution not found with id: " + id));
+    }
+
     public List<DevolutionEntity> getDevolutions() {
         return repository.findAll();
     }
 
-    // Obtener uno por ID
-    public DevolutionEntity getDevolution(Long id) {
-        Optional<DevolutionEntity> devolution = repository.findById(id.intValue());
-        if (devolution.isEmpty())
-            throw new IllegalArgumentException("La devolución con id " + id + " no existe");
-        return devolution.get();
-    }
-
-    // Actualizar
     public DevolutionEntity updateDevolution(Long id, DevolutionEntity devolution) {
-        Optional<DevolutionEntity> existing = repository.findById(id.intValue());
-        if (existing.isEmpty())
-            throw new IllegalArgumentException("La devolución con id " + id + " no existe");
-        if (devolution.getReason() == null || devolution.getReason().isEmpty())
-            throw new IllegalArgumentException("El motivo no puede ser nulo o vacío");
-        DevolutionEntity toUpdate = existing.get();
-        toUpdate.setReason(devolution.getReason());
-        toUpdate.setDetailedDescription(devolution.getDetailedDescription());
-        toUpdate.setPetState(devolution.getPetState());
-        toUpdate.setReturnDate(devolution.getReturnDate());
-        return repository.save(toUpdate);
+        DevolutionEntity existing = getDevolution(id);
+        
+        if (devolution.getReason() == null || devolution.getReason().isEmpty()) {
+            throw new IllegalArgumentException("Reason cannot be empty.");
+        }
+
+        existing.setReason(devolution.getReason());
+        existing.setDetailedDescription(devolution.getDetailedDescription());
+        existing.setPetState(devolution.getPetState());
+        
+        return repository.save(existing);
     }
 
-    // Eliminar
     public void deleteDevolution(Long id) {
-        Optional<DevolutionEntity> devolution = repository.findById(id.intValue());
-        if (devolution.isEmpty())
-            throw new IllegalArgumentException("La devolución con id " + id + " no existe");
-        repository.deleteById(id.intValue());
+        DevolutionEntity devolution = getDevolution(id);
+        repository.delete(devolution);
     }
 }

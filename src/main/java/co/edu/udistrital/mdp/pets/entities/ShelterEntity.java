@@ -10,7 +10,10 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties("shelter")
 @Table(name = "shelters")
 @Data
 @EqualsAndHashCode(callSuper = true)

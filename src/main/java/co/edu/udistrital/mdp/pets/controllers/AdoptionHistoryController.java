@@ -10,54 +10,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/adoption-history")
+@RequestMapping("/adoption-histories")
 public class AdoptionHistoryController {
 
     @Autowired
-    private AdoptionHistoryService service;
+    private AdoptionHistoryService adoptionHistoryService;
 
     @PostMapping
-    public ResponseEntity<AdoptionHistoryEntity> createAdoptionHistory(
-            @RequestBody AdoptionHistoryEntity history) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(service.createAdoptionHistory(history));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<AdoptionHistoryEntity> create(@RequestBody AdoptionHistoryEntity history) {
+        return new ResponseEntity<>(adoptionHistoryService.createAdoptionHistory(history), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<AdoptionHistoryEntity>> getAdoptionHistories() {
-        return ResponseEntity.ok(service.getAdoptionHistories());
+    public ResponseEntity<List<AdoptionHistoryEntity>> getAll() {
+        return new ResponseEntity<>(adoptionHistoryService.getAdoptionHistories(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdoptionHistoryEntity> getAdoptionHistory(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(service.getAdoptionHistory(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AdoptionHistoryEntity> getById(@PathVariable Long id) {
+        return new ResponseEntity<>(adoptionHistoryService.getAdoptionHistory(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdoptionHistoryEntity> updateAdoptionHistory(
-            @PathVariable Long id, @RequestBody AdoptionHistoryEntity history) {
-        try {
-            return ResponseEntity.ok(service.updateAdoptionHistory(id, history));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AdoptionHistoryEntity> update(@PathVariable Long id, @RequestBody AdoptionHistoryEntity history) {
+        return new ResponseEntity<>(adoptionHistoryService.updateAdoptionHistory(id, history), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAdoptionHistory(@PathVariable Long id) {
-        try {
-            service.deleteAdoptionHistory(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        adoptionHistoryService.deleteAdoptionHistory(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

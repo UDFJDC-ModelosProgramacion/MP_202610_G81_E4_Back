@@ -10,54 +10,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/adoption-tracking")
+@RequestMapping("/adoption-trackings")
 public class AdoptionTrackingController {
 
     @Autowired
-    private AdoptionTrackingService service;
+    private AdoptionTrackingService adoptionTrackingService;
 
     @PostMapping
-    public ResponseEntity<AdoptionTrackingEntity> createAdoptionTracking(
-            @RequestBody AdoptionTrackingEntity tracking) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(service.createAdoptionTracking(tracking));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<AdoptionTrackingEntity> create(@RequestBody AdoptionTrackingEntity tracking) {
+        return new ResponseEntity<>(adoptionTrackingService.createAdoptionTracking(tracking), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<AdoptionTrackingEntity>> getAdoptionTrackings() {
-        return ResponseEntity.ok(service.getAdoptionTrackings());
+    public ResponseEntity<List<AdoptionTrackingEntity>> getAll() {
+        return new ResponseEntity<>(adoptionTrackingService.getAdoptionTrackings(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdoptionTrackingEntity> getAdoptionTracking(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(service.getAdoptionTracking(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AdoptionTrackingEntity> getById(@PathVariable Long id) {
+        return new ResponseEntity<>(adoptionTrackingService.getAdoptionTracking(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdoptionTrackingEntity> updateAdoptionTracking(
-            @PathVariable Long id, @RequestBody AdoptionTrackingEntity tracking) {
-        try {
-            return ResponseEntity.ok(service.updateAdoptionTracking(id, tracking));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<AdoptionTrackingEntity> update(@PathVariable Long id, @RequestBody AdoptionTrackingEntity tracking) {
+        return new ResponseEntity<>(adoptionTrackingService.updateAdoptionTracking(id, tracking), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAdoptionTracking(@PathVariable Long id) {
-        try {
-            service.deleteAdoptionTracking(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        adoptionTrackingService.deleteAdoptionTracking(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

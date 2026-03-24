@@ -80,21 +80,24 @@ description: >-
   you want to modify in the request body. All other fields will retain their
   current values. Note that pet and adopter associations typically cannot be
   changed after creation.
-url: "{{base_url}}/update/{{ultimo_id_trial_stay}}"
+url: http://localhost:8080/api/trial-stays/1
 method: PUT
 body:
-  type: text
+  type: json
   content: "{\r
 
-    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+    \    \"startDate\": \"2026-03-24\",\r
 
-    \    \"city\": \"Bogotá\",\r
+    \    \"endDate\": \"2026-03-31\",\r
 
-    \    \"address\": \"Calle 123 #45-67\",\r
+    \    \"result\": \"ACTUALIZADO\",\r
 
-    \    \"phone\": \"3001234567\",\r
+    \    \"observations\": \"Actualización de prueba\",\r
 
-    \    \"email\": \"contacto@orejitas.com\"\r
+    \    \"pet\": { \"id\": 1 },\r
+
+    \    \"adoption\": { \"id\": 1 }\r
 
     }"
+examples: ./.resources/Update Trial Stay.resources/examples
 order: 2000

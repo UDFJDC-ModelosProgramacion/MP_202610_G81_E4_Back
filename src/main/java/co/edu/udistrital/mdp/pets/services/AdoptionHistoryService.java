@@ -1,60 +1,59 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import co.edu.udistrital.mdp.pets.entities.AdoptionHistoryEntity;
-import co.edu.udistrital.mdp.pets.repositories.HistorialAdopcionRepository;
+import co.edu.udistrital.mdp.pets.repositories.AdoptionHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 public class AdoptionHistoryService {
 
     @Autowired
-    private HistorialAdopcionRepository repository;
+    private AdoptionHistoryRepository repository;
 
-    // Crear
     public AdoptionHistoryEntity createAdoptionHistory(AdoptionHistoryEntity history) {
+        log.info("Creating adoption history");
         if (history.getAdoption() == null)
-            throw new IllegalArgumentException("El historial debe tener una adopción asociada");
+            throw new IllegalArgumentException("History must have an associated adoption");
         if (history.getReason() == null || history.getReason().isEmpty())
-            throw new IllegalArgumentException("La razón no puede ser nula o vacía");
+            throw new IllegalArgumentException("Reason cannot be null or empty");
+        
         return repository.save(history);
     }
 
-    // Obtener todos
     public List<AdoptionHistoryEntity> getAdoptionHistories() {
+        log.info("Searching all adoption histories");
         return repository.findAll();
     }
 
-    // Obtener uno por ID
     public AdoptionHistoryEntity getAdoptionHistory(Long id) {
-        Optional<AdoptionHistoryEntity> history = repository.findById(id.intValue());
-        if (history.isEmpty())
-            throw new IllegalArgumentException("El historial con id " + id + " no existe");
-        return history.get();
+        log.info("Searching adoption history with id: {}", id);
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Adoption history with id " + id + " does not exist"));
     }
 
-    // Actualizar
     public AdoptionHistoryEntity updateAdoptionHistory(Long id, AdoptionHistoryEntity history) {
-        Optional<AdoptionHistoryEntity> existing = repository.findById(id.intValue());
-        if (existing.isEmpty())
-            throw new IllegalArgumentException("El historial con id " + id + " no existe");
+        log.info("Updating adoption history with id: {}", id);
+        AdoptionHistoryEntity existing = getAdoptionHistory(id);
+        
         if (history.getReason() == null || history.getReason().isEmpty())
-            throw new IllegalArgumentException("La razón no puede ser nula o vacía");
-        AdoptionHistoryEntity toUpdate = existing.get();
-        toUpdate.setReason(history.getReason());
-        toUpdate.setDetail(history.getDetail());
-        toUpdate.setDate(history.getDate());
-        toUpdate.setAdoption(history.getAdoption());
-        return repository.save(toUpdate);
+            throw new IllegalArgumentException("Reason cannot be null or empty");
+
+        existing.setReason(history.getReason());
+        existing.setDetail(history.getDetail());
+        existing.setDate(history.getDate());
+        existing.setAdoption(history.getAdoption());
+        
+        return repository.save(existing);
     }
 
-    // Eliminar
     public void deleteAdoptionHistory(Long id) {
-        Optional<AdoptionHistoryEntity> history = repository.findById(id.intValue());
-        if (history.isEmpty())
-            throw new IllegalArgumentException("El historial con id " + id + " no existe");
-        repository.deleteById(id.intValue());
+        log.info("Deleting adoption history with id: {}", id);
+        AdoptionHistoryEntity history = getAdoptionHistory(id);
+        repository.delete(history);
     }
 }

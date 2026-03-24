@@ -1,59 +1,58 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
-import co.edu.udistrital.mdp.pets.repositories.SeguimientoAdopcionRepository;
+import co.edu.udistrital.mdp.pets.repositories.AdoptionTrackingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate; 
+import java.util.List;
+
+@Slf4j
 @Service
 public class AdoptionTrackingService {
 
     @Autowired
-    private SeguimientoAdopcionRepository repository;
-
-    // Crear
+    private AdoptionTrackingRepository repository;
     public AdoptionTrackingEntity createAdoptionTracking(AdoptionTrackingEntity tracking) {
-        if (tracking.getAdoption() == null)
-            throw new IllegalArgumentException("El seguimiento debe tener una adopción asociada");
-        if (tracking.getFrequency() == null || tracking.getFrequency().isEmpty())
-            throw new IllegalArgumentException("La frecuencia no puede ser nula o vacía");
+        log.info("Creating adoption tracking");
+        
+        if (tracking.getAdoption() == null) {
+            throw new IllegalArgumentException("Tracking must have an associated adoption");
+        }
+        if (tracking.getFrequency() == null || tracking.getFrequency().isEmpty()) {
+            throw new IllegalArgumentException("Frequency cannot be null or empty");
+        }
+        
         return repository.save(tracking);
     }
-
-    // Obtener todos
     public List<AdoptionTrackingEntity> getAdoptionTrackings() {
+        log.info("Searching all adoption trackings");
         return repository.findAll();
     }
-
-    // Obtener uno por ID
     public AdoptionTrackingEntity getAdoptionTracking(Long id) {
-        Optional<AdoptionTrackingEntity> tracking = repository.findById(id.intValue());
-        if (tracking.isEmpty())
-            throw new IllegalArgumentException("El seguimiento con id " + id + " no existe");
-        return tracking.get();
+        log.info("Searching adoption tracking with id: {}", id);
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Adoption tracking with id " + id + " does not exist"));
     }
-
-    // Actualizar
     public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
-        Optional<AdoptionTrackingEntity> existing = repository.findById(id.intValue());
-        if (existing.isEmpty())
-            throw new IllegalArgumentException("El seguimiento con id " + id + " no existe");
-        if (tracking.getNextReview() == null)
-            throw new IllegalArgumentException("La fecha de próxima revisión no puede ser nula");
-        AdoptionTrackingEntity toUpdate = existing.get();
-        toUpdate.setFrequency(tracking.getFrequency());
-        toUpdate.setNotes(tracking.getNotes());
-        toUpdate.setNextReview(tracking.getNextReview());
-        return repository.save(toUpdate);
+        log.info("Updating adoption tracking with id: {}", id);
+        AdoptionTrackingEntity existing = getAdoptionTracking(id);
+        
+        if (tracking.getNextReview() == null) {
+            throw new IllegalArgumentException("Next review date cannot be null");
+        }
+        existing.setFrequency(tracking.getFrequency());
+        existing.setNotes(tracking.getNotes());
+        existing.setNextReview(tracking.getNextReview());
+        
+        return repository.save(existing);
     }
-
-    // Eliminar
     public void deleteAdoptionTracking(Long id) {
-        Optional<AdoptionTrackingEntity> tracking = repository.findById(id.intValue());
-        if (tracking.isEmpty())
-            throw new IllegalArgumentException("El seguimiento con id " + id + " no existe");
-        repository.deleteById(id.intValue());
+        log.info("Deleting adoption tracking with id: {}", id);
+        AdoptionTrackingEntity tracking = getAdoptionTracking(id);
+        repository.delete(tracking);
     }
 }
