@@ -1,0 +1,35 @@
+$kind: http-example
+request:
+  url: http://localhost:8080/api/reviews/1
+  method: DELETE
+  body:
+    type: text
+    content: "{\r
+
+      \    \"comments\": \"Comentario actualizado: El proceso fue
+      impecable.\",\r
+
+      \    \"rating\": 5,\r
+
+      \    \"reviewDate\": \"2026-03-23T21:55:00\",\r
+
+      \    \"adoption\": {\r
+
+      \        \"id\": 1\r
+
+      \    },\r
+
+      \    \"adopter\": {\r
+
+      \        \"id\": 1\r
+
+      \    }\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: text
+    content: ""
+order: 1000

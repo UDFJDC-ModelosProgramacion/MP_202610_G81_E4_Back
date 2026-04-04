@@ -95,15 +95,29 @@ description: >-
   The review resource captures user feedback and ratings, contributing to the
   shelter's overall reputation score and helping potential adopters make
   informed decisions.
-url: "{{base_url}}/create"
+url: http://localhost:8080/api/reviews
 method: POST
 body:
   type: json
   content: "{\r
 
-    \    \"comments\":\" Que refugio tan lindo\",\r
+    \    \"comments\": \"El proceso de seguimiento fue excelente.\",\r
 
-    \    \"rating\":\"rating de 5\"\r
+    \    \"rating\": 5,\r
+
+    \    \"reviewDate\": \"2026-03-23T15:30:00\",\r
+
+    \    \"adoption\": {\r
+
+    \        \"id\": 1\r
+
+    \    },\r
+
+    \    \"adopter\": {\r
+
+    \        \"id\": 1\r
+
+    \    }\r
 
     }"
 scripts:
@@ -129,4 +143,5 @@ scripts:
 
       console.log(\"ID guardado correctamente: \" + idGenerado);"
     language: text/javascript
+examples: ./.resources/Create Review.resources/examples
 order: 1000

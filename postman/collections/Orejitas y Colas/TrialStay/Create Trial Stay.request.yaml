@@ -96,17 +96,32 @@ description: >-
   The trial stay resource tracks the temporary placement of pets with potential
   adopters, allowing shelters to monitor trial periods and make informed
   decisions about final adoptions.
-url: "{{base_url}}/create"
+url: http://localhost:8080/api/trial-stays
 method: POST
 body:
   type: json
   content: "{\r
 
-    \     \"startDate\":\"22 de marzo\",\r
+    \    \"startDate\": \"2026-03-25\",\r
 
-    \     \"endDate\": \"23 de marzo\",\r
+    \    \"endDate\": \"2026-04-01\",\r
 
-    \     \"result\": \"aprobado\"\r
+    \    \"result\": \"EN_PROCESO\",\r
+
+    \    \"observations\": \"El perrito se está adaptando bien al nuevo
+    hogar.\",\r
+
+    \    \"pet\": {\r
+
+    \        \"id\": 1\r
+
+    \    },\r
+
+    \    \"adoption\": {\r
+
+    \        \"id\": 1\r
+
+    \    }\r
 
     }"
 scripts:
@@ -132,4 +147,5 @@ scripts:
 
       console.log(\"ID guardado correctamente: \" + idGenerado);"
     language: text/javascript
+examples: ./.resources/Create Trial Stay.resources/examples
 order: 4000

@@ -77,6 +77,30 @@ description: >-
   you want to modify in the request body. All other fields will retain their
   current values. Note that shelter and user associations typically cannot be
   changed after creation.
-url: "{{base_url}}/update/{{ultimo_id_review}}"
+url: http://localhost:8080/api/reviews/1
 method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"comments\": \"Comentario actualizado: El proceso fue impecable.\",\r
+
+    \    \"rating\": 5,\r
+
+    \    \"reviewDate\": \"2026-03-23T21:55:00\",\r
+
+    \    \"adoption\": {\r
+
+    \        \"id\": 1\r
+
+    \    },\r
+
+    \    \"adopter\": {\r
+
+    \        \"id\": 1\r
+
+    \    }\r
+
+    }"
+examples: ./.resources/Update Review.resources/examples
 order: 3000

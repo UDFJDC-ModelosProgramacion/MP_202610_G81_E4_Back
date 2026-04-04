@@ -152,25 +152,31 @@ description: >-
   shelter ID to the environment variable `ultimo_id_shelter`. This allows you to
   use the newly created shelter's ID in subsequent requests within your
   collection.
-url: "{{base_url}}/create"
+url: http://localhost:8080/api/shelters
 method: POST
 body:
   type: json
   content: "{\r
 
-    \    \"name\":\"Orejitas y colas\",\r
+    \    \"name\": \"Refugio Distrital\",\r
 
     \    \"city\": \"Bogotá\",\r
 
-    \    \"adress\": \"Dirección\",\r
+    \    \"address\": \"Calle 123 #45-67\",\r
 
-    \    \"phone\": \"123456780\",\r
+    \    \"phone\": \"3101234567\",\r
 
-    \    \"email\": \"cienlopezj@gmail.com\"\r
+    \    \"email\": \"contacto@refugio.edu.co\",\r
 
-    \r
+    \    \"description\": \"Sede principal de atención a mascotas\",\r
 
-    }"
+    \    \"photos\": [\"http://link-foto1.jpg\"],\r
+
+    \    \"videos\": []\r
+
+    }\r
+
+    \r\n"
 scripts:
   - type: afterResponse
     code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
@@ -194,4 +200,5 @@ scripts:
 
       console.log(\"ID guardado correctamente: \" + idGenerado);"
     language: text/javascript
+examples: ./.resources/Create Shelter.resources/examples
 order: 1000

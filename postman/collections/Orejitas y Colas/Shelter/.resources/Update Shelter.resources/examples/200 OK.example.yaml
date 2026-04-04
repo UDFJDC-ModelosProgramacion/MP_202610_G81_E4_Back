@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: http://localhost:8080/api/shelters/1
+  method: PUT
+  body:
+    type: json
+    content: "{\r
+
+      \r
+
+      \    \"name\": \"Refugio Actualizado\",\r
+
+      \    \"city\": \"Bogotá\",\r
+
+      \    \"address\": \"Nueva Avenida 123\",\r
+
+      \    \"phone\": \"3009998877\",\r
+
+      \    \"email\": \"nuevo_email@refugio.com\"\r
+
+      \r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: text
+    content: ""
+order: 2000

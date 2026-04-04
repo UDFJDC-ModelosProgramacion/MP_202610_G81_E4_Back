@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.entities.ShelterEventEntity;
 import co.edu.udistrital.mdp.pets.repositories.ShelterEventRepository;
@@ -17,6 +18,7 @@ public class ShelterEventService {
     @Autowired
     private ShelterEventRepository shelterEventRepository;
 
+    @Transactional
     public ShelterEventEntity createShelterEvent(ShelterEventEntity event) {
         log.info("Creating shelter event");
         validateEvent(event);
@@ -43,6 +45,7 @@ public class ShelterEventService {
         return shelterEventRepository.findAll();
     }
 
+    @Transactional
     public ShelterEventEntity updateShelterEventByCode(Integer eventCode, ShelterEventEntity event) {
         log.info("Updating shelter event with code: {}", eventCode);
         validateEvent(event);
@@ -63,6 +66,7 @@ public class ShelterEventService {
         return shelterEventRepository.save(existing);
     }
 
+    @Transactional
     public void deleteShelterEventByCode(Integer eventCode) {
         log.info("Deleting shelter event with code: {}", eventCode);
         ShelterEventEntity event = searchShelterEventByCode(eventCode);

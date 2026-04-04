@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "trial_stays")
 @Data
@@ -19,11 +21,12 @@ public class TrialStayEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
+    @JsonIgnoreProperties({"trialStays", "shelter", "adoptions", "owner"}) 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
-    @PodamExclude
     private PetEntity pet;
 
+    @JsonIgnoreProperties({"trialStay", "pet", "adopter", "payments"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adoption_id")
     private AdoptionEntity adoption;

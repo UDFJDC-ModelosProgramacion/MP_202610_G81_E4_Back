@@ -75,6 +75,30 @@ description: >-
 
   The shelter resource includes all attributes defined in the Shelter entity,
   providing a complete view of the shelter's current state in the system.
-url: "{{base_url}}/search/{{ultimo_id_shelter}}"
+url: http://localhost:8080/api/shelters
 method: GET
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Refugio Distrital\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3101234567\",\r
+
+    \    \"email\": \"contacto@refugio.edu.co\",\r
+
+    \    \"description\": \"Sede principal de atención a mascotas\",\r
+
+    \    \"photos\": [\"http://link-foto1.jpg\"],\r
+
+    \    \"videos\": []\r
+
+    }\r
+
+    \r\n"
+examples: ./.resources/Search Shelter.resources/examples
 order: 2000
