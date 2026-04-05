@@ -1,60 +1,162 @@
 package co.edu.udistrital.mdp.ZZZ.services;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import co.edu.udistrital.mdp.pets.entities.Message;
-import co.edu.udistrital.mdp.pets.repositories.MessageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+
+import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.services.MessageService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
-@ExtendWith(MockitoExtension.class)
-class MessageServiceTest {
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-    @Mock
-    private MessageRepository messageRepository;
+@DataJpaTest
+@Transactional
+@Import(MessageService.class)
+public class MessageServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MessageService messageService;
 
-    @Test
-    void shouldCreateMessageSuccessfully() {
+    @Autowired
+    private TestEntityManager entityManager;
 
-        Message message = new Message();
-        message.setSenderId(1L);
-        message.setRecipientId(2L);
-        message.setSubject("Hola");
-        message.setContent("Mensaje de prueba");
+    private PodamFactory factory = new PodamFactoryImpl();
+    private List<MessageEntity> messageList = new ArrayList<>();
+    private UserEntity sender;
+    private UserEntity recipient;
 
-        when(messageRepository.save(any(Message.class)))
-                .thenReturn(message);
+    @BeforeEach
+    void setUp() {
+        clearData();
+        insertData();
+    }
 
-        Message result = messageService.createMessage(message);
+    private void clearData() {
+        entityManager.getEntityManager().createQuery("delete from MessageEntity").executeUpdate();
+        entityManager.getEntityManager().createQuery("delete from UserEntity").executeUpdate();
+    }
 
-        assertNotNull(result.getTimestamp());
-        assertFalse(result.getIsRead());
-        verify(messageRepository).save(message);
+    private void insertData() {
+        sender = factory.manufacturePojo(UserEntity.class);
+        entityManager.persist(sender);
+        
+        recipient = factory.manufacturePojo(UserEntity.class);
+        entityManager.persist(recipient);
+
+        for (int i = 0; i < 3; i++) {
+            MessageEntity message = factory.manufacturePojo(MessageEntity.class);
+            message.setSender(sender);
+            message.setRecipient(recipient);
+            message.setSubject("Subject " + i);
+            message.setIsRead(false);
+            message.setTimestamp(LocalDateTime.now());
+            
+            entityManager.persist(message);
+            messageList.add(message);
+        }
     }
 
     @Test
-    void shouldFailWhenSendingMessageToYourself() {
+    void testCreateMessage() {
+        MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
+        newEntity.setSender(sender);
+        newEntity.setRecipient(recipient);
+        newEntity.setSubject("Test Subject");
+        newEntity.setContent("Test Content");
 
-        Message message = new Message();
-        message.setSenderId(1L);
-        message.setRecipientId(1L);
-        message.setSubject("Hola");
+        MessageEntity result = messageService.createMessage(newEntity);
+        
+        assertNotNull(result);
+        MessageEntity found = entityManager.find(MessageEntity.class, result.getId());
+        assertEquals("Test Subject", found.getSubject());
+        assertFalse(found.getIsRead());
+        assertNotNull(found.getTimestamp());
+    }
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> messageService.createMessage(message)
-        );
+    @Test
+    void testCreateMessageToYourself() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            MessageEntity message = factory.manufacturePojo(MessageEntity.class);
+            message.setSender(sender);
+            message.setRecipient(sender);
+            messageService.createMessage(message);
+        });
+    }
+
+    @Test
+    void testUpdateMessageSuccess() {
+        MessageEntity existing = messageList.get(0);
+        MessageEntity updateData = new MessageEntity();
+        updateData.setSender(sender);
+        updateData.setRecipient(recipient);
+        updateData.setSubject("Updated Subject");
+        updateData.setContent("Updated Content");
+
+        MessageEntity result = messageService.updateMessage(existing.getId(), updateData);
+        
+        assertNotNull(result);
+        MessageEntity updated = entityManager.find(MessageEntity.class, existing.getId());
+        assertEquals("Updated Subject", updated.getSubject());
+    }
+
+    @Test
+    void testUpdateMessageAfter15Minutes() {
+        MessageEntity oldMessage = messageList.get(1);
+        oldMessage.setTimestamp(LocalDateTime.now().minusMinutes(20));
+        entityManager.persist(oldMessage);
+        entityManager.flush();
+
+        MessageEntity updateData = new MessageEntity();
+        updateData.setSender(sender);
+        
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.updateMessage(oldMessage.getId(), updateData);
+        });
+    }
+
+    @Test
+    void testUpdateMessageAlreadyRead() {
+        MessageEntity readMessage = messageList.get(2);
+        readMessage.setIsRead(true);
+        entityManager.persist(readMessage);
+        
+        MessageEntity updateData = new MessageEntity();
+        updateData.setSender(sender);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.updateMessage(readMessage.getId(), updateData);
+        });
+    }
+
+    @Test
+    void testDeleteMessageBySender() {
+        MessageEntity message = messageList.get(0);
+        
+        messageService.deleteMessage(message.getId(), sender.getId());
+        
+        MessageEntity found = entityManager.find(MessageEntity.class, message.getId());
+        assertNull(found);
+    }
+
+    @Test
+    void testDeleteMessageByNonSender() {
+        MessageEntity message = messageList.get(0);
+        
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.deleteMessage(message.getId(), recipient.getId());
+        });
     }
 }

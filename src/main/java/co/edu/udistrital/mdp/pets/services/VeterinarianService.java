@@ -1,28 +1,39 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
-import co.edu.udistrital.mdp.pets.entities.Veterinarian;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Arrays;
+import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Arrays;
 
+import co.edu.udistrital.mdp.pets.entities.VeterinarianEntity;
+import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class VeterinarianService {
-    
+
     @Autowired
     private VeterinarianRepository veterinarianRepository;
-    
-    private static final List<String> VALID_SPECIALTIES = Arrays.asList(
-        "General", "Surgery", "Dentistry", "Cardiology", "Dermatology"
-    );
-    
 
-    public Veterinarian createVetterinarian(Veterinarian vet) {
-        if (vet.getVeterinarianId() == null) {
-            throw new IllegalArgumentException("Professional license is required");
+    private static final List<String> VALID_SPECIALTIES = Arrays.asList(
+            "General", "Surgery", "Dentistry", "Cardiology", "Dermatology"
+    );
+
+    @Transactional
+    public VeterinarianEntity createVeterinarian(VeterinarianEntity vet) {
+        log.info("Creating Veterinarian");
+        
+        if (vet == null) {
+            throw new IllegalArgumentException("Veterinarian cannot be null");
         }
         
+        if (vet.getVeterinarianIdBusiness() == null) {
+            throw new IllegalArgumentException("Professional license (business id) is required");
+        }
+
         if (vet.getSpecialties() != null) {
             for (String specialty : vet.getSpecialties()) {
                 if (!VALID_SPECIALTIES.contains(specialty)) {
@@ -30,60 +41,77 @@ public class VeterinarianService {
                 }
             }
         }
-        
-        if (vet.getShelterId() == null) {
+
+        if (vet.getShelter() == null) {
             throw new IllegalArgumentException("Veterinarian must be assigned to a shelter");
         }
-        
-        if (vet.getAvailability() == null || vet.getAvailability().isEmpty()) {
-            throw new IllegalArgumentException("Availability schedule is required");
-        }
-        
-        return veterinarianRepository.save(vet);
-    }
-    
-    public Veterinarian updateVetterinarian(Long id, Veterinarian updatedVet) {
-        Veterinarian existing = veterinarianRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Veterinarian not found"));
-        
-        if (!existing.getVeterinarianId().equals(updatedVet.getVeterinarianId())) {
-            throw new IllegalArgumentException("Cannot change veterinarian ID");
-        }
-        
-        if (updatedVet.getSpecialties() != null) {
-            for (String specialty : updatedVet.getSpecialties()) {
-                if (!VALID_SPECIALTIES.contains(specialty)) {
-                    throw new IllegalArgumentException("Invalid specialty: " + specialty);
-                }
-            }
-            existing.setSpecialties(updatedVet.getSpecialties());
-        }
-        
 
-        if (!shelterRepository.existsById(updatedVet.getShelterId())) {
-             throw new IllegalArgumentException("Shelter does not exist");
-        }
-        
-        existing.setAvailability(updatedVet.getAvailability());
-        existing.setShelterId(updatedVet.getShelterId());
-        
-        return veterinarianRepository.save(existing);
+        VeterinarianEntity savedVet = veterinarianRepository.save(vet);
+        log.info("Veterinarian created with id: {}", savedVet.getId());
+        return savedVet;
     }
-    
-    public void deleteVetterinarian(Long id) {
-        Veterinarian vet = veterinarianRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Veterinarian not found"));
-        
- 
-        if (adoptionRepository.countByVeterinarian(id) > 0) {
-             throw new IllegalStateException("Cannot delete vet with assigned adoptions");
-        }
-        
 
-        if (medicalEventRepository.countPendingByVet(id) > 0) {
-             throw new IllegalStateException("Cannot delete vet with pending medical events");
+    @Transactional(readOnly = true)
+    public VeterinarianEntity searchVeterinarian(Long id) {
+        log.info("Searching Veterinarian with id: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
         }
+        return veterinarianRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Veterinarian not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<VeterinarianEntity> searchVeterinarians() {
+        log.info("Searching all veterinarians");
+        return veterinarianRepository.findAll();
+    }
+
+    @Transactional
+    public VeterinarianEntity updateVeterinarian(Long id, VeterinarianEntity vet) {
+        log.info("Updating Veterinarian with id: {}", id);
         
-        veterinarianRepository.deleteById(id);
+        if (id == null || vet == null) {
+            throw new IllegalArgumentException("Id and Veterinarian object cannot be null");
+        }
+
+        VeterinarianEntity existing = veterinarianRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Veterinarian not found"));
+
+        if (vet.getVeterinarianIdBusiness() != null && 
+            !existing.getVeterinarianIdBusiness().equals(vet.getVeterinarianIdBusiness())) {
+            throw new IllegalArgumentException("Cannot change veterinarian business ID");
+        }
+
+        existing.setLastName(vet.getLastName());
+        existing.setSpecialties(vet.getSpecialties());
+        existing.setAvailability(vet.getAvailability());
+        existing.setShelter(vet.getShelter());
+
+        VeterinarianEntity updatedVet = veterinarianRepository.save(existing);
+        log.info("Veterinarian updated with id: {}", updatedVet.getId());
+        return updatedVet;
+    }
+
+    @Transactional
+    public void deleteVeterinarian(Long id) {
+        log.info("Deleting Veterinarian with id: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+
+        VeterinarianEntity vet = veterinarianRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Veterinarian not found"));
+
+        if (vet.getAdoptions() != null && !vet.getAdoptions().isEmpty()) {
+            throw new IllegalStateException("Cannot delete vet with assigned adoptions");
+        }
+
+        if (vet.getMedicalEvents() != null && !vet.getMedicalEvents().isEmpty()) {
+            throw new IllegalStateException("Cannot delete vet with medical events");
+        }
+
+        veterinarianRepository.delete(vet);
+        log.info("Veterinarian deleted successfully");
     }
 }
