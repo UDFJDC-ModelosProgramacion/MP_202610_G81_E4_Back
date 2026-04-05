@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ShelterEventDetailDTO extends ShelterEventDTO {
+    
     private ShelterDTO shelter;
 
     public ShelterEventDetailDTO (ShelterEventEntity entity) {

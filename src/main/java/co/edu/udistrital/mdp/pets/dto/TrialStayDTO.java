@@ -17,6 +17,7 @@ public class TrialStayDTO {
     private Long adoptionId; 
 
     public TrialStayDTO(TrialStayEntity entity) {
+        
         if (entity != null) {
             this.id = entity.getId();
             this.startDate = entity.getStartDate();

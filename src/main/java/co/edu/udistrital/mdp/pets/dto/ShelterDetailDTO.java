@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ShelterDetailDTO extends ShelterDTO {
-
     private String description;
     private List<String> photos = new ArrayList<>();
     private List<String> videos = new ArrayList<>();

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ShelterEventDTO {
+    
     private Long id;
     private Integer eventCode;
     private String eventType;
