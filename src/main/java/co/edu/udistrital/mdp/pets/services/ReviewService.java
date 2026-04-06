@@ -4,73 +4,95 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
-import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
-import jakarta.persistence.EntityNotFoundException;
-import co.edu.udistrital.mdp.pets.repositories.ReviewRepository;
+import org.springframework.transaction.annotation.Transactional;
 
+import co.edu.udistrital.mdp.pets.dto.ReviewDTO;
+import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.repositories.*;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class ReviewService {
+
     @Autowired
     private ReviewRepository reviewRepository;
-    public ReviewEntity createReview(ReviewEntity review) {
+
+    @Autowired
+    private AdoptionRepository adoptionRepository;
+
+    @Autowired
+    private AdopterRepository adopterRepository;
+
+    @Transactional
+    public ReviewEntity createReview(ReviewDTO dto) {
         log.info("Creating review");
-        if (review == null) {
+
+        if (dto == null) {
             throw new IllegalArgumentException("Review cannot be null");
         }
-        if (review.getRating() == null || review.getRating() < 1 || review.getRating() > 5) {
+
+        if (dto.getRating() == null || dto.getRating() < 1 || dto.getRating() > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5");
         }
-        if (review.getAdoption() == null) {
-            throw new IllegalArgumentException("Adoption cannot be null");
-        }
-        if (review.getAdopter() == null) {
-            throw new IllegalArgumentException("Adopter cannot be null");
-        }
-        ReviewEntity savedReview = reviewRepository.save(review);
-        log.info("Review created with id: {}", savedReview.getId());
-        return savedReview;
+
+        ReviewEntity review = new ReviewEntity();
+        review.setComments(dto.getComments());
+        review.setRating(dto.getRating());
+        review.setReviewDate(dto.getReviewDate());
+
+        // 🔥 RELACIONES CORRECTAS
+        review.setAdoption(
+            adoptionRepository.findById(dto.getAdoptionId())
+                .orElseThrow(() -> new EntityNotFoundException("Adoption not found"))
+        );
+
+        review.setAdopter(
+            adopterRepository.findById(dto.getAdopterId())
+                .orElseThrow(() -> new EntityNotFoundException("Adopter not found"))
+        );
+
+        return reviewRepository.save(review);
     }
-    public ReviewEntity searchReview(Long id) {
-        log.info("Searching review with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
-        return reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not found"));
-    }
+
+    @Transactional(readOnly = true)
     public List<ReviewEntity> searchReviews() {
-        log.info("Searching all reviews");
         return reviewRepository.findAll();
     }
-    public ReviewEntity updateReview(Long id, ReviewEntity review) {
-        log.info("Updating review with id: {}", id);
+
+    @Transactional(readOnly = true)
+    public ReviewEntity searchReview(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        if (review == null) {
-            throw new IllegalArgumentException("Review cannot be null");
-        }
-        ReviewEntity existing = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not found"));
-        existing.setComments(review.getComments());
-        existing.setRating(review.getRating());
-        existing.setReviewDate(review.getReviewDate());
-        
-        ReviewEntity updatedReview = reviewRepository.save(existing);
-        log.info("Review updated with id: {}", updatedReview.getId());
-        return updatedReview;
+
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Review not found"));
     }
+
+    @Transactional
+    public ReviewEntity updateReview(Long id, ReviewDTO dto) {
+
+        ReviewEntity existing = searchReview(id);
+
+        existing.setComments(dto.getComments());
+        existing.setRating(dto.getRating());
+        existing.setReviewDate(dto.getReviewDate());
+
+        return reviewRepository.save(existing);
+    }
+
+    @Transactional
     public void deleteReview(Long id, Long adopterId, boolean isAdmin) {
-        log.info("Deleting review with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
-        ReviewEntity review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not found"));
+
+        ReviewEntity review = searchReview(id);
+
         if (!isAdmin && !review.getAdopter().getId().equals(adopterId)) {
-            throw new IllegalStateException("Only the author or an admin can delete this review");
+            throw new IllegalStateException("Only the author or admin can delete");
         }
+
         reviewRepository.delete(review);
     }
 }

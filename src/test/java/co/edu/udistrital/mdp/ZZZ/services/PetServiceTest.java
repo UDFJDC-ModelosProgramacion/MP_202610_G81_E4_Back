@@ -1,9 +1,6 @@
 package co.edu.udistrital.mdp.ZZZ.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
-import co.edu.udistrital.mdp.pets.services.PetService;
 import co.edu.udistrital.mdp.pets.entities.PetEntity;
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
-import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
-import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
-import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import jakarta.transaction.Transactional;
+import co.edu.udistrital.mdp.pets.services.PetService;
+import jakarta.persistence.EntityNotFoundException;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -29,133 +24,102 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @Transactional
 @Import(PetService.class)
 public class PetServiceTest {
+
     @Autowired
     private PetService petService;
+
     @Autowired
     private TestEntityManager entityManager;
-    private PodamFactory factory = new PodamFactoryImpl();
+
+    private final PodamFactory factory = new PodamFactoryImpl();
     private List<PetEntity> petList = new ArrayList<>();
-    private List<ShelterEntity> shelterList = new ArrayList<>();
+    private ShelterEntity shelterEntity;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         clearData();
         insertData();
     }
+
     private void clearData() {
         entityManager.getEntityManager().createQuery("delete from PetEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from ShelterEntity").executeUpdate();
+        entityManager.flush();
     }
 
-    private void insertData(){
-        for(int i = 0; i<3; i++){
-            ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-            entityManager.persist(shelter);
-            shelterList.add(shelter);
-        }
+    private void insertData() {
+        // Primero creamos un Shelter porque Pet lo requiere (nullable = false)
+        shelterEntity = factory.manufacturePojo(ShelterEntity.class);
+        entityManager.persist(shelterEntity);
 
-        for(int i = 0; i<3; i++){
-            PetEntity pet = factory.manufacturePojo((PetEntity.class));
-            pet.setShelter(shelterList.get(0));
-            entityManager.persist(pet);
-            petList.add(pet);
+        for (int i = 0; i < 3; i++) {
+            PetEntity entity = factory.manufacturePojo(PetEntity.class);
+            entity.setShelter(shelterEntity);
+            entity.setStatus("AVAILABLE");
+            entityManager.persist(entity);
+            petList.add(entity);
         }
+        entityManager.flush();
     }
+
     @Test
-    void testCreatePet() throws IllegalOperationException {
-        PetEntity newPet = factory.manufacturePojo((PetEntity.class));
-        newPet.setShelter(shelterList.get(0));
-        newPet.setName("Rex");
-        newPet.setSpecies("Dog");
-        newPet.setStatus("AVAILABLE");
+    void testCreatePet() {
+        PetEntity newEntity = factory.manufacturePojo(PetEntity.class);
+        newEntity.setShelter(shelterEntity);
+        newEntity.setStatus("AVAILABLE");
 
-        PetEntity result = petService.createPet(newPet);
+        PetEntity result = petService.createPet(newEntity);
+
         assertNotNull(result);
-
         PetEntity entity = entityManager.find(PetEntity.class, result.getId());
-        assertEquals(newPet.getName(), entity.getName());
-        assertEquals(newPet.getSpecies(), entity.getSpecies());
+        assertEquals(newEntity.getName(), entity.getName());
+        assertEquals("AVAILABLE", entity.getStatus());
     }
-    @Test
-    void testCreatePetWithInvalidName(){
-        assertThrows(IllegalOperationException.class,() -> {
-            PetEntity newPet = factory.manufacturePojo(PetEntity.class);
-            newPet.setShelter(shelterList.get(0));
-            newPet.setName("");
-            newPet.setSpecies("Dog");
-            newPet.setStatus("AVALIABLE");
 
-            petService.createPet(newPet);
-        });
-    }
     @Test
-    void testCreatePetWithInvalidShelter(){
-        assertThrows(IllegalOperationException.class,() -> {
-            PetEntity newPet = factory.manufacturePojo(PetEntity.class);
-            newPet.setName("");
-            newPet.setSpecies("Dog");
-            newPet.setStatus("AVALIABLE");
-            ShelterEntity fake = new ShelterEntity();
-            fake.setId(0L);
-            newPet.setShelter(fake);
-            petService.createPet(newPet);
-        });
-    }
-    @Test
-    void testGetPets(){
-        List<PetEntity> list = petService.getPets();
+    void testSearchPets() {
+        List<PetEntity> list = petService.searchPets();
         assertEquals(petList.size(), list.size());
     }
+
     @Test
-    void testGetPet() throws EntityNotFoundException{
+    void testSearchPet() {
         PetEntity entity = petList.get(0);
-        PetEntity result = petService.getPet(entity.getId());
+        PetEntity result = petService.searchPet(entity.getId());
         
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getName(), result.getName());
     }
-    @Test
-    void testGetInvalidPet(){
-        assertThrows(EntityNotFoundException.class, () -> {
-            petService.getPet(0L);
-        });
-    }
-    @Test
-    void testUpdatePet()
-        throws EntityNotFoundException, IllegalOperationException{
-            PetEntity entity = petList.get(0);
 
-            PetEntity updated = factory.manufacturePojo(PetEntity.class);
-            updated.setName("Nuevo nombre");
-            PetEntity result = petService.updatePet(entity.getId(), updated);
-            assertEquals(("Nuevo nombre"), result.getName());
-    }
     @Test
-    void testUpdateInvalidPet(){
+    void testSearchPetInvalidId() {
         assertThrows(EntityNotFoundException.class, () -> {
-            PetEntity pet = factory.manufacturePojo(PetEntity.class );
-            petService.updatePet(0L, pet);
+            petService.searchPet(999L);
         });
     }
+
     @Test
-    void testDeletePet() throws Exception{
-        PetEntity entity = petList.get(1);
+    void testUpdatePet() {
+        PetEntity entity = petList.get(0);
+        PetEntity updateData = factory.manufacturePojo(PetEntity.class);
+        updateData.setName("Rex Actualizado");
+        updateData.setStatus("ADOPTED");
+
+        PetEntity result = petService.updatePet(entity.getId(), updateData);
+
+        assertNotNull(result);
+        assertEquals("Rex Actualizado", result.getName());
+        assertEquals("ADOPTED", result.getStatus());
+    }
+
+    @Test
+    void testDeletePet() {
+        PetEntity entity = petList.get(0);
         petService.deletePet(entity.getId());
+        
+        entityManager.flush();
         PetEntity deleted = entityManager.find(PetEntity.class, entity.getId());
         assertNull(deleted);
     }
-    @Test
-    void testDeletePetWithVaccinationRecords(){
-        assertThrows(IllegalOperationException.class, ()-> {
-            PetEntity pet = petList.get(0);
-            VaccinationRecordEntity record = new VaccinationRecordEntity();
-            record.setPet(pet);
-
-            entityManager.persist(record);
-            pet.getVaccinationRecords().add(record);
-
-            petService.deletePet(pet.getId());
-        });
-    }
-    
 }

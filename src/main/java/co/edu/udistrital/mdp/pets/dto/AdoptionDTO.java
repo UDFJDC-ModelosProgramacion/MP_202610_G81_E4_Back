@@ -1,6 +1,7 @@
 package co.edu.udistrital.mdp.pets.dto;
 
 import java.time.LocalDate;
+
 import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdoptionDTO {
-    
+
     private Long id;
     private LocalDate adoptionDate;
     private String status;
@@ -21,30 +22,26 @@ public class AdoptionDTO {
     private Long veterinarianId;
 
     public AdoptionDTO(AdoptionEntity entity) {
-        if (entity != null) {
-            this.id = entity.getId();
-            this.adoptionDate = entity.getAdoptionDate();
-            this.status = entity.getStatus();
 
-         if (entity.getPet() != null) {
-                this.petId = entity.getPet().getId();
-        }
-            
-        if (entity.getAdopter() != null) {
-                this.adopterId = entity.getAdopter().getId();
-        }
+        if (entity == null) return;
 
-        if (entity.getTrialStay() != null) {
-                this.trialStayId = entity.getTrialStay().getId();
-        }
-
-        if (entity.getReview() != null) {
-                this.reviewId = entity.getReview().getId();
-        }
-
-        if (entity.getVeterinarian() != null) {
-                this.veterinarianId = entity.getVeterinarian().getId();
-            }
-        }
+        this.id = entity.getId();
+        this.adoptionDate = entity.getAdoptionDate();
+        this.status = entity.getStatus();
+        this.petId = null;
+        this.adopterId = (entity.getAdopter() != null) ? entity.getAdopter().getId() : null;
+        this.trialStayId = (entity.getTrialStay() != null) ? entity.getTrialStay().getId() : null;
+        this.reviewId = (entity.getReview() != null) ? entity.getReview().getId() : null;
+        this.veterinarianId = (entity.getVeterinarian() != null) ? entity.getVeterinarian().getId() : null;
     }
+
+    public static AdoptionEntity toEntity(AdoptionDTO dto) {
+    AdoptionEntity entity = new AdoptionEntity();
+    entity.setId(dto.getId());
+    entity.setAdoptionDate(dto.getAdoptionDate());
+    entity.setStatus(dto.getStatus());
+    return entity;
+}
+
+
 }

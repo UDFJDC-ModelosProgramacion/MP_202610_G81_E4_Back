@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class ShelterEventDTO {
     
     private Long id;
-    private Integer eventCode;
+    private Long eventCode;
     private String eventType;
     private String title;
     private String description;

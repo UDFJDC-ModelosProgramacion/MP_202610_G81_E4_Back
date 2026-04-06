@@ -2,7 +2,7 @@ package co.edu.udistrital.mdp.ZZZ.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import co.edu.udistrital.mdp.pets.dto.ReviewDTO;
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.services.ReviewService;
 
@@ -54,32 +55,31 @@ public class ReviewServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
+
             ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-            shelter.setId(null); 
             entityManager.persist(shelter);
-            
+
             PetEntity pet = factory.manufacturePojo(PetEntity.class);
-            pet.setId(null);
             pet.setShelter(shelter);
             entityManager.persist(pet);
 
             AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            adopter.setId(null);
+            adopter.setFirstName("Nombre");
+            adopter.setLastName("Apellido");
             entityManager.persist(adopter);
-    
+
             AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
-            adoption.setId(null);
             adoption.setPet(pet);
             adoption.setAdopter(adopter);
             entityManager.persist(adoption);
 
-            ReviewEntity review = factory.manufacturePojo(ReviewEntity.class);
-            review.setId(null);
-            review.setAdoption(adoption);
+            ReviewEntity review = new ReviewEntity();
+            review.setComments("Test");
+            review.setRating(5);
+            review.setReviewDate(LocalDate.now());
             review.setAdopter(adopter);
-            review.setRating(5); 
-            review.setReviewDate(LocalDateTime.now().toLocalDate());
-            
+            review.setAdoption(adoption);
+
             entityManager.persist(review);
             reviewList.add(review);
         }
@@ -88,29 +88,31 @@ public class ReviewServiceTest {
 
     @Test
     void testCreateReview() {
-        AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-        adopter.setId(null);
-        entityManager.persist(adopter);
+
+        AdopterEntity adopter = entityManager.persist(factory.manufacturePojo(AdopterEntity.class));
+        adopter.setFirstName("Juan");
+        adopter.setLastName("Perez");
+
+        ShelterEntity shelter = entityManager.persist(factory.manufacturePojo(ShelterEntity.class));
 
         PetEntity pet = factory.manufacturePojo(PetEntity.class);
-        pet.setId(null);
+        pet.setShelter(shelter);
         entityManager.persist(pet);
 
-        AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
-        adoption.setId(null);
+        AdoptionEntity adoption = new AdoptionEntity();
         adoption.setPet(pet);
         adoption.setAdopter(adopter);
         entityManager.persist(adoption);
 
-        ReviewEntity newReview = factory.manufacturePojo(ReviewEntity.class);
-        newReview.setId(null);
-        newReview.setAdopter(adopter);
-        newReview.setAdoption(adoption);
-        newReview.setRating(4); 
-        newReview.setReviewDate(LocalDateTime.now().toLocalDate());
+        ReviewDTO dto = new ReviewDTO();
+        dto.setComments("Nueva review");
+        dto.setRating(4);
+        dto.setReviewDate(LocalDate.now());
+        dto.setAdopterId(adopter.getId());
+        dto.setAdoptionId(adoption.getId());
 
-        ReviewEntity result = reviewService.createReview(newReview);
-        
+        ReviewEntity result = reviewService.createReview(dto);
+
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(4, result.getRating());
@@ -118,11 +120,29 @@ public class ReviewServiceTest {
 
     @Test
     void testCreateReviewInvalidRating() {
-        ReviewEntity review = factory.manufacturePojo(ReviewEntity.class);
-        review.setRating(10); 
-        
+
+        AdopterEntity adopter = entityManager.persist(factory.manufacturePojo(AdopterEntity.class));
+        adopter.setFirstName("Juan");
+        adopter.setLastName("Perez");
+
+        ShelterEntity shelter = entityManager.persist(factory.manufacturePojo(ShelterEntity.class));
+
+        PetEntity pet = factory.manufacturePojo(PetEntity.class);
+        pet.setShelter(shelter);
+        entityManager.persist(pet);
+
+        AdoptionEntity adoption = new AdoptionEntity();
+        adoption.setPet(pet);
+        adoption.setAdopter(adopter);
+        entityManager.persist(adoption);
+
+        ReviewDTO dto = new ReviewDTO();
+        dto.setRating(10); // inválido
+        dto.setAdopterId(adopter.getId());
+        dto.setAdoptionId(adoption.getId());
+
         assertThrows(IllegalArgumentException.class, () -> {
-            reviewService.createReview(review);
+            reviewService.createReview(dto);
         });
     }
 
@@ -130,7 +150,7 @@ public class ReviewServiceTest {
     void testSearchReview() {
         ReviewEntity expected = reviewList.get(0);
         ReviewEntity result = reviewService.searchReview(expected.getId());
-        
+
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
     }
@@ -145,53 +165,50 @@ public class ReviewServiceTest {
     @Test
     void testUpdateReview() {
         ReviewEntity original = reviewList.get(0);
-        ReviewEntity changes = new ReviewEntity();
-        changes.setComments("Updated Comment");
-        changes.setRating(2);
-        changes.setReviewDate(LocalDateTime.now().toLocalDate());
 
-        ReviewEntity updated = reviewService.updateReview(original.getId(), changes);
-        
+        ReviewDTO dto = new ReviewDTO();
+        dto.setComments("Updated");
+        dto.setRating(2);
+        dto.setReviewDate(LocalDate.now());
+
+        ReviewEntity updated = reviewService.updateReview(original.getId(), dto);
+
         assertNotNull(updated);
+
         entityManager.flush();
         entityManager.clear();
-        
-        ReviewEntity dbReview = entityManager.find(ReviewEntity.class, original.getId());
-        assertEquals("Updated Comment", dbReview.getComments());
-        assertEquals(2, dbReview.getRating());
+
+        ReviewEntity db = entityManager.find(ReviewEntity.class, original.getId());
+        assertEquals("Updated", db.getComments());
+        assertEquals(2, db.getRating());
     }
 
     @Test
     void testDeleteReviewByOwner() {
         ReviewEntity review = reviewList.get(0);
-        Long id = review.getId();
-        Long ownerId = review.getAdopter().getId();
 
-        reviewService.deleteReview(id, ownerId, false);
-        
+        reviewService.deleteReview(review.getId(), review.getAdopter().getId(), false);
+
         entityManager.flush();
-        ReviewEntity deleted = entityManager.find(ReviewEntity.class, id);
-        assertNull(deleted);
+        assertNull(entityManager.find(ReviewEntity.class, review.getId()));
     }
 
     @Test
     void testDeleteReviewByAdmin() {
         ReviewEntity review = reviewList.get(0);
-        Long id = review.getId();
 
-        reviewService.deleteReview(id, null, true);
-        
+        reviewService.deleteReview(review.getId(), null, true);
+
         entityManager.flush();
-        assertNull(entityManager.find(ReviewEntity.class, id));
+        assertNull(entityManager.find(ReviewEntity.class, review.getId()));
     }
 
     @Test
     void testDeleteReviewUnauthorized() {
         ReviewEntity review = reviewList.get(0);
-        Long wrongAdopterId = review.getAdopter().getId() + 999L; 
 
         assertThrows(IllegalStateException.class, () -> {
-            reviewService.deleteReview(review.getId(), wrongAdopterId, false);
+            reviewService.deleteReview(review.getId(), 999L, false);
         });
     }
 }

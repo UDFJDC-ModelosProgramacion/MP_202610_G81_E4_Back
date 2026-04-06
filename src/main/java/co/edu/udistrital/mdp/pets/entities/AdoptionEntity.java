@@ -1,48 +1,42 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.Data;
-import uk.co.jemos.podam.common.PodamExclude;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.*;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
-
 
 @Entity
 @Table(name = "adoptions")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AdoptionEntity extends BaseEntity {
     
     private LocalDate adoptionDate;
     private String status;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "pet_id")
+    @JsonIgnoreProperties("adoptions") // Ignora la lista dentro de Pet
     private PetEntity pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "adopter_id")
+    @JsonIgnoreProperties("adoptions") // Ignora la lista dentro de Adopter
     private AdopterEntity adopter;
 
-    @OneToOne(fetch = FetchType.LAZY) 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) 
     @JoinColumn(name = "trial_stay_id")
-    @PodamExclude 
     private TrialStayEntity trialStay;
 
     @OneToOne(mappedBy = "adoption", cascade = CascadeType.ALL)
-    @PodamExclude
+    @JsonIgnoreProperties("adoption")
     private ReviewEntity review;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "veterinarian_id")
+    @JsonIgnoreProperties("adoptions")
     private VeterinarianEntity veterinarian;
-
-
 }
     

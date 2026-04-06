@@ -1,48 +1,48 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
-import co.edu.udistrital.mdp.pets.services.AdoptionService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
+import co.edu.udistrital.mdp.pets.services.AdoptionService;
 
 @RestController
-@RequestMapping("/api/adoptions")
+@RequestMapping("/adoptions")
 public class AdoptionController {
 
     @Autowired
     private AdoptionService adoptionService;
 
     @PostMapping
-    public ResponseEntity<AdoptionEntity> createAdoption(@RequestBody AdoptionEntity adoption) {
-        AdoptionEntity newAdoption = adoptionService.createAdoption(adoption);
-        return new ResponseEntity<>(newAdoption, HttpStatus.CREATED);
+    public ResponseEntity<AdoptionEntity> create(@RequestBody AdoptionEntity adoption) {
+        AdoptionEntity created = adoptionService.createAdoption(adoption);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<AdoptionEntity>> getAllAdoptions() {
-        List<AdoptionEntity> adoptions = adoptionService.searchAdoptions();
-        return new ResponseEntity<>(adoptions, HttpStatus.OK);
+    public ResponseEntity<List<AdoptionEntity>> getAll() {
+        return ResponseEntity.ok(adoptionService.searchAdoptions());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdoptionEntity> getAdoptionById(@PathVariable Long id) {
-        AdoptionEntity adoption = adoptionService.searchAdoption(id);
-        return new ResponseEntity<>(adoption, HttpStatus.OK);
+    public ResponseEntity<AdoptionEntity> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(adoptionService.searchAdoption(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdoptionEntity> updateAdoption(@PathVariable Long id, @RequestBody AdoptionEntity adoption) {
-        AdoptionEntity updated = adoptionService.updateAdoption(id, adoption);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+    public ResponseEntity<AdoptionEntity> update(
+            @PathVariable Long id,
+            @RequestBody AdoptionEntity adoption) {
+        return ResponseEntity.ok(adoptionService.updateAdoption(id, adoption));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAdoption(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         adoptionService.deleteAdoption(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

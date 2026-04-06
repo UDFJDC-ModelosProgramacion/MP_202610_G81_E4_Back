@@ -24,13 +24,13 @@ public class ReviewEntity extends BaseEntity {
     private Integer rating;
     private LocalDate reviewDate;
 
-    @JsonIgnoreProperties({"review", "payments", "adoptions", "pet", "adopter"}) 
-    @OneToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "adoption_id")
-    private AdoptionEntity adoption;
-
-    @JsonIgnoreProperties({"reviews", "adoptions", "applications"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopter_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
     private AdopterEntity adopter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
+    private AdoptionEntity adoption;
 }

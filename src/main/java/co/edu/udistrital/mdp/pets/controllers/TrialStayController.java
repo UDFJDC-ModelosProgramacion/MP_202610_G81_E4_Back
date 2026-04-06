@@ -1,11 +1,12 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
-import co.edu.udistrital.mdp.pets.services.TrialStayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
+import co.edu.udistrital.mdp.pets.services.TrialStayService;
 
 import java.util.List;
 
@@ -17,30 +18,33 @@ public class TrialStayController {
     private TrialStayService trialStayService;
 
     @PostMapping
-    public ResponseEntity<TrialStayEntity> createTrialStay(@RequestBody TrialStayEntity trialStay) {
-        TrialStayEntity newStay = trialStayService.createTrialStay(trialStay);
-        return new ResponseEntity<>(newStay, HttpStatus.CREATED);
+    public ResponseEntity<TrialStayEntity> create(@RequestBody TrialStayEntity entity) {
+        TrialStayEntity created = trialStayService.createTrialStay(entity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<TrialStayEntity>> getAllTrialStays() {
-        List<TrialStayEntity> stays = trialStayService.searchAllTrialStays();
-        return new ResponseEntity<>(stays, HttpStatus.OK);
+    public ResponseEntity<List<TrialStayEntity>> getAll() {
+        return ResponseEntity.ok(trialStayService.searchAllTrialStays());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrialStayEntity> getTrialStayById(@PathVariable Long id) {
-        TrialStayEntity stay = trialStayService.searchTrialStay(id);
-        return new ResponseEntity<>(stay, HttpStatus.OK);
+    public ResponseEntity<TrialStayEntity> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(trialStayService.searchTrialStay(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrialStayEntity> update(@PathVariable Long id, @RequestBody TrialStayEntity trialStay) {
-    return ResponseEntity.ok(trialStayService.updateTrialStay(id, trialStay));
-}
+    public ResponseEntity<TrialStayEntity> update(
+            @PathVariable Long id,
+            @RequestBody TrialStayEntity entity) {
+
+        TrialStayEntity updated = trialStayService.updateTrialStay(id, entity);
+        return ResponseEntity.ok(updated);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrialStay(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         trialStayService.deleteTrialStay(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

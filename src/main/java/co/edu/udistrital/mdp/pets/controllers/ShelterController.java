@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/shelters")
@@ -20,19 +21,24 @@ public class ShelterController {
         return new ResponseEntity<>(shelterService.createShelter(shelter), HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ShelterEntity>> getShelters() {
+        return new ResponseEntity<>(shelterService.searchShelters(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ShelterEntity> getShelterById(@PathVariable Long id) {
         return new ResponseEntity<>(shelterService.searchShelter(id), HttpStatus.OK);
     }
 
-   @PutMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ShelterEntity> updateShelter(@PathVariable Long id, @RequestBody ShelterEntity shelter) {
-    return new ResponseEntity<>(shelterService.updateShelter(id, shelter), HttpStatus.OK);
+        return new ResponseEntity<>(shelterService.updateShelter(id, shelter), HttpStatus.OK);
     }
 
-   @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteShelter(@PathVariable Long id) {
-    shelterService.deleteShelter(id);
-}
+        shelterService.deleteShelter(id);
+    }
 }

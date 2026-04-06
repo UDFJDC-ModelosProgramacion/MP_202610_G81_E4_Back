@@ -1,50 +1,35 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.ToString;
-
-import java.time.LocalDate;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "pets")
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@EqualsAndHashCode(callSuper = true)
 public class PetEntity extends BaseEntity {
 
     private String name;
     private String species;
     private String breed;
-    private int age;
-    private String sex;
-    private String size;
-    private String temperament;
+    private Integer age;
+    private String status; 
 
-    @Column(columnDefinition = "TEXT")
-    private String specialNeeds;
-
-    @ElementCollection
-    private List<String> photos;
-
-    @Column(columnDefinition = "TEXT")
-    private String arrivalHistory;
-
-    private LocalDate arrivalDate;
-
-    private String status;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
-    private List<VaccinationRecordEntity> vaccinationRecords;
-
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shelter_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "shelter_id", nullable = false)
+    @JsonIgnoreProperties("pets")
     private ShelterEntity shelter;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("pet") // 👈 ESTO CORTA EL ERROR 500 EN SEARCH PETS
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<AdoptionEntity> adoptions = new ArrayList<>();
 }

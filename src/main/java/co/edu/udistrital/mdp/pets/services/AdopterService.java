@@ -2,14 +2,14 @@ package co.edu.udistrital.mdp.pets.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 import co.edu.udistrital.mdp.pets.entities.AdopterEntity;
 import co.edu.udistrital.mdp.pets.repositories.AdopterRepository;
-import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
-import co.edu.udistrital.mdp.pets.repositories.AdoptionRequestRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,96 +19,78 @@ public class AdopterService {
     @Autowired
     private AdopterRepository adopterRepository;
 
-    @Autowired
-    private AdoptionRequestRepository adoptionRequestRepository;
-
-    @Autowired
-    private AdoptionRepository adoptionRepository;
-
+    @Transactional
     public AdopterEntity createAdopter(AdopterEntity adopter) {
-        log.info("Creating Adopter");
         if (adopter == null) {
-            throw new IllegalArgumentException("Adopter cannot be null");
-        }
-        if (adopter.getAdopterIdBusiness() == null) {
-            throw new IllegalArgumentException("Adopter business ID is required");
-        }
-        
-        // Validación de tipo de vivienda (Lógica de negocio)
-        List<String> validHousing = Arrays.asList("Casa", "Apartamento", "Finca");
-        if (adopter.getHousingType() == null || !validHousing.contains(adopter.getHousingType())) {
-            throw new IllegalArgumentException("Invalid housing type");
+            throw new IllegalArgumentException("El adoptante no puede ser nulo");
         }
 
-        AdopterEntity savedAdopter = adopterRepository.save(adopter);
-        log.info("Adopter created with id: {}", savedAdopter.getId());
-        return savedAdopter;
+        log.info("Creando adoptante: {} {}", adopter.getFirstName(), adopter.getLastName());
+
+        validateRequiredFields(adopter);
+
+        if (adopter.getHousingType() != null) {
+            String ht = adopter.getHousingType().toUpperCase().trim();
+            List<String> validHousing = Arrays.asList("CASA", "APARTAMENTO", "FINCA");
+
+            if (!validHousing.contains(ht)) {
+                throw new IllegalArgumentException("Tipo de vivienda inválido");
+            }
+
+            adopter.setHousingType(ht.substring(0, 1) + ht.substring(1).toLowerCase());
+        }
+
+        return adopterRepository.save(adopter);
     }
 
+    @Transactional(readOnly = true)
     public AdopterEntity searchAdopter(Long id) {
-        log.info("Searching Adopter with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
         return adopterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopter not found"));
+                .orElseThrow(() -> new EntityNotFoundException("No encontrado"));
     }
 
+    @Transactional(readOnly = true)
     public List<AdopterEntity> searchAdopters() {
-        log.info("Searching all adopters");
         return adopterRepository.findAll();
     }
 
+    @Transactional
     public AdopterEntity updateAdopter(Long id, AdopterEntity adopter) {
-        log.info("Updating Adopter with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
-        if (adopter == null) {
-            throw new IllegalArgumentException("Adopter cannot be null");
-        }
 
-        AdopterEntity existing = adopterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopter not found"));
+        AdopterEntity existing = searchAdopter(id);
 
-        // Impedir cambio de identificación de negocio
-        if (adopter.getAdopterIdBusiness() != null && !existing.getAdopterIdBusiness().equals(adopter.getAdopterIdBusiness())) {
-            throw new IllegalArgumentException("Cannot change adopter business ID");
-        }
-
+        existing.setFirstName(adopter.getFirstName());
         existing.setLastName(adopter.getLastName());
         existing.setAddress(adopter.getAddress());
         existing.setHousingType(adopter.getHousingType());
         existing.setHasChildren(adopter.getHasChildren());
         existing.setHasOtherPets(adopter.getHasOtherPets());
-        existing.setPreferences(adopter.getPreferences());
 
-        AdopterEntity updatedAdopter = adopterRepository.save(existing);
-        log.info("Adopter updated with id: {}", updatedAdopter.getId());
-        return updatedAdopter;
+        if (adopter.getPreferences() != null) {
+            existing.setPreferences(new ArrayList<>(adopter.getPreferences()));
+        }
+
+        return adopterRepository.save(existing);
     }
 
+    @Transactional
     public void deleteAdopter(Long id) {
-        log.info("Deleting Adopter with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
 
-        AdopterEntity adopter = adopterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopter not found"));
+        AdopterEntity adopter = searchAdopter(id);
 
-       
-        if (adoptionRequestRepository.findAll().stream()
-            .anyMatch(request -> request.getAdopter() != null && id.equals(request.getAdopter().getId()))) {
-            throw new IllegalStateException("Adopter has associated adoption requests");
-        }
-
-        if (adoptionRepository.findAll().stream()
-            .anyMatch(adoption -> adoption.getAdopter() != null && id.equals(adoption.getAdopter().getId()))) {
-            throw new IllegalStateException("Adopter has associated adoption records");
+        if (adopter.getAdoptionRequests() != null && !adopter.getAdoptionRequests().isEmpty()) {
+            throw new IllegalStateException("Tiene solicitudes asociadas");
         }
 
         adopterRepository.delete(adopter);
-        log.info("Adopter deleted successfully");
+    }
+
+    private void validateRequiredFields(AdopterEntity adopter) {
+        if (adopter.getFirstName() == null || adopter.getFirstName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nombre obligatorio");
+        }
+        if (adopter.getLastName() == null || adopter.getLastName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Apellido obligatorio");
+        }
     }
 }

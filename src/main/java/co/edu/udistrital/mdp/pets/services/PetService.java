@@ -1,91 +1,62 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import java.util.Optional;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.PetEntity;
-import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
-import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
-import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.repositories.PetRepository;
-import co.edu.udistrital.mdp.pets.repositories.ShelterRepository;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class PetService {
+
     @Autowired
     private PetRepository petRepository;
-    @Autowired
-    private ShelterRepository shelterRepository;
 
-    @Transactional
-    public PetEntity createPet(PetEntity pet) throws IllegalOperationException{
-        log.info("inicia proceso de creacion de mascota") ;
-        if (pet.getName() == null || pet.getName().isEmpty())
-            throw new IllegalOperationException("Pet name is not valid");
-        
-        if (pet.getSpecies() == null || pet.getSpecies().isEmpty())
-            throw new IllegalOperationException("pet species is not valid");
-        if (pet.getStatus() == null || pet.getStatus().isEmpty())
-            throw new IllegalOperationException("pet status is not valid");
-        if (pet.getShelter() == null)
-            throw new IllegalOperationException("Shelter is not valid");
-        Optional<ShelterEntity> shelterEntity = shelterRepository.findById(pet.getShelter().getId());
-        if (shelterEntity.isEmpty())
-            throw new IllegalOperationException("Shelter does not exist");
-        pet.setShelter(shelterEntity.get());
-        PetEntity newPet = petRepository.save(pet);
-        log.info("Termina proceso de creacion de mascota");
-        return newPet;
-    }
-
-    @Transactional
-    public List<PetEntity> getPets() {
-        log.info("consulta todas las mascotas");
+    @Transactional(readOnly = true)
+    public List<PetEntity> searchPets() {
+        log.info("Consultando todas las mascotas");
         return petRepository.findAll();
     }
-    @Transactional
-    public PetEntity getPet(Long petId) throws EntityNotFoundException { 
-        log.info("Consulta mascota con id = {}", petId);
-        Optional<PetEntity> petEntity = petRepository.findById(petId);
-        if (petEntity.isEmpty()){
-            throw new EntityNotFoundException(("pet not found"));
-        }
-        return petEntity.get();
+
+    @Transactional(readOnly = true)
+    public PetEntity searchPet(Long id) {
+        log.info("Buscando mascota con ID: {}", id);
+        return petRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró la mascota con ID: " + id));
     }
+
     @Transactional
-    public PetEntity updatePet(Long petId, PetEntity pet)
-        throws EntityNotFoundException, IllegalOperationException{
-        log.info("Inicia actualizacion de mascota");
-        Optional<PetEntity> existingPet = petRepository.findById(petId);
-        if(existingPet.isEmpty()){
-            throw new EntityNotFoundException(("Pet not found"));
-        }
-        if(pet.getName() == null || pet.getName().isEmpty()){
-            throw new IllegalOperationException("Pet name is not valid");
-        }
-        pet.setId(petId);
-        
+    public PetEntity createPet(PetEntity pet) {
+        log.info("Guardando nueva mascota: {}", pet.getName());
         return petRepository.save(pet);
     }
-    @Transactional
-    public void deletePet(Long petId)
-        throws EntityNotFoundException, IllegalOperationException{
-        log.info("Inicia eliminacion de mascota");
-        Optional<PetEntity> petEntity = petRepository.findById(petId);
 
-        if(petEntity.isEmpty())
-            throw new EntityNotFoundException("Pet not found");
-        if (!petEntity.get().getVaccinationRecords().isEmpty())
-            throw new IllegalOperationException("Cannot delete pet with vaccination records");
-        petRepository.deleteById(petId);
-        log.info("Se eliminó la mascota correctamente");
-            
+    @Transactional
+    public PetEntity updatePet(Long id, PetEntity petData) {
+        PetEntity existing = searchPet(id);
         
+        existing.setName(petData.getName());
+        existing.setSpecies(petData.getSpecies());
+        existing.setBreed(petData.getBreed());
+        existing.setAge(petData.getAge());
+        existing.setStatus(petData.getStatus());
+        
+        if (petData.getShelter() != null) {
+            existing.setShelter(petData.getShelter());
+        }
+
+        return petRepository.save(existing);
+    }
+
+    @Transactional
+    public void deletePet(Long id) {
+        PetEntity pet = searchPet(id);
+        petRepository.delete(pet);
+        log.info("Mascota con ID: {} eliminada", id);
     }
 }
