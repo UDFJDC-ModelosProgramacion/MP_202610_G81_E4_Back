@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AdoptionDetailDTO extends AdoptionDTO {
+    
     private ReviewDTO review;
     private TrialStayDTO trialStay;
 

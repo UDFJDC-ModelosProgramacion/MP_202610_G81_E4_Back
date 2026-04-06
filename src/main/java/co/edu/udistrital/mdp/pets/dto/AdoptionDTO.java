@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdoptionDTO {
+    
     private Long id;
     private LocalDate adoptionDate;
     private String status;

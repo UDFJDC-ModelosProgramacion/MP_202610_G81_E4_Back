@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ShelterDTO {
+    
     private Long id;
     private String name;
     private String city;

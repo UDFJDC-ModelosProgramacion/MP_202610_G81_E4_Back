@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ReviewDetailDTO extends ReviewDTO {
+    
     private AdoptionDTO adoption;
     
     public ReviewDetailDTO(ReviewEntity entity) {
