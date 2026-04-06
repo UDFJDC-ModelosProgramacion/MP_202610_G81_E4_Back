@@ -17,5 +17,5 @@ public class PetDTO {
     private String specialNeeds;
     private String arrivalHistory;
     private String status;
-
+    private Long shelterId;
 }
