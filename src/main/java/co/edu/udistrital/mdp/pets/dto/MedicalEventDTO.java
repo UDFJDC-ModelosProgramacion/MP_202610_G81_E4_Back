@@ -14,6 +14,7 @@ public class MedicalEventDTO {
     private String description;
     private String diagnosis;
     private String treatment;
+    private Long petId;
 
     private List<String> attachments;
 
