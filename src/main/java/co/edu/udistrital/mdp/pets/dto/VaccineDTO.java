@@ -13,5 +13,6 @@ public class VaccineDTO {
     private LocalDate nextApplicationDate;
     private String batchNumber;
     private String observations;
+    private Long vaccinationRecordId;
 
 }

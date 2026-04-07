@@ -11,5 +11,7 @@ public class AdoptionRequestDTO {
     private LocalDate requestDate;
     private String status;
     private String motivation;
+    private Long petId;
+    private Long AdopterId;
 
 }
