@@ -2,7 +2,8 @@ package co.edu.udistrital.mdp.pets.services;
 
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.repositories.*;
-import jakarta.persistence.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,33 +24,36 @@ public class AdoptionService {
     private AdopterRepository adopterRepository;
 
     @Transactional
-    public AdoptionEntity createAdoption(AdoptionEntity adoption) {
+    public AdoptionEntity createAdoption(AdoptionEntity adoption) throws IllegalOperationException, EntityNotFoundException {
         log.info("Iniciando creación de adopción");
 
         if (adoption.getPet() == null || adoption.getPet().getId() == null) {
-            throw new IllegalArgumentException("El ID de la mascota es obligatorio");
+            throw new IllegalOperationException("El ID de la mascota es obligatorio");
         }
         if (adoption.getAdopter() == null || adoption.getAdopter().getId() == null) {
-            throw new IllegalArgumentException("El ID del adoptante es obligatorio");
+            throw new IllegalOperationException("El ID del adoptante es obligatorio");
         }
 
-        // Buscar y validar Mascota
         PetEntity pet = petRepository.findById(adoption.getPet().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Mascota no encontrada"));
 
         if (pet.getStatus() == null || !pet.getStatus().equalsIgnoreCase("AVAILABLE")) {
-            throw new IllegalStateException("La mascota no está disponible (Status actual: " + pet.getStatus() + ")");
+            throw new IllegalOperationException("La mascota no está disponible");
         }
 
-        // Buscar Adoptante
         AdopterEntity adopter = adopterRepository.findById(adoption.getAdopter().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Adoptante no encontrado"));
 
-        // Vincular objetos reales
         adoption.setPet(pet);
         adoption.setAdopter(adopter);
+        
+        pet.setStatus("ADOPTED");
+        petRepository.save(pet);
 
-        return adoptionRepository.save(adoption);
+        AdoptionEntity newAdoption = adoptionRepository.save(adoption);
+        log.info("Adopción creada con ID: {}", newAdoption.getId());
+        
+        return newAdoption;
     }
 
     @Transactional
@@ -58,29 +62,35 @@ public class AdoptionService {
     }
 
     @Transactional
-    public AdoptionEntity searchAdoption(Long id) {
+    public AdoptionEntity searchAdoption(Long id) throws EntityNotFoundException {
         return adoptionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
     }
 
     @Transactional
-    public AdoptionEntity updateAdoption(Long id, AdoptionEntity adoption) {
+    public AdoptionEntity updateAdoption(Long id, AdoptionEntity adoptionData) 
+            throws EntityNotFoundException, IllegalOperationException {
+        
         AdoptionEntity existing = adoptionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
 
-        if (adoption.getStatus() != null) existing.setStatus(adoption.getStatus());
-        if (adoption.getAdoptionDate() != null) existing.setAdoptionDate(adoption.getAdoptionDate());
+        if (adoptionData.getStatus() != null) {
+            existing.setStatus(adoptionData.getStatus());
+        }
+        if (adoptionData.getAdoptionDate() != null) {
+            existing.setAdoptionDate(adoptionData.getAdoptionDate());
+        }
 
         return adoptionRepository.save(existing);
     }
 
     @Transactional
-    public void deleteAdoption(Long id) {
+    public void deleteAdoption(Long id) throws EntityNotFoundException, IllegalOperationException {
         AdoptionEntity adoption = adoptionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
 
         if (!"FINISHED".equalsIgnoreCase(adoption.getStatus())) {
-            throw new IllegalStateException("Solo se pueden eliminar adopciones con estado FINISHED");
+            throw new IllegalOperationException("Solo se pueden eliminar adopciones con estado FINISHED");
         }
 
         adoptionRepository.delete(adoption);

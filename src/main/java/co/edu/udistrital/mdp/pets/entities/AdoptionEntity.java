@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"pet", "adopter", "trialStay", "review", "veterinarian"})
 public class AdoptionEntity extends BaseEntity {
     
     private LocalDate adoptionDate;
@@ -18,16 +18,17 @@ public class AdoptionEntity extends BaseEntity {
     
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    @JsonIgnoreProperties("adoptions") // Ignora la lista dentro de Pet
+    @JsonIgnoreProperties({"adoptions", "vaccinationRecords", "shelter"}) 
     private PetEntity pet;
 
     @ManyToOne
     @JoinColumn(name = "adopter_id")
-    @JsonIgnoreProperties("adoptions") // Ignora la lista dentro de Adopter
+    @JsonIgnoreProperties("adoptions")
     private AdopterEntity adopter;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) 
     @JoinColumn(name = "trial_stay_id")
+    @JsonIgnoreProperties("adoption")
     private TrialStayEntity trialStay;
 
     @OneToOne(mappedBy = "adoption", cascade = CascadeType.ALL)
@@ -36,7 +37,7 @@ public class AdoptionEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "veterinarian_id")
-    @JsonIgnoreProperties("adoptions")
+    @JsonIgnoreProperties({"adoptions", "appointments"})
     private VeterinarianEntity veterinarian;
 }
     

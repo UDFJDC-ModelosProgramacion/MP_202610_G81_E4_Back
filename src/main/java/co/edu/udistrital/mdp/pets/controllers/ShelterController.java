@@ -1,5 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
+import co.edu.udistrital.mdp.pets.dto.ShelterDTO;
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import co.edu.udistrital.mdp.pets.services.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/shelters")
@@ -16,29 +18,36 @@ public class ShelterController {
     @Autowired
     private ShelterService shelterService;
 
-    @PostMapping
-    public ResponseEntity<ShelterEntity> createShelter(@RequestBody ShelterEntity shelter) {
-        return new ResponseEntity<>(shelterService.createShelter(shelter), HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public ResponseEntity<List<ShelterEntity>> getShelters() {
-        return new ResponseEntity<>(shelterService.searchShelters(), HttpStatus.OK);
+    public ResponseEntity<List<ShelterDTO>> getAll() {
+        List<ShelterEntity> entities = shelterService.getShelters();
+        List<ShelterDTO> dtos = entities.stream()
+                .map(ShelterDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShelterEntity> getShelterById(@PathVariable Long id) {
-        return new ResponseEntity<>(shelterService.searchShelter(id), HttpStatus.OK);
+    public ResponseEntity<ShelterDTO> getById(@PathVariable Long id) {
+        ShelterEntity entity = shelterService.searchShelter(id);
+        return ResponseEntity.ok(new ShelterDTO(entity));
+    }
+
+    @PostMapping
+    public ResponseEntity<ShelterDTO> create(@RequestBody ShelterEntity shelter) {
+        ShelterEntity newShelter = shelterService.createShelter(shelter);
+        return new ResponseEntity<>(new ShelterDTO(newShelter), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ShelterEntity> updateShelter(@PathVariable Long id, @RequestBody ShelterEntity shelter) {
-        return new ResponseEntity<>(shelterService.updateShelter(id, shelter), HttpStatus.OK);
+    public ResponseEntity<ShelterDTO> update(@PathVariable Long id, @RequestBody ShelterEntity shelter) {
+        ShelterEntity updated = shelterService.updateShelter(id, shelter);
+        return ResponseEntity.ok(new ShelterDTO(updated));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteShelter(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         shelterService.deleteShelter(id);
     }
 }

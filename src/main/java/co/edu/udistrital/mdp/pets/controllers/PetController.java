@@ -1,10 +1,11 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import co.edu.udistrital.mdp.pets.entities.PetEntity;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,28 +18,31 @@ public class PetController {
     private PetService petService;
 
     @GetMapping
-    public ResponseEntity<List<PetEntity>> getAll() {
-        return ResponseEntity.ok(petService.searchPets());
+    public List<PetEntity> getAll() {
+        return petService.getPets();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PetEntity> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(petService.searchPet(id));
+    public PetEntity getById(@PathVariable Long id) throws EntityNotFoundException {
+        return petService.getPet(id);
     }
 
     @PostMapping
-    public ResponseEntity<PetEntity> create(@RequestBody PetEntity pet) {
-        return new ResponseEntity<>(petService.createPet(pet), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public PetEntity create(@RequestBody PetEntity pet) throws IllegalOperationException {
+        return petService.createPet(pet);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PetEntity> update(@PathVariable Long id, @RequestBody PetEntity pet) {
-        return ResponseEntity.ok(petService.updatePet(id, pet));
+    public PetEntity update(@PathVariable Long id, @RequestBody PetEntity pet) 
+            throws EntityNotFoundException, IllegalOperationException {
+        return petService.updatePet(id, pet);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) 
+            throws EntityNotFoundException, IllegalOperationException {
         petService.deletePet(id);
-        return ResponseEntity.noContent().build();
     }
 }

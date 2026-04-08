@@ -19,28 +19,15 @@ public class ShelterService {
 
     @Transactional
     public ShelterEntity createShelter(ShelterEntity shelter) {
-        log.info("Creating shelter");
-        if (shelter == null) {
-            throw new IllegalArgumentException("Shelter cannot be null");
-        }
-        if (shelter.getName() == null || shelter.getName().isEmpty()) {
-            throw new IllegalArgumentException("Shelter name is required");
-        }
-        if (shelter.getCity() == null || shelter.getCity().isEmpty()) {
-            throw new IllegalArgumentException("Shelter city is required");
-        }
-        if (shelter.getAddress() == null || shelter.getAddress().isEmpty()) {
-            throw new IllegalArgumentException("Shelter address is required");
-        }
-        if (shelter.getPhone() == null || shelter.getPhone().isEmpty()) {
-            throw new IllegalArgumentException("Shelter phone is required");
-        }
-        if (shelter.getEmail() == null || shelter.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("Shelter email is required");
-        }
-        ShelterEntity savedShelter = shelterRepository.save(shelter);
-        log.info("Shelter created with id: {}", savedShelter.getId());
-        return savedShelter;
+        log.info("Creating shelter entity");
+        validateShelter(shelter);
+        return shelterRepository.save(shelter);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShelterEntity> getShelters() {
+        log.info("Searching all shelter entities");
+        return shelterRepository.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -53,33 +40,24 @@ public class ShelterService {
                 .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
     }
 
-    @Transactional(readOnly = true)
-    public List<ShelterEntity> searchShelters() {
-        log.info("Searching all shelters");
-        return shelterRepository.findAll();
-    }
-
     @Transactional
     public ShelterEntity updateShelter(Long id, ShelterEntity shelter) {
         log.info("Updating shelter with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
+        if (id == null || shelter == null) {
+            throw new IllegalArgumentException("Id and Shelter cannot be null");
         }
-        if (shelter == null) {
-            throw new IllegalArgumentException("Shelter cannot be null");
-        }
+
         ShelterEntity existing = shelterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
-        
+
         existing.setName(shelter.getName());
         existing.setCity(shelter.getCity());
         existing.setAddress(shelter.getAddress());
         existing.setPhone(shelter.getPhone());
         existing.setEmail(shelter.getEmail());
-        
-        ShelterEntity updatedShelter = shelterRepository.save(existing);
-        log.info("Shelter updated with id: {}", updatedShelter.getId());
-        return updatedShelter;
+        existing.setDescription(shelter.getDescription());
+
+        return shelterRepository.save(existing);
     }
 
     @Transactional
@@ -88,13 +66,24 @@ public class ShelterService {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
+        
         ShelterEntity shelter = shelterRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
-        
+
         if (shelter.getPets() != null && !shelter.getPets().isEmpty()) {
             throw new IllegalStateException("Cannot delete shelter with associated pets");
         }
+
         shelterRepository.delete(shelter);
         log.info("Shelter deleted successfully");
+    }
+
+    private void validateShelter(ShelterEntity shelter) {
+        if (shelter == null) throw new IllegalArgumentException("Shelter cannot be null");
+        if (shelter.getName() == null || shelter.getName().isEmpty()) throw new IllegalArgumentException("Name is required");
+        if (shelter.getCity() == null || shelter.getCity().isEmpty()) throw new IllegalArgumentException("City is required");
+        if (shelter.getAddress() == null || shelter.getAddress().isEmpty()) throw new IllegalArgumentException("Address is required");
+        if (shelter.getPhone() == null || shelter.getPhone().isEmpty()) throw new IllegalArgumentException("Phone is required");
+        if (shelter.getEmail() == null || shelter.getEmail().isEmpty()) throw new IllegalArgumentException("Email is required");
     }
 }

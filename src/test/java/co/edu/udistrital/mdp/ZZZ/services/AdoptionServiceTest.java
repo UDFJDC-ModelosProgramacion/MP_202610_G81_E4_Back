@@ -15,8 +15,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.AdoptionService;
-import jakarta.persistence.EntityNotFoundException;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -74,7 +75,7 @@ public class AdoptionServiceTest {
     }
 
     @Test
-    void testCreateAdoption() {
+    void testCreateAdoption() throws IllegalOperationException, EntityNotFoundException {
         ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
         entityManager.persist(shelter);
 
@@ -97,25 +98,33 @@ public class AdoptionServiceTest {
         assertNotNull(result);
         AdoptionEntity entity = entityManager.find(AdoptionEntity.class, result.getId());
         assertEquals(newEntity.getAdoptionDate(), entity.getAdoptionDate());
+        assertEquals("ADOPTED", entity.getPet().getStatus());
     }
 
     @Test
     void testCreateAdoptionPetNotAvailable() {
-        assertThrows(IllegalStateException.class, () -> {
-            PetEntity pet = adoptionList.get(0).getPet();
-            pet.setStatus("ADOPTED"); // Cambiamos a no disponible
-            entityManager.merge(pet);
+    assertThrows(IllegalOperationException.class, () -> {
+        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+        entityManager.persist(shelter);
 
-            AdoptionEntity entity = new AdoptionEntity();
-            entity.setPet(pet);
-            entity.setAdopter(adoptionList.get(0).getAdopter());
-            entity.setAdoptionDate(LocalDate.now());
-            adoptionService.createAdoption(entity);
-        });
-    }
+        PetEntity pet = factory.manufacturePojo(PetEntity.class);
+        pet.setShelter(shelter);
+        pet.setStatus("ADOPTED");
+        entityManager.persist(pet);
+
+        AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
+        entityManager.persist(adopter);
+
+        AdoptionEntity entity = new AdoptionEntity();
+        entity.setPet(pet);
+        entity.setAdopter(adopter);
+        entity.setAdoptionDate(LocalDate.now());
+        adoptionService.createAdoption(entity);
+    });
+}
 
     @Test
-    void testDeleteAdoption() {
+    void testDeleteAdoption() throws EntityNotFoundException, IllegalOperationException {
         AdoptionEntity entity = adoptionList.get(0);
         entity.setStatus("FINISHED");
         entityManager.merge(entity);
