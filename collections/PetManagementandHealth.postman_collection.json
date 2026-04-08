@@ -29,13 +29,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/pets",
+              "raw": "http://localhost:8080/api/pets",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "pets"
               ]
             }
@@ -47,13 +48,14 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -76,13 +78,14 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -124,13 +127,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/pets",
+              "raw": "http://localhost:8080/api/pets",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "pets"
               ]
             }
@@ -142,13 +146,14 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -173,13 +178,14 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -204,13 +210,14 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -235,13 +242,14 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/pets",
+                  "raw": "http://localhost:8080/api/pets",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "pets"
                   ]
                 }
@@ -280,13 +288,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/adoption-requests",
+              "raw": "http://localhost:8080/api/adoption-requests",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "adoption-requests"
               ]
             }
@@ -307,13 +316,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/adoption-requests",
+                  "raw": "http://localhost:8080/api/adoption-requests",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "adoption-requests"
                   ]
                 }
@@ -345,13 +355,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/adoption-requests",
+                  "raw": "http://localhost:8080/api/adoption-requests",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "adoption-requests"
                   ]
                 }
@@ -385,13 +396,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/adoption-requests",
+                  "raw": "http://localhost:8080/api/adoption-requests",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "adoption-requests"
                   ]
                 }
@@ -423,13 +435,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/adoption-requests",
+                  "raw": "http://localhost:8080/api/adoption-requests",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "adoption-requests"
                   ]
                 }
@@ -461,13 +474,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/adoption-requests",
+                  "raw": "http://localhost:8080/api/adoption-requests",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "adoption-requests"
                   ]
                 }
@@ -492,13 +506,14 @@
             "method": "PUT",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/adoption-requests/1/approve",
+              "raw": "http://localhost:8080/api/adoption-requests/1/approve",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "adoption-requests",
                 "1",
                 "approve"
@@ -574,13 +589,14 @@
             "method": "PUT",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/adoption-requests/1/reject",
+              "raw": "http://localhost:8080/api/adoption-requests/1/reject",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "adoption-requests",
                 "1",
                 "reject"
@@ -709,13 +725,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/medical-events",
+              "raw": "http://localhost:8080/api/medical-events",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "medical-events"
               ]
             }
@@ -736,13 +753,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/medical-events",
+                  "raw": "http://localhost:8080/api/medical-events",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "medical-events"
                   ]
                 }
@@ -776,13 +794,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/medical-events",
+                  "raw": "http://localhost:8080/api/medical-events",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "medical-events"
                   ]
                 }
@@ -816,13 +835,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/medical-events",
+                  "raw": "http://localhost:8080/api/medical-events",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "medical-events"
                   ]
                 }
@@ -856,13 +876,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/medical-events",
+                  "raw": "http://localhost:8080/api/medical-events",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "medical-events"
                   ]
                 }
@@ -903,13 +924,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/vaccination-records",
+              "raw": "http://localhost:8080/api/vaccination-records",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "vaccination-records"
               ]
             }
@@ -930,13 +952,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccination-records",
+                  "raw": "http://localhost:8080/api/vaccination-records",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccination-records"
                   ]
                 }
@@ -976,13 +999,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccination-records",
+                  "raw": "http://localhost:8080/api/vaccination-records",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccination-records"
                   ]
                 }
@@ -1022,13 +1046,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccination-records",
+                  "raw": "http://localhost:8080/api/vaccination-records",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccination-records"
                   ]
                 }
@@ -1062,13 +1087,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccination-records",
+                  "raw": "http://localhost:8080/api/vaccination-records",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccination-records"
                   ]
                 }
@@ -1109,13 +1135,14 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/vaccines",
+              "raw": "http://localhost:8080/api/vaccines",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
+                "api",
                 "vaccines"
               ]
             }
@@ -1136,13 +1163,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccines",
+                  "raw": "http://localhost:8080/api/vaccines",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccines"
                   ]
                 }
@@ -1176,13 +1204,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccines",
+                  "raw": "http://localhost:8080/api/vaccines",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccines"
                   ]
                 }
@@ -1216,13 +1245,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccines",
+                  "raw": "http://localhost:8080/api/vaccines",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccines"
                   ]
                 }
@@ -1256,13 +1286,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccines",
+                  "raw": "http://localhost:8080/api/vaccines",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccines"
                   ]
                 }
@@ -1296,13 +1327,14 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/vaccines",
+                  "raw": "http://localhost:8080/api/vaccines",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
+                    "api",
                     "vaccines"
                   ]
                 }
