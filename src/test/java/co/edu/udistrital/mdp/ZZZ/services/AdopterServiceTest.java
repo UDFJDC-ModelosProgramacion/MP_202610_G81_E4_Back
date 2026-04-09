@@ -44,17 +44,16 @@ public class AdopterServiceTest {
 
     private void clearData() {
         entityManager.getEntityManager().createQuery("delete from AdoptionRequestEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from AdoptionEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from AdopterEntity").executeUpdate();
     }
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
             AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            adopter.setAdopterIdBusiness(1000L + i);
             adopter.setHousingType("Casa");
+            adopter.setFirstName("Nombre " + i);
             adopter.setLastName("Apellido " + i);
-            
+
             entityManager.persist(adopter);
             adopterList.add(adopter);
         }
@@ -63,14 +62,16 @@ public class AdopterServiceTest {
     @Test
     void testCreateAdopter() {
         AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
-        newEntity.setAdopterIdBusiness(9999L);
         newEntity.setHousingType("Apartamento");
+        newEntity.setFirstName("Juan");
+        newEntity.setLastName("Perez");
 
         AdopterEntity result = adopterService.createAdopter(newEntity);
-        
+
         assertNotNull(result);
+        assertNotNull(result.getId());
+
         AdopterEntity found = entityManager.find(AdopterEntity.class, result.getId());
-        assertEquals(newEntity.getAdopterIdBusiness(), found.getAdopterIdBusiness());
         assertEquals("Apartamento", found.getHousingType());
     }
 
@@ -78,18 +79,10 @@ public class AdopterServiceTest {
     void testCreateAdopterInvalidHousing() {
         assertThrows(IllegalArgumentException.class, () -> {
             AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
-            newEntity.setHousingType("Hotel"); // Tipo no permitido
-            adopterService.createAdopter(newEntity);
-        });
-    }
+            newEntity.setFirstName("Juan");
+            newEntity.setLastName("Perez");
+            newEntity.setHousingType("Hotel");
 
-    @Test
-    void testCreateAdopterDuplicateBusinessId() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            AdopterEntity existing = adopterList.get(0);
-            AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
-            newEntity.setAdopterIdBusiness(existing.getAdopterIdBusiness());
-            newEntity.setHousingType("Casa");
             adopterService.createAdopter(newEntity);
         });
     }
@@ -97,10 +90,11 @@ public class AdopterServiceTest {
     @Test
     void testSearchAdopter() {
         AdopterEntity entity = adopterList.get(0);
+
         AdopterEntity result = adopterService.searchAdopter(entity.getId());
-        
+
         assertNotNull(result);
-        assertEquals(entity.getAdopterIdBusiness(), result.getAdopterIdBusiness());
+        assertEquals(entity.getId(), result.getId());
     }
 
     @Test
@@ -113,24 +107,26 @@ public class AdopterServiceTest {
     @Test
     void testUpdateAdopter() {
         AdopterEntity entity = adopterList.get(0);
-        AdopterEntity pojo = factory.manufacturePojo(AdopterEntity.class);
-        
-        pojo.setLastName("Nuevo Apellido");
+
+        AdopterEntity pojo = new AdopterEntity();
+        pojo.setFirstName("Nuevo");
+        pojo.setLastName("Apellido");
         pojo.setHousingType("Finca");
-        pojo.setAdopterIdBusiness(entity.getAdopterIdBusiness());
 
         AdopterEntity result = adopterService.updateAdopter(entity.getId(), pojo);
-        
+
         assertNotNull(result);
+
         AdopterEntity updated = entityManager.find(AdopterEntity.class, entity.getId());
-        assertEquals("Nuevo Apellido", updated.getLastName());
+        assertEquals("Nuevo", updated.getFirstName());
+        assertEquals("Apellido", updated.getLastName());
         assertEquals("Finca", updated.getHousingType());
     }
 
     @Test
     void testDeleteAdopterSuccess() {
         AdopterEntity entity = adopterList.get(0);
-        // El adoptante no tiene solicitudes ni adopciones en el setup inicial
+
         adopterService.deleteAdopter(entity.getId());
 
         AdopterEntity deleted = entityManager.find(AdopterEntity.class, entity.getId());
@@ -140,13 +136,11 @@ public class AdopterServiceTest {
     @Test
     void testDeleteAdopterWithRequests() {
         AdopterEntity entity = adopterList.get(0);
-        
-        // Simular una solicitud de adopción vinculada
+
         AdoptionRequestEntity request = factory.manufacturePojo(AdoptionRequestEntity.class);
         request.setAdopter(entity);
+
         entityManager.persist(request);
-        
-        // Forzar flush para que el conteo en el service detecte la relación
         entityManager.flush();
 
         assertThrows(IllegalStateException.class, () -> {

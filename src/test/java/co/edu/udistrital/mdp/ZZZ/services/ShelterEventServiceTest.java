@@ -13,10 +13,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
+import co.edu.udistrital.mdp.pets.entities.ShelterEventEntity;
 import co.edu.udistrital.mdp.pets.services.ShelterEventService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -26,13 +27,14 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 public class ShelterEventServiceTest {
 
     @Autowired
-    private ShelterEventService shelterEventService;
+    private ShelterEventService eventService;
 
     @Autowired
     private TestEntityManager entityManager;
 
-    private PodamFactory factory = new PodamFactoryImpl();
+    private final PodamFactory factory = new PodamFactoryImpl();
     private List<ShelterEventEntity> eventList = new ArrayList<>();
+    private ShelterEntity sharedShelter;
 
     @BeforeEach
     void setUp() {
@@ -43,46 +45,53 @@ public class ShelterEventServiceTest {
     private void clearData() {
         entityManager.getEntityManager().createQuery("delete from ShelterEventEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from ShelterEntity").executeUpdate();
-    }
-
-    private void insertData() {
-        for (int i = 0; i < 3; i++) {
-            // Persistir Shelter primero (es obligatorio para el evento)
-            ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-            entityManager.persist(shelter);
-
-            // Persistir Evento asociado al Shelter
-            ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
-            event.setShelter(shelter);
-            event.setEventCode(1000 + i); 
-            event.setEventDate(LocalDateTime.now().plusDays(5)); // Fecha futura para evitar validaciones
-            entityManager.persist(event);
-            eventList.add(event);
-        }
         entityManager.flush();
     }
 
+    private void insertData() {
+        // Creamos un shelter base para todos los eventos del test
+        sharedShelter = factory.manufacturePojo(ShelterEntity.class);
+        entityManager.persist(sharedShelter);
+
+        for (int i = 0; i < 3; i++) {
+            ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
+            event.setShelter(sharedShelter);
+            event.setEventDate(LocalDateTime.now().plusDays(5)); // Fecha futura para que sea válido
+            
+            // Importante: No seteamos eventCode manualmente si es autoincremental
+            ShelterEventEntity persisted = entityManager.persistFlushFind(event);
+            eventList.add(persisted);
+        }
+    }
+
     @Test
-    void testCreateShelterEvent() {
-        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-        entityManager.persist(shelter);
-
+    void testCreateShelterEventSuccess() {
         ShelterEventEntity newEvent = factory.manufacturePojo(ShelterEventEntity.class);
-        newEvent.setShelter(shelter);
-        newEvent.setEventDate(LocalDateTime.now().plusDays(2));
-        newEvent.setEventCode(null); // El service debe generar uno aleatorio
+        newEvent.setShelter(sharedShelter);
+        newEvent.setEventDate(LocalDateTime.now().plusDays(2)); // Futuro
 
-        ShelterEventEntity result = shelterEventService.createShelterEvent(newEvent);
+        ShelterEventEntity result = eventService.createShelterEvent(newEvent);
 
         assertNotNull(result);
         assertNotNull(result.getEventCode());
-        assertEquals(shelter.getId(), result.getShelter().getId());
+        assertEquals(newEvent.getTitle(), result.getTitle());
+    }
+
+    @Test
+    void testCreateEventPastDateThrowsException() {
+        ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
+        event.setShelter(sharedShelter);
+        event.setEventDate(LocalDateTime.now().minusDays(1)); // PASADO: Debe fallar
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            eventService.createShelterEvent(event);
+        });
     }
 
     @Test
     void testSearchEventByCode() {
         ShelterEventEntity target = eventList.get(0);
-        ShelterEventEntity result = shelterEventService.searchShelterEventByCode(target.getEventCode());
+        ShelterEventEntity result = eventService.searchShelterEventByCode(target.getEventCode());
 
         assertNotNull(result);
         assertEquals(target.getEventCode(), result.getEventCode());
@@ -91,68 +100,47 @@ public class ShelterEventServiceTest {
     @Test
     void testSearchEventNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
-            shelterEventService.searchShelterEventByCode(9999);
+            eventService.searchShelterEventByCode(9999L);
         });
     }
 
     @Test
     void testUpdateEventByCode() {
         ShelterEventEntity target = eventList.get(0);
-        
         ShelterEventEntity updateData = factory.manufacturePojo(ShelterEventEntity.class);
         updateData.setEventDate(LocalDateTime.now().plusDays(10));
-        updateData.setShelter(target.getShelter()); // El validador pide que no sea nulo
+        updateData.setShelter(sharedShelter);
 
-        ShelterEventEntity result = shelterEventService.updateShelterEventByCode(target.getEventCode(), updateData);
+        ShelterEventEntity result = eventService.updateShelterEventByCode(target.getEventCode(), updateData);
 
         assertNotNull(result);
-        assertEquals(updateData.getEventDate(), result.getEventDate());
         assertEquals(updateData.getTitle(), result.getTitle());
+        assertEquals(updateData.getEventDate(), result.getEventDate());
     }
 
     @Test
-    void testDeleteEventFutureThrowsException() {
-        // La regla de negocio prohibe borrar eventos futuros
+    void testDeleteFutureEventThrowsException() {
+        // La lógica dice: NO se pueden borrar eventos futuros
         ShelterEventEntity futureEvent = eventList.get(0); 
         
         assertThrows(IllegalStateException.class, () -> {
-            shelterEventService.deleteShelterEventByCode(futureEvent.getEventCode());
+            eventService.deleteShelterEventByCode(futureEvent.getEventCode());
         });
     }
 
     @Test
-    void testDeleteEventPastSuccess() {
-        // Crear un evento del pasado manualmente
-        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-        entityManager.persist(shelter);
-
+    void testDeletePastEventSuccess() {
+        // Creamos manualmente un evento que YA PASÓ para poder borrarlo
         ShelterEventEntity pastEvent = factory.manufacturePojo(ShelterEventEntity.class);
-        pastEvent.setShelter(shelter);
-        pastEvent.setEventDate(LocalDateTime.now().minusDays(5)); // Pasado
-        pastEvent.setEventCode(8888);
-        entityManager.persist(pastEvent);
-        entityManager.flush();
-
-        // No debe lanzar excepción al borrar algo pasado
-        assertDoesNotThrow(() -> shelterEventService.deleteShelterEventByCode(8888));
+        pastEvent.setShelter(sharedShelter);
+        pastEvent.setEventDate(LocalDateTime.now().minusDays(10)); // Hace 10 días
         
-        // Verificar que ya no existe
+        ShelterEventEntity persisted = entityManager.persistFlushFind(pastEvent);
+        Long code = persisted.getEventCode();
+
+        assertDoesNotThrow(() -> eventService.deleteShelterEventByCode(code));
         assertThrows(EntityNotFoundException.class, () -> {
-            shelterEventService.searchShelterEventByCode(8888);
-        });
-    }
-
-    @Test
-    void testCreateEventPastDateThrowsException() {
-        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
-        entityManager.persist(shelter);
-
-        ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
-        event.setShelter(shelter);
-        event.setEventDate(LocalDateTime.now().minusDays(1)); // Intento de crear en el pasado
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            shelterEventService.createShelterEvent(event);
+            eventService.searchShelterEventByCode(code);
         });
     }
 }

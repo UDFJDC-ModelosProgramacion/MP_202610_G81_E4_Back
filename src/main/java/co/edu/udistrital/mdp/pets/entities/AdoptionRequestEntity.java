@@ -1,14 +1,17 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 
-
-@Data
 @Entity
 @Table(name = "adoption_requests")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AdoptionRequestEntity extends BaseEntity {
     
@@ -18,9 +21,15 @@ public class AdoptionRequestEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopter_id")
-    private AdopterEntity adopter; // Este nombre debe ser igual al mappedBy en AdopterEntity
+    @JsonIgnore 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private AdopterEntity adopter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
+    @JsonIgnore 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private PetEntity pet;
 }

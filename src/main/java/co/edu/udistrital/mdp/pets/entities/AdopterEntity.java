@@ -1,47 +1,49 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.ToString;
-
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "adopters")
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@EqualsAndHashCode(callSuper = true)
 public class AdopterEntity extends BaseEntity {
 
-    // adopterId como identificador de negocio (ej. cédula), no como Primary Key
-    @Column(name = "adopter_id_business", unique = true)
-    private Long adopterIdBusiness;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(length = 255)
     private String address;
 
-    @Column(name = "housing_type", length = 50)
+    @Column(name = "housing_type")
     private String housingType;
 
-    @Column(name = "has_children")
     private Boolean hasChildren;
-
-    @Column(name = "has_other_pets")
     private Boolean hasOtherPets;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adopter_preferences", joinColumns = @JoinColumn(name = "adopter_id"))
     @Column(name = "preference")
-    private List<String> preferences;
+    private List<String> preferences = new ArrayList<>();
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AdoptionRequestEntity> adoptionRequests;
+    @JsonIgnoreProperties("adopter")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<AdoptionRequestEntity> adoptionRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("adopter")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<AdoptionEntity> adoptions = new ArrayList<>();
 }

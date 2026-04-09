@@ -1,48 +1,62 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
-import co.edu.udistrital.mdp.pets.services.AdoptionService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import co.edu.udistrital.mdp.pets.dto.AdoptionDTO;
+import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
+import co.edu.udistrital.mdp.pets.services.AdoptionService;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 
 @RestController
-@RequestMapping("/api/adoptions")
+@RequestMapping("/adoptions")
 public class AdoptionController {
 
     @Autowired
     private AdoptionService adoptionService;
 
     @PostMapping
-    public ResponseEntity<AdoptionEntity> createAdoption(@RequestBody AdoptionEntity adoption) {
-        AdoptionEntity newAdoption = adoptionService.createAdoption(adoption);
-        return new ResponseEntity<>(newAdoption, HttpStatus.CREATED);
+    public ResponseEntity<AdoptionDTO> create(@RequestBody AdoptionEntity adoption) 
+            throws IllegalOperationException, EntityNotFoundException {
+        AdoptionEntity created = adoptionService.createAdoption(adoption);
+        return new ResponseEntity<>(new AdoptionDTO(created), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<AdoptionEntity>> getAllAdoptions() {
-        List<AdoptionEntity> adoptions = adoptionService.searchAdoptions();
-        return new ResponseEntity<>(adoptions, HttpStatus.OK);
+    public ResponseEntity<List<AdoptionDTO>> getAll() {
+        List<AdoptionEntity> entities = adoptionService.searchAdoptions();
+        List<AdoptionDTO> dtos = entities.stream()
+                .map(AdoptionDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdoptionEntity> getAdoptionById(@PathVariable Long id) {
-        AdoptionEntity adoption = adoptionService.searchAdoption(id);
-        return new ResponseEntity<>(adoption, HttpStatus.OK);
+    public ResponseEntity<AdoptionDTO> getById(@PathVariable Long id) 
+            throws EntityNotFoundException {
+        AdoptionEntity entity = adoptionService.searchAdoption(id);
+        return ResponseEntity.ok(new AdoptionDTO(entity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdoptionEntity> updateAdoption(@PathVariable Long id, @RequestBody AdoptionEntity adoption) {
+    public ResponseEntity<AdoptionDTO> update(
+            @PathVariable Long id,
+            @RequestBody AdoptionEntity adoption) 
+            throws EntityNotFoundException, IllegalOperationException {
         AdoptionEntity updated = adoptionService.updateAdoption(id, adoption);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        return ResponseEntity.ok(new AdoptionDTO(updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAdoption(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) 
+            throws EntityNotFoundException, IllegalOperationException {
         adoptionService.deleteAdoption(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

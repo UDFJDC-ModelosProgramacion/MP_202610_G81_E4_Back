@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class ReviewDetailDTO extends ReviewDTO {
     
-    private AdoptionDTO adoption;
+    private String adoptionStatus;
     
     public ReviewDetailDTO(ReviewEntity entity) {
         super(entity);
         if (entity.getAdoption() != null) {
-                this.adoption = new AdoptionDTO(entity.getAdoption());
+                this.adoptionStatus = entity.getAdoption().getStatus();
         }
     }
     
