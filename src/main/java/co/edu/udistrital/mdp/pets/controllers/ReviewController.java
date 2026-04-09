@@ -1,5 +1,8 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +12,6 @@ import co.edu.udistrital.mdp.pets.dto.ReviewDTO;
 import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
 import co.edu.udistrital.mdp.pets.services.ReviewService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -19,53 +19,51 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-    @PostMapping
-    public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO dto) {
-
-        ReviewEntity entity = reviewService.createReview(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ReviewDTO(entity));
-    }
-
     @GetMapping
-    public ResponseEntity<List<ReviewDTO>> getAll() {
-
-        List<ReviewDTO> list = reviewService.searchReviews()
+    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
+        List<ReviewDTO> reviews = reviewService.searchReviews()
                 .stream()
                 .map(ReviewDTO::new)
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewDTO> getById(@PathVariable Long id) {
-
+    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
         ReviewEntity entity = reviewService.searchReview(id);
-
         return ResponseEntity.ok(new ReviewDTO(entity));
     }
 
+    @PostMapping
+    public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDTO) {
+        ReviewEntity reviewEntity = new ReviewEntity();
+        reviewEntity.setComments(reviewDTO.getComments());
+        reviewEntity.setRating(reviewDTO.getRating());
+        reviewEntity.setReviewDate(reviewDTO.getReviewDate());
+
+        ReviewEntity savedEntity = reviewService.createReview(
+                reviewEntity, 
+                reviewDTO.getAdoptionId(), 
+                reviewDTO.getAdopterId()
+        );
+        
+        return new ResponseEntity<>(new ReviewDTO(savedEntity), HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> update(
-            @PathVariable Long id,
-            @RequestBody ReviewDTO dto) {
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
+        ReviewEntity reviewDetails = new ReviewEntity();
+        reviewDetails.setComments(reviewDTO.getComments());
+        reviewDetails.setRating(reviewDTO.getRating());
+        reviewDetails.setReviewDate(reviewDTO.getReviewDate());
 
-        ReviewEntity updated = reviewService.updateReview(id, dto);
-
-        return ResponseEntity.ok(new ReviewDTO(updated));
+        ReviewEntity updatedEntity = reviewService.updateReview(id, reviewDetails);
+        return ResponseEntity.ok(new ReviewDTO(updatedEntity));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id,
-            @RequestParam Long adopterId,
-            @RequestParam boolean isAdmin) {
-
-        reviewService.deleteReview(id, adopterId, isAdmin);
-
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+        reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }
 }

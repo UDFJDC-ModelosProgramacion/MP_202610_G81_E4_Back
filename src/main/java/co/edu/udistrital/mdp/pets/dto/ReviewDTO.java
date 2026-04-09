@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ReviewDTO {
-    
     private Long id;
     private String comments;
     private Integer rating; 
@@ -16,20 +15,14 @@ public class ReviewDTO {
     private Long adoptionId;
     private Long adopterId;
 
-    public ReviewDTO (ReviewEntity entity) {
+    public ReviewDTO(ReviewEntity entity) {
         if (entity != null) {
             this.id = entity.getId();
             this.comments = entity.getComments();
             this.rating = entity.getRating();
             this.reviewDate = entity.getReviewDate();
-
-            if (entity.getAdoption() != null) {
-                this.adoptionId = entity.getAdoption().getId();
-            }
-
-            if (entity.getAdopter() != null) {
-                this.adopterId = entity.getAdopter().getId();
-            }
+            if (entity.getAdoption() != null) this.adoptionId = entity.getAdoption().getId();
+            if (entity.getAdopter() != null) this.adopterId = entity.getAdopter().getId();
         }
     }
 }
