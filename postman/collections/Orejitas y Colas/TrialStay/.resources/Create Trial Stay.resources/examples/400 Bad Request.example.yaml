@@ -1,0 +1,22 @@
+$kind: http-example
+request:
+  url: http://localhost:8080/api/trial-stays
+  method: POST
+  body:
+    type: json
+    content: "{\r
+
+      \     \"startDate\":\"22 de marzo\",\r
+
+      \     \"endDate\": \"23 de marzo\",\r
+
+      \     \"result\": \"aprobado\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  body:
+    type: text
+    content: ""
+order: 2000

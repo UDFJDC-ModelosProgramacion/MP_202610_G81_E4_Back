@@ -1,0 +1,8 @@
+$kind: collection
+description: This folder contains the complete CRUD operations for managing
+  shelter records in the Orejitas y Colas system. It includes endpoints to
+  create new shelters, search for existing shelters by ID, update shelter
+  information, and delete shelter records. All requests use
+  [http://localhost:8080/api/shelters](http://localhost:8080/api/shelters) for
+  operations requiring a shelter identifier.
+order: 1000

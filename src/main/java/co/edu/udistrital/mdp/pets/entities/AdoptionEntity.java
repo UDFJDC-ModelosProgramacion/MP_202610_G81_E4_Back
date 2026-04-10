@@ -1,44 +1,43 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Table;
-import lombok.Data;
-import uk.co.jemos.podam.common.PodamExclude;
-
+import jakarta.persistence.*;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
-import  java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
-@Table(name = "ADOPTION_ENTITY")
+@Table(name = "adoptions")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"pet", "adopter", "trialStay", "review", "veterinarian"})
 public class AdoptionEntity extends BaseEntity {
-    private int adoption;
-    private int pet;
-    private int adopter;
-    private int veterinarian;
+    
     private LocalDate adoptionDate;
     private String status;
-    private boolean trialPeriod; 
+    
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    @JsonIgnoreProperties({"adoptions", "vaccinationRecords", "shelter"}) 
+    private PetEntity pet;
 
     @ManyToOne
-    @JoinColumn(name = "TrialStay_id")
-    @PodamExclude 
+    @JoinColumn(name = "adopter_id")
+    @JsonIgnoreProperties("adoptions")
+    private AdopterEntity adopter;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) 
+    @JoinColumn(name = "trial_stay_id")
+    @JsonIgnoreProperties("adoption")
     private TrialStayEntity trialStay;
 
-    @ManyToOne
-    @JoinColumn (name = "Review_id")
-    @PodamExclude
+    @OneToOne(mappedBy = "adoption", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("adoption")
     private ReviewEntity review;
 
-    
-
-    
-    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "veterinarian_id")
+    @JsonIgnoreProperties({"adoptions", "appointments"})
+    private VeterinarianEntity veterinarian;
 }
+    

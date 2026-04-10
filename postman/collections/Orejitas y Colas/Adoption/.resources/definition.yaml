@@ -1,0 +1,8 @@
+$kind: collection
+description: This folder contains the complete CRUD operations for managing
+  adoption records in the Orejitas y Colas system. It includes endpoints to
+  create new adoption , search for existing adoptions by ID, update adoption
+  information, and delete adoption records. All requests use the {{base_url}}
+  environment variable and {{ultimo_id_adoption}} for operations requiring a
+  adoption identifier.
+order: 5000

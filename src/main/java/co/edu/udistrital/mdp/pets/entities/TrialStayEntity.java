@@ -1,28 +1,44 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Data;
-import uk.co.jemos.podam.common.PodamExclude;
-import  java.time.LocalDateTime;
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "TRIAL_STAY_ENTITY")
-@Data
+@Table(name = "trial_stays")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class TrialStayEntity extends BaseEntity {
-    private int trial;
-    private int adoption;
-    private Date startDate;
-    private Date endDate;
-    private int durationDays;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String result;
+
+    @Column(columnDefinition = "TEXT")
     private String observations;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id")
+    @JsonIgnoreProperties({"trialStays", "shelter"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private PetEntity pet;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
+    @JsonIgnoreProperties({"trialStay"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private AdoptionEntity adoption;
+}
 
     
     
-}
+

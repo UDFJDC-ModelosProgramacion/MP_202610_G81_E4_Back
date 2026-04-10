@@ -1,40 +1,60 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 import uk.co.jemos.podam.common.PodamExclude;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "SHELTER_ENTITY")
+@Table(name = "shelters")
 @Data
+@EqualsAndHashCode(callSuper = true, exclude = {"pets", "veterinarians", "events"})
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShelterEntity extends BaseEntity {
-    private int shelter;
+
     private String name;
     private String city;
     private String address;
     private String phone;
     private String email;
-    private String[] photos;
-    private String[] videos;
-    private String description; 
 
-    @ManyToOne
-    @JoinColumn(name = "ShelterEvent_id")
-    @PodamExclude 
-    private ShelterEventEntity shelterEvent;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @ManyToOne
-    @JoinColumn (name = "Adoption_id")
+    @ElementCollection
+    @CollectionTable(name = "shelter_photos", joinColumns = @JoinColumn(name = "shelter_id"))
+    @Column(name = "photo_url")
+    private List<String> photos;
+
+    @ElementCollection
+    @CollectionTable(name = "shelter_videos", joinColumns = @JoinColumn(name = "shelter_id"))
+    @Column(name = "video_url")
+    private List<String> videos;
+
     @PodamExclude
-    private AdoptionEntity adoption; 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("shelter")
+    private List<PetEntity> pets;
 
+    @PodamExclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("shelter")
+    private List<VeterinarianEntity> veterinarians;
+
+    @PodamExclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("shelter")
+    private List<ShelterEventEntity> events;
+}
 
     
-}
+

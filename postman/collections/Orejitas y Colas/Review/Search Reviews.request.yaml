@@ -1,0 +1,90 @@
+$kind: http-request
+description: >-
+  # Search Reviews
+
+
+  ## Overview
+
+
+  Retrieves a list of reviews, typically filtered by criteria such as shelter
+  ID, user ID, or rating. This endpoint allows querying multiple review records
+  to analyze feedback patterns and shelter ratings.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The identifier used to filter reviews (e.g., shelter ID
+  or user ID) |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON array containing review information:
+
+
+  ```json
+
+  [
+    {
+      "id": 1,
+      "shelterId": 5,
+      "userId": 10,
+      "rating": 5,
+      "comment": "Excellent shelter with caring staff!",
+      "reviewDate": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "shelterId": 5,
+      "userId": 12,
+      "rating": 4,
+      "comment": "Great experience overall",
+      "reviewDate": "2024-01-18"
+    }
+  ]
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Reviews found and returned |
+
+  | 404 | Not Found - No reviews found matching the criteria |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  This endpoint provides access to multiple review records, enabling analysis of
+  shelter performance, user satisfaction trends, and overall feedback patterns.
+url: http://localhost:8080/api/reviews
+method: GET
+examples: ./.resources/Search Reviews.resources/examples
+order: 5000

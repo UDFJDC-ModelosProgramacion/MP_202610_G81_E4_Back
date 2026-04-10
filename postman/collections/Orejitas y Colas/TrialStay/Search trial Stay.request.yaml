@@ -1,0 +1,81 @@
+$kind: http-request
+description: >-
+  # Search Trial Stay
+
+
+  ## Overview
+
+
+  Retrieves detailed information about a specific trial stay by its unique
+  identifier. This endpoint returns comprehensive trial stay data including pet
+  information, adopter details, dates, and current status.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the trial stay to retrieve |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON object containing the complete trial stay information:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "petId": 15,
+    "adopterId": 20,
+    "startDate": "2024-01-20",
+    "endDate": "2024-02-03",
+    "status": "ACTIVE",
+    "notes": "First-time adopter, requires follow-up"
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Trial stay found and returned |
+
+  | 404 | Not Found - No trial stay exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  The trial stay resource includes all attributes defined in the TrialStay
+  entity, providing a complete view of the trial adoption period and its current
+  status.
+url: http://localhost:8080/api/trial-stays
+method: GET
+examples: ./.resources/Search trial Stay.resources/examples
+order: 3000

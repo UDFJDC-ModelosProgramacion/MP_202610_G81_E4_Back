@@ -1,29 +1,36 @@
+
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Date;
+import jakarta.persistence.*;
 import lombok.Data;
-import uk.co.jemos.podam.common.PodamExclude;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "REVIEW_ENTITY")
+@Table(name = "reviews")
 @Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewEntity extends BaseEntity {
-    private int review;
-    private int pet;
-    private int adopter;
-    private int rating;
-    private String comment;
-    private Date reviewDate;
-    private String[] photos;
 
-    
-    
+    @Column(columnDefinition = "TEXT")
+    private String comments;
+    private Integer rating;
+    private LocalDate reviewDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adopter_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
+    private AdopterEntity adopter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
+    private AdoptionEntity adoption;
 }

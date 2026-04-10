@@ -1,0 +1,147 @@
+$kind: http-request
+description: >-
+  # Create Review
+
+
+  ## Overview
+
+
+  Creates a new review for a shelter. This endpoint allows users to submit
+  ratings and feedback about their experience with a specific shelter, helping
+  others make informed decisions.
+
+
+  ## Request Details
+
+
+  - **Method**: `POST`
+
+  - **Endpoint**: `/create`
+
+  - **Content-Type**: `application/json`
+
+
+  ### Request Body Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `shelterId` | Long | Yes | The unique identifier of the shelter being
+  reviewed |
+
+  | `userId` | Long | Yes | The unique identifier of the user submitting the
+  review |
+
+  | `rating` | Integer | Yes | Rating score (typically 1-5) |
+
+  | `comment` | String | No | Detailed review text and feedback |
+
+  | `reviewDate` | Date | No | Date of the review (defaults to current date if
+  not provided) |
+
+
+  ## Response
+
+
+  ### Success Response (201 Created)
+
+
+  Returns the newly created review object with its assigned ID:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "shelterId": 5,
+    "userId": 10,
+    "rating": 5,
+    "comment": "Excellent shelter with caring staff!",
+    "reviewDate": "2024-01-15"
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 201 | Created - Review successfully created |
+
+  | 400 | Bad Request - Invalid or missing required fields |
+
+  | 409 | Conflict - Review already exists or duplicate submission |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Operations on Associations
+
+
+  This endpoint creates a relationship between the review, the shelter, and the
+  user. Ensure that both the shelter and user exist in the system before
+  creating a review.
+
+
+  ## Resource Representation
+
+
+  The review resource captures user feedback and ratings, contributing to the
+  shelter's overall reputation score and helping potential adopters make
+  informed decisions.
+url: http://localhost:8080/api/reviews
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"comments\": \"El proceso de seguimiento fue excelente.\",\r
+
+    \    \"rating\": 5,\r
+
+    \    \"reviewDate\": \"2026-03-23T15:30:00\",\r
+
+    \    \"adoption\": {\r
+
+    \        \"id\": 1\r
+
+    \    },\r
+
+    \    \"adopter\": {\r
+
+    \        \"id\": 1\r
+
+    \    }\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
+
+      const respuesta = pm.response.json();\r
+
+      \r
+
+      // 2. Extraer el ID (ajusta 'id' según cómo se llame en tu Entity de
+      Java)\r
+
+      const idGenerado = respuesta.id;\r
+
+      \r
+
+      // 3. Guardar el ID en una variable de entorno\r
+
+      pm.environment.set(\"ultimo_id_review\", idGenerado);\r
+
+      \r
+
+      console.log(\"ID guardado correctamente: \" + idGenerado);"
+    language: text/javascript
+examples: ./.resources/Create Review.resources/examples
+order: 1000

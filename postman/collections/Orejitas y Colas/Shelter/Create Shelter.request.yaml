@@ -1,0 +1,204 @@
+$kind: http-request
+description: >-
+  # Create Shelter
+
+
+  ## Overview
+
+  This endpoint creates a new shelter in the system. It allows you to register a
+  shelter with its basic information including name, location, and contact
+  details.
+
+
+  ## Request Details
+
+  - **Method:** `POST`
+
+  - **Endpoint:** `{{base_url}}/create`
+
+  - **Content-Type:** `application/json`
+
+
+  ## Request Body Parameters
+
+
+  The request body should be in JSON format with the following fields:
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `name` | String | Yes | The name of the shelter |
+
+  | `city` | String | Yes | The city where the shelter is located |
+
+  | `adress` | String | Yes | The physical address of the shelter |
+
+  | `phone` | String | Yes | Contact phone number for the shelter |
+
+  | `email` | String | Yes | Contact email address for the shelter |
+
+
+  ### Example Request Body
+
+  ```json
+
+  {
+    "name": "Orejitas y colas",
+    "city": "Bogotá",
+    "adress": "Dirección",
+    "phone": "123456780",
+    "email": "cienlopezj@gmail.com"
+  }
+
+  ```
+
+
+  ## Response
+
+
+  ### Success Response
+
+  The endpoint returns the created shelter object with an auto-generated ID
+  assigned by the system.
+
+
+  **Response Body:**
+
+  ```json
+
+  {
+    "id": 1,
+    "name": "Orejitas y colas",
+    "city": "Bogotá",
+    "adress": "Dirección",
+    "phone": "123456780",
+    "email": "cienlopezj@gmail.com"
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | `201 Created` | Shelter was successfully created |
+
+  | `400 Bad Request` | Invalid request body or missing required fields |
+
+  | `409 Conflict` | A shelter with the same information already exists |
+
+  | `500 Internal Server Error` | Server error occurred while creating the
+  shelter |
+
+
+  ## Operations on Associations
+
+
+  This endpoint creates the base shelter entity. Once created, the shelter can
+  be associated with:
+
+  - **Animals** - Animals can be assigned to this shelter
+
+  - **Adoption Records** - Track adoptions processed by this shelter
+
+  - **Trial Stays** - Manage trial adoption periods for animals from this
+  shelter
+
+  - **Shelter Events** - Events organized by or related to this shelter
+
+
+  Use the generated shelter ID to create these associations through their
+  respective endpoints.
+
+
+  ## Resource Representations
+
+
+  ### Basic Representation (Request)
+
+  The basic representation includes only the essential information needed to
+  create a shelter:
+
+  - name
+
+  - city
+
+  - adress
+
+  - phone
+
+  - email
+
+
+  ### Detailed Representation (Response)
+
+  The detailed representation includes all the basic fields plus:
+
+  - **id** - Auto-generated unique identifier for the shelter
+
+  - Additional metadata fields may be included depending on the system
+  configuration
+
+
+  ## Test Script
+
+  This request includes a test script that automatically saves the generated
+  shelter ID to the environment variable `ultimo_id_shelter`. This allows you to
+  use the newly created shelter's ID in subsequent requests within your
+  collection.
+url: http://localhost:8080/api/shelters
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"Refugio Distrital\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3101234567\",\r
+
+    \    \"email\": \"contacto@refugio.edu.co\",\r
+
+    \    \"description\": \"Sede principal de atención a mascotas\",\r
+
+    \    \"photos\": [\"http://link-foto1.jpg\"],\r
+
+    \    \"videos\": []\r
+
+    }\r
+
+    \r\n"
+scripts:
+  - type: afterResponse
+    code: "// 1. Convertir la respuesta del servidor a un objeto JSON\r
+
+      const respuesta = pm.response.json();\r
+
+      \r
+
+      // 2. Extraer el ID (ajusta 'id' según cómo se llame en tu Entity de
+      Java)\r
+
+      const idGenerado = respuesta.id;\r
+
+      \r
+
+      // 3. Guardar el ID en una variable de entorno\r
+
+      pm.environment.set(\"ultimo_id_shelter\", idGenerado);\r
+
+      \r
+
+      console.log(\"ID guardado correctamente: \" + idGenerado);"
+    language: text/javascript
+examples: ./.resources/Create Shelter.resources/examples
+order: 1000

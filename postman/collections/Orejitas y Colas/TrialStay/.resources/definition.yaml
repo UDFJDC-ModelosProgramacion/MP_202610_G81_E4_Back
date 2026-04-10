@@ -1,0 +1,8 @@
+$kind: collection
+description: This folder contains the complete CRUD operations for managing
+  trial stay records in the Orejitas y Colas system. It includes endpoints to
+  create new shelters, search for existing trial stays by ID, update trial stays
+  information, and delete trial stays records. All requests use the {{base_url}}
+  environment variable and {{ultimo_id_trial_stay}} for operations requiring a
+  trial stay identifier.
+order: 3000

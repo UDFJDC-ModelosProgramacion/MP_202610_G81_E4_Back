@@ -1,0 +1,82 @@
+$kind: http-request
+description: >-
+  # Search Shelter Event
+
+
+  ## Overview
+
+
+  Retrieves detailed information about a specific shelter event by its unique
+  identifier. This endpoint returns comprehensive event data including schedule,
+  location, and participation details.
+
+
+  ## Request Details
+
+
+  - **Method**: `GET`
+
+  - **Endpoint**: `/search/{id}`
+
+  - **Content-Type**: Not required for GET requests
+
+
+  ### Path Parameters
+
+
+  | Parameter | Type | Required | Description |
+
+  |-----------|------|----------|-------------|
+
+  | `id` | Long | Yes | The unique identifier of the shelter event to retrieve |
+
+
+  ## Response
+
+
+  ### Success Response (200 OK)
+
+
+  Returns a JSON object containing the complete shelter event information:
+
+
+  ```json
+
+  {
+    "id": 1,
+    "shelterId": 5,
+    "eventName": "Spring Adoption Fair",
+    "eventType": "ADOPTION_DRIVE",
+    "eventDate": "2024-03-15",
+    "startTime": "10:00:00",
+    "endTime": "16:00:00",
+    "location": "Central Park Pavilion",
+    "description": "Meet adoptable pets and learn about our shelter",
+    "maxParticipants": 100
+  }
+
+  ```
+
+
+  ## HTTP Status Codes
+
+
+  | Status Code | Description |
+
+  |-------------|-------------|
+
+  | 200 | Success - Shelter event found and returned |
+
+  | 404 | Not Found - No shelter event exists with the provided ID |
+
+  | 500 | Internal Server Error - An unexpected error occurred |
+
+
+  ## Resource Representation
+
+
+  The shelter event resource includes all attributes defined in the ShelterEvent
+  entity, providing a complete view of the event's details and current status.
+url: "{{base_url}}/search/{{ultimo_id_shelter_event}}"
+method: GET
+order: 2000
