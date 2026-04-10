@@ -1,44 +1,59 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
-import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
+import java.util.List;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDTO;
+import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDetailDTO;
+import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
+import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
 
 @RestController
-@RequestMapping("/adoption-trackings")
+@RequestMapping("/adoptiontrackings")
 public class AdoptionTrackingController {
 
     @Autowired
     private AdoptionTrackingService adoptionTrackingService;
 
-    @PostMapping
-    public ResponseEntity<AdoptionTrackingEntity> create(@RequestBody AdoptionTrackingEntity tracking) {
-        return new ResponseEntity<>(adoptionTrackingService.createAdoptionTracking(tracking), HttpStatus.CREATED);
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<AdoptionTrackingEntity>> getAll() {
-        return new ResponseEntity<>(adoptionTrackingService.getAdoptionTrackings(), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<AdoptionTrackingDetailDTO> findAll() {
+        List<AdoptionTrackingEntity> entities = adoptionTrackingService.getAdoptionTrackings();
+        return modelMapper.map(entities, new TypeToken<List<AdoptionTrackingDetailDTO>>() {}.getType());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdoptionTrackingEntity> getById(@PathVariable Long id) {
-        return new ResponseEntity<>(adoptionTrackingService.getAdoptionTracking(id), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public AdoptionTrackingDetailDTO findOne(@PathVariable Long id) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.getAdoptionTracking(id);
+        return modelMapper.map(entity, AdoptionTrackingDetailDTO.class);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdoptionTrackingDTO create(@RequestBody AdoptionTrackingDTO adoptionTrackingDTO) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.createAdoptionTracking(
+                modelMapper.map(adoptionTrackingDTO, AdoptionTrackingEntity.class));
+        return modelMapper.map(entity, AdoptionTrackingDTO.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdoptionTrackingEntity> update(@PathVariable Long id, @RequestBody AdoptionTrackingEntity tracking) {
-        return new ResponseEntity<>(adoptionTrackingService.updateAdoptionTracking(id, tracking), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public AdoptionTrackingDTO update(@PathVariable Long id, @RequestBody AdoptionTrackingDTO adoptionTrackingDTO) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.updateAdoptionTracking(id,
+                modelMapper.map(adoptionTrackingDTO, AdoptionTrackingEntity.class));
+        return modelMapper.map(entity, AdoptionTrackingDTO.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         adoptionTrackingService.deleteAdoptionTracking(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
