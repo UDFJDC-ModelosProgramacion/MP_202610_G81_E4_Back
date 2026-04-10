@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "95b2e6f6-a493-4b95-9dc7-575ea46a3d5b",
+    "_postman_id": "55420c19-d180-43c2-848c-6ce4fe253413",
     "name": "Lucero - persistencia",
-    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53407433",
-    "_collection_link": "https://go.postman.co/collection/53407433-95b2e6f6-a493-4b95-9dc7-575ea46a3d5b?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53407433-55420c19-d180-43c2-848c-6ce4fe253413?source=collection_link"
   },
   "item": [
     {
@@ -84,6 +84,26 @@
     },
     {
       "name": "Get All Adoption Trackings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Number of adoption trackings > 0\", function () {\r",
+              "    var data = pm.response.json();\r",
+              "    pm.expect(data.length).to.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -125,12 +145,30 @@
     },
     {
       "name": "Create Adoption Tracking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();\r",
+              "pm.globals.set(\"adoptiontracking_id_1\", data.id);\r",
+              "\r",
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"frequency\": \"Mensual\",\r\n    \"notes\": \"El animal está bien adaptado\",\r\n    \"nextReview\": \"2026-04-01\"\r\n}",
+          "raw": "{\r\n    \"adoptionId\": 1,\r\n    \"frequency\": \"Mensual\",\r\n    \"notes\": \"El animal está bien adaptado\",\r\n    \"nextReview\": \"2026-04-01\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -154,6 +192,21 @@
     },
     {
       "name": "Update Adoption Tracking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
@@ -184,6 +237,21 @@
     },
     {
       "name": "Delete Adoption Tracking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -205,6 +273,26 @@
     },
     {
       "name": "Get All Adoption Histories",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Number of adoption histories > 0\", function () {\r",
+              "    var data = pm.response.json();\r",
+              "    pm.expect(data.length).to.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -225,6 +313,19 @@
     },
     {
       "name": "Get Adoption History By Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -246,12 +347,30 @@
     },
     {
       "name": "Create Adoption History",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();\r",
+              "pm.globals.set(\"adoptionhistory_id_1\", data.id);\r",
+              "\r",
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"reason\": \"Adopción exitosa\",\r\n    \"detail\": \"El animal se adaptó bien\",\r\n    \"date\": \"2026-03-22\"\r\n}",
+          "raw": "{\r\n    \"adoptionId\": 1,\r\n    \"reason\": \"Adopción exitosa\",\r\n    \"detail\": \"El animal se adaptó bien\",\r\n    \"date\": \"2026-03-22\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -275,6 +394,21 @@
     },
     {
       "name": "Update Adoption History",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
@@ -305,6 +439,21 @@
     },
     {
       "name": "Delete Adoption History",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -330,6 +479,26 @@
     },
     {
       "name": "Get All Devolutions",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Number of devolutions > 0\", function () {\r",
+              "    var data = pm.response.json();\r",
+              "    pm.expect(data.length).to.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -385,12 +554,30 @@
     },
     {
       "name": "Create Devolution",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();\r",
+              "pm.globals.set(\"devolution_id_1\", data.id);\r",
+              "\r",
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"reason\": \"No puede cuidarlo\",\r\n    \"detailedDescription\": \"El adoptante se mudó a otro país\",\r\n    \"petState\": \"Saludable\",\r\n    \"returnDate\": \"2026-03-22\"\r\n}",
+          "raw": "{\r\n    \"adoptionId\": 1,\r\n    \"reason\": \"No pudo adaptarse\",\r\n    \"detailedDescription\": \"El animal mostró comportamiento agresivo\",\r\n    \"petState\": \"Saludable\",\r\n    \"returnDate\": \"2026-03-22\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -414,6 +601,21 @@
     },
     {
       "name": "Update Devolution",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
@@ -444,6 +646,21 @@
     },
     {
       "name": "Delete Devolution",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -469,6 +686,26 @@
     },
     {
       "name": "Get All Reports",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Number of reports > 0\", function () {\r",
+              "    var data = pm.response.json();\r",
+              "    pm.expect(data.length).to.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -521,12 +758,30 @@
     },
     {
       "name": "Create Report",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var data = pm.response.json();\r",
+              "pm.globals.set(\"report_id_1\", data.id);\r",
+              "\r",
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"reportType\": \"Mensual\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-01-31\",\r\n    \"data\": \"Datos del reporte mensual\",\r\n    \"generationDate\": \"2026-03-22\"\r\n}",
+          "raw": "{\r\n    \"shelterId\": 1,\r\n    \"reportType\": \"Mensual\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-01-31\",\r\n    \"data\": \"Datos del reporte\",\r\n    \"generationDate\": \"2026-02-01\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -550,6 +805,21 @@
     },
     {
       "name": "Update Report",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
@@ -580,6 +850,21 @@
     },
     {
       "name": "Delete Report",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
