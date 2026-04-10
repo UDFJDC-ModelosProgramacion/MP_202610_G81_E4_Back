@@ -2038,6 +2038,920 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "veterinarian",
+      "item": [
+        {
+          "name": "Create Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()",
+                  "",
+                  "pm.globals.set(\"veterinarian_id_1\", data.id);",
+                  "",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "",
+                  "   pm.response.to.have.status(201);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"veterinarianIdBusiness\": 999001,\n    \"lastName\": \"Sanchez\",\n    \"specialties\": [\"General\"],\n    \"availability\": \"Tarde\",\n    \"shelterId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Veterinarians",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of shelters > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "",
+                  "   pm.response.to.have.status(200);",
+                  "",
+                  "});",
+                  "",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "",
+                  "   pm.response.to.have.status(404);",
+                  "",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "",
+                  "   var data = pm.response.json();",
+                  "",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"veterinarianIdBusiness\": 102030,\n    \"lastName\": \"Cárdenas\",\n    \"availability\": \"Mañana\",\n    \"specialties\": [\"Surgery\"], \n    \"shelterId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adopter with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "item": [
+        {
+          "name": "Create Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"veterinarian_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"senderId\": 1,\r\n    \"senderType\": \"ADOPTER\",\r\n    \"recipientId\": 2,\r\n    \"recipientType\": \"SHELTER\",\r\n    \"subject\": \"Interés en adopción\",\r\n    \"content\": \"Hola, ¿cómo puedo iniciar el proceso?\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Messages",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of message > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"senderId\": 1,\r\n    \"recipientId\": 2,\r\n    \"subject\": \"Consulta sobre adopción (Actualizado)\",\r\n    \"content\": \"Hola, ya vi los requisitos, ¿podemos agendar una cita para conocer a Toby?\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The message with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notification",
+      "item": [
+        {
+          "name": "Create Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()",
+                  "",
+                  "pm.globals.set(\"notification_id_1\", data.id);",
+                  "",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "",
+                  "   pm.response.to.have.status(201);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"userType\": \"ADOPTER\",\r\n    \"notificationType\": \"INFO\",\r\n    \"message\": \"Mensaje de prueba para el taller\",\r\n    \"relatedEntity\": \"PET_SHELTER\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of notifications > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"userType\": \"ADOPTER\",\r\n    \"notificationType\": \"ALERT\",\r\n    \"message\": \"Actualización de prueba sin fecha\",\r\n    \"isRead\": true,\r\n    \"relatedEntity\": \"PET_SHELTER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The message with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [
