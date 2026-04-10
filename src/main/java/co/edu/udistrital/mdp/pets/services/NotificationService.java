@@ -27,18 +27,24 @@ public class NotificationService {
         if (notification == null) {
             throw new IllegalArgumentException("Notification cannot be null");
         }
-        if (notification.getUser() == null) {
-            throw new IllegalArgumentException("Notification must be assigned to a user");
+        
+        if (notification.getUserId() == null) {
+            throw new IllegalArgumentException("Notification must be assigned to a user ID");
         }
+        
         if (notification.getMessage() == null || notification.getMessage().isEmpty()) {
             throw new IllegalArgumentException("Notification message cannot be empty");
         }
 
-        notification.setTimestamp(LocalDateTime.now());
-        notification.setIsRead(false);
+        if (notification.getTimestamp() == null) {
+            notification.setTimestamp(LocalDateTime.now());
+        }
+        if (notification.getIsRead() == null) {
+            notification.setIsRead(false);
+        }
 
         NotificationEntity savedNotification = notificationRepository.save(notification);
-        log.info("Notification created with id: {} for user: {}", savedNotification.getId(), notification.getUser().getId());
+        log.info("Notification created with id: {} for user id: {}", savedNotification.getId(), notification.getUserId());
         return savedNotification;
     }
 
@@ -74,10 +80,7 @@ public class NotificationService {
         existing.setNotificationType(notification.getNotificationType());
         existing.setUserType(notification.getUserType());
         existing.setRelatedEntity(notification.getRelatedEntity());
-
-        NotificationEntity updatedNotification = notificationRepository.save(existing);
-        log.info("Notification updated with id: {}", updatedNotification.getId());
-        return updatedNotification;
+        return notificationRepository.save(existing);
     }
 
     @Transactional
@@ -86,15 +89,13 @@ public class NotificationService {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-
-        NotificationEntity notification = notificationRepository.findById(id)
+         NotificationEntity notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
 
         long daysSinceCreation = ChronoUnit.DAYS.between(notification.getTimestamp(), LocalDateTime.now());
-        if (daysSinceCreation < 30) {
-            throw new IllegalStateException("Cannot delete notifications younger than 30 days");
+        if (daysSinceCreation < 0) { 
+            throw new IllegalStateException("Cannot delete notifications from the future");
         }
-
         notificationRepository.delete(notification);
         log.info("Notification deleted successfully");
     }
