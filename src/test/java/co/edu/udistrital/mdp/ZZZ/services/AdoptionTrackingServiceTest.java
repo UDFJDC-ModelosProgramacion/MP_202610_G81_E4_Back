@@ -8,17 +8,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -33,7 +31,7 @@ public class AdoptionTrackingServiceTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private PodamFactory factory = new PodamFactoryImpl();
+    private final PodamFactory factory = new PodamFactoryImpl();
     private List<AdoptionTrackingEntity> trackingList = new ArrayList<>();
 
     @BeforeEach
@@ -43,10 +41,10 @@ public class AdoptionTrackingServiceTest {
     }
 
     private void clearData() {
-        // Borrar en orden para respetar llaves foráneas
         entityManager.getEntityManager().createQuery("delete from AdoptionTrackingEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from AdoptionEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from PetEntity").executeUpdate();
+        entityManager.flush();
     }
 
     private void insertData() {
@@ -66,42 +64,47 @@ public class AdoptionTrackingServiceTest {
             entityManager.persist(tracking);
             trackingList.add(tracking);
         }
+        entityManager.flush();
     }
 
     @Test
     void testCreateAdoptionTracking() {
-        // Arrange
         AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
         entityManager.persist(adoption);
 
-        AdoptionTrackingEntity newTracking = factory.manufacturePojo(AdoptionTrackingEntity.class);
+        AdoptionTrackingEntity newTracking = new AdoptionTrackingEntity();
         newTracking.setAdoption(adoption);
         newTracking.setFrequency("Weekly");
         newTracking.setNextReview(LocalDate.now().plusDays(7));
+        newTracking.setNotes("First visit notes");
 
-        // Act
-        AdoptionTrackingEntity result = trackingService.createAdoptionTracking(newTracking);
+        AdoptionTrackingEntity result = trackingService.create(newTracking);
 
-        // Assert
         assertNotNull(result);
         AdoptionTrackingEntity entity = entityManager.find(AdoptionTrackingEntity.class, result.getId());
-        assertEquals(newTracking.getFrequency(), entity.getFrequency());
+        assertEquals("Weekly", entity.getFrequency());
         assertEquals(adoption.getId(), entity.getAdoption().getId());
     }
 
     @Test
     void testCreateTrackingNoAdoption() {
         assertThrows(IllegalArgumentException.class, () -> {
-            AdoptionTrackingEntity tracking = factory.manufacturePojo(AdoptionTrackingEntity.class);
+            AdoptionTrackingEntity tracking = new AdoptionTrackingEntity();
             tracking.setAdoption(null);
-            trackingService.createAdoptionTracking(tracking);
+            trackingService.create(tracking);
         });
+    }
+
+    @Test
+    void testFindAllTrackings() {
+        List<AdoptionTrackingEntity> list = trackingService.findAll();
+        assertEquals(trackingList.size(), list.size());
     }
 
     @Test
     void testGetAdoptionTracking() {
         AdoptionTrackingEntity entity = trackingList.get(0);
-        AdoptionTrackingEntity result = trackingService.getAdoptionTracking(entity.getId());
+        AdoptionTrackingEntity result = trackingService.findById(entity.getId());
         
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
@@ -110,21 +113,24 @@ public class AdoptionTrackingServiceTest {
     @Test
     void testGetAdoptionTrackingNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
-            trackingService.getAdoptionTracking(999L);
+            trackingService.findById(999L);
         });
     }
 
     @Test
     void testUpdateAdoptionTracking() {
         AdoptionTrackingEntity entity = trackingList.get(0);
-        AdoptionTrackingEntity updateData = factory.manufacturePojo(AdoptionTrackingEntity.class);
+        AdoptionTrackingEntity updateData = new AdoptionTrackingEntity();
         updateData.setFrequency("Quarterly");
         updateData.setNextReview(LocalDate.now().plusMonths(3));
+        updateData.setNotes("Updated notes for testing");
+
         AdoptionTrackingEntity result = trackingService.updateAdoptionTracking(entity.getId(), updateData);
+
         assertNotNull(result);
         AdoptionTrackingEntity updated = entityManager.find(AdoptionTrackingEntity.class, entity.getId());
         assertEquals("Quarterly", updated.getFrequency());
-        assertEquals(updateData.getNextReview(), updated.getNextReview());
+        assertEquals("Updated notes for testing", updated.getNotes());
     }
 
     @Test
@@ -132,7 +138,7 @@ public class AdoptionTrackingServiceTest {
         AdoptionTrackingEntity entity = trackingList.get(0);
         assertThrows(IllegalArgumentException.class, () -> {
             AdoptionTrackingEntity invalidData = new AdoptionTrackingEntity();
-            invalidData.setNextReview(null);
+            invalidData.setNextReview(null); 
             trackingService.updateAdoptionTracking(entity.getId(), invalidData);
         });
     }
@@ -141,7 +147,10 @@ public class AdoptionTrackingServiceTest {
     void testDeleteAdoptionTracking() {
         AdoptionTrackingEntity tracking = trackingList.get(0);
         Long id = tracking.getId();
+        
         trackingService.deleteAdoptionTracking(id);
+        entityManager.flush();
+
         AdoptionTrackingEntity deleted = entityManager.find(AdoptionTrackingEntity.class, id);
         assertNull(deleted);
     }
