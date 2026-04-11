@@ -34,8 +34,6 @@ public class NotificationEntity extends BaseEntity {
     @Column(name = "related_entity", length = 100)
     private String relatedEntity;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }

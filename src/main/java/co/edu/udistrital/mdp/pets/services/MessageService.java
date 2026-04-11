@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,20 @@ public class MessageService {
         message.setIsRead(false);
 
         return messageRepository.save(message);
+    }
+
+    @Transactional(readOnly = true)
+    public MessageEntity searchMessage(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        return messageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Message not found with id: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageEntity> searchAllMessages() {
+        return messageRepository.findAll();
     }
 
     @Transactional
@@ -105,7 +120,6 @@ public class MessageService {
                 return ((Number) value).longValue();
             }
         } catch (Exception ignored) {
-            // Fallback to relation-based getter
         }
 
         try {

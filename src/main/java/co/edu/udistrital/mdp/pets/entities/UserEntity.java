@@ -26,8 +26,4 @@ public abstract class UserEntity extends BaseEntity {
 
     @Column(length = 20)
     private String phone;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NotificationEntity> notifications;
 }

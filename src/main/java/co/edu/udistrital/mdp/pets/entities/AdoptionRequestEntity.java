@@ -32,4 +32,11 @@ public class AdoptionRequestEntity extends BaseEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private PetEntity pet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinarian_id") 
+    @JsonIgnore 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private VeterinarianEntity veterinarian; 
 }
