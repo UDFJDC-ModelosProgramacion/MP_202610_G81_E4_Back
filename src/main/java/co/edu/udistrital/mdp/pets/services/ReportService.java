@@ -17,7 +17,14 @@ public class ReportService {
 
     public ReportEntity createReport(ReportEntity report) {
         log.info("Creating report");
-        validateReport(report);
+        
+        if (report == null) 
+            throw new IllegalArgumentException("Report cannot be null");
+        if (report.getShelter() == null || report.getShelter().getId() == null)
+            throw new IllegalArgumentException("Report must have an associated shelter");
+        if (report.getReportType() == null || report.getReportType().isEmpty())
+            throw new IllegalArgumentException("Report type cannot be null or empty");
+            
         return repository.save(report);
     }
 
@@ -34,16 +41,20 @@ public class ReportService {
 
     public ReportEntity updateReport(Long id, ReportEntity report) {
         log.info("Updating report with id: {}", id);
-        ReportEntity existing = getReport(id);
-        validateReport(report);
-
-        existing.setReportType(report.getReportType());
-        existing.setStartDate(report.getStartDate());
-        existing.setEndDate(report.getEndDate());
-        existing.setData(report.getData());
-        existing.setGenerationDate(report.getGenerationDate());
-        existing.setShelter(report.getShelter());
-
+        
+        ReportEntity existing = getReport(id); 
+        
+        if (report != null) {
+            if (report.getReportType() != null) existing.setReportType(report.getReportType());
+            if (report.getStartDate() != null) existing.setStartDate(report.getStartDate());
+            if (report.getEndDate() != null) existing.setEndDate(report.getEndDate());
+            if (report.getData() != null) existing.setData(report.getData());
+            
+            if (report.getShelter() != null && report.getShelter().getId() != null) {
+                existing.setShelter(report.getShelter());
+            }
+        }
+        
         return repository.save(existing);
     }
 
@@ -51,17 +62,5 @@ public class ReportService {
         log.info("Deleting report with id: {}", id);
         ReportEntity report = getReport(id);
         repository.delete(report);
-    }
-
-    private void validateReport(ReportEntity report) {
-        if (report == null) 
-            throw new IllegalArgumentException("Report cannot be null");
-        if (report.getShelter() == null)
-            throw new IllegalArgumentException("Report must have an associated shelter");
-        if (report.getReportType() == null || report.getReportType().isEmpty())
-            throw new IllegalArgumentException("Report type cannot be null or empty");
-        if (report.getStartDate() != null && report.getEndDate() != null
-                && report.getStartDate().isAfter(report.getEndDate()))
-            throw new IllegalArgumentException("Start date cannot be after end date");
     }
 }
