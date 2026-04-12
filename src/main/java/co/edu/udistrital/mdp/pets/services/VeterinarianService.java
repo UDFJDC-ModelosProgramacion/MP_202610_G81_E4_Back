@@ -76,6 +76,9 @@ public class VeterinarianService {
     public void deleteVeterinarian(Long id) {
         log.info("Eliminando veterinario con ID: {}", id);
         VeterinarianEntity vet = self.searchVeterinarian(id);
+        if (!adoptionRepository.findByVeterinarian_Id(id).isEmpty()) {
+            throw new IllegalStateException("Cannot delete veterinarian with adoptions");
+        }
         veterinarianRepository.delete(vet);
     }
 
