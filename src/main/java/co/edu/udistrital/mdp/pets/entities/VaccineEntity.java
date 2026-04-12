@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
+import uk.co.jemos.podam.common.PodamExclude;
 import java.time.LocalDate;
 
 @Entity
@@ -25,6 +27,8 @@ public class VaccineEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
+    @PodamExclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vaccination_record_id")
     private VaccinationRecordEntity vaccinationRecord;
