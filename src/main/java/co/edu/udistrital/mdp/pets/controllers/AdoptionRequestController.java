@@ -15,8 +15,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/adoption-requests")
 public class AdoptionRequestController {
-
     @Autowired
+    
     private AdoptionRequestService service;
 
     @PostMapping
