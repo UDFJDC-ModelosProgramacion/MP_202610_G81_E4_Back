@@ -36,6 +36,7 @@ class AdopterServiceTest {
     private PodamFactory factory = new PodamFactoryImpl();
     private List<AdopterEntity> adopterList = new ArrayList<>();
 
+
     @BeforeEach
     void setUp() {
         clearData();
@@ -144,8 +145,9 @@ class AdopterServiceTest {
         entityManager.persist(request);
         entityManager.flush();
         entityManager.refresh(entity); 
+        Long adopterId = entity.getId();
         assertThrows(IllegalStateException.class, () -> {
-        adopterService.deleteAdopter(entity.getId());
+            adopterService.deleteAdopter(adopterId);
         });
     }
 }

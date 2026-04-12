@@ -133,6 +133,7 @@ class MessageServiceTest {
         MessageEntity updateData = new MessageEntity();
         updateData.setSenderId(senderId);
         updateData.setRecipientId(recipientId);
+        Long oldMessageId = oldMessage.getId();
         
         assertThrows(IllegalArgumentException.class, () -> 
             messageService.updateMessage(oldMessage.getId(), updateData)

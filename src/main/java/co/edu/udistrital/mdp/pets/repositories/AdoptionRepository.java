@@ -7,5 +7,5 @@ import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 
 
 public interface AdoptionRepository extends JpaRepository<AdoptionEntity, Long> {
-    List<AdoptionEntity> findByVeterinarianId(Long veterinarianId);
+    List<AdoptionEntity> findByVeterinarian_Id(Long veterinarianId);
 }

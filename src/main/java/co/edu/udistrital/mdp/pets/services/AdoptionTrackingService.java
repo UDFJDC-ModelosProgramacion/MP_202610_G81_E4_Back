@@ -18,6 +18,9 @@ public class AdoptionTrackingService {
     @Autowired
     private AdoptionRepository adoptionRepository;
 
+    // buena practica recomendada por sonar, prevencion de falsos positivos
+    private static final String TRACKING_NOT_FOUND = "Tracking not found with ID: ";
+
     @Transactional
     public AdoptionTrackingEntity createAdoptionTracking(AdoptionTrackingEntity tracking) {
         if (tracking == null) {
@@ -43,13 +46,13 @@ public class AdoptionTrackingService {
     @Transactional(readOnly = true)
     public AdoptionTrackingEntity getAdoptionTracking(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
     }
 
     @Transactional
     public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
         AdoptionTrackingEntity existing = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
         
         if (tracking.getNextReview() == null) {
             throw new IllegalArgumentException("Next review date cannot be null");
@@ -65,7 +68,7 @@ public class AdoptionTrackingService {
     @Transactional
     public void deleteAdoptionTracking(Long id) {
         AdoptionTrackingEntity tracking = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
                 
         repository.delete(tracking);
     }

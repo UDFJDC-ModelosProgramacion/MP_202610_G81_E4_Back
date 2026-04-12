@@ -102,26 +102,26 @@ class ShelterServiceTest {
 
     @Test
     void testCreateShelterNoAddress() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setAddress("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setAddress("");
             shelterService.createShelter(entity);
         });
     }
 
     @Test
     void testCreateShelterNoPhone() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setPhone("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setPhone("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoEmail() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setEmail("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setEmail("");
             shelterService.createShelter(entity);
         });
     }

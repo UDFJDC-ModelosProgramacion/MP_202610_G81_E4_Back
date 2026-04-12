@@ -49,12 +49,12 @@ class VaccineServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
-            VaccinationRecordEntity record = new VaccinationRecordEntity();
-            entityManager.persist(record);
-            recordList.add(record);
+            VaccinationRecordEntity vaccinationRecord = new VaccinationRecordEntity();
+            entityManager.persist(vaccinationRecord);
+            recordList.add(vaccinationRecord);
 
             VaccineEntity vaccine = factory.manufacturePojo(VaccineEntity.class);
-            vaccine.setVaccinationRecord(record);
+            vaccine.setVaccinationRecord(vaccinationRecord);
             vaccine.setVaccineName("Rabies");
 
             entityManager.persist(vaccine);
