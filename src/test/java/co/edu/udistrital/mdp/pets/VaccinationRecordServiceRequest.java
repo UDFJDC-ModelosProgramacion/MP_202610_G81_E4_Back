@@ -1,5 +1,6 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,30 +14,29 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import co.edu.udistrital.mdp.pets.services.*;
-import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.services.VaccinationRecordService;
+import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
+import co.edu.udistrital.mdp.pets.entities.PetEntity;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import jakarta.transaction.Transactional;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-
 @DataJpaTest
 @Transactional
-@Import(AdoptionRequestService.class)
-class AdoptionRequestServiceTest {
+@Import(VaccinationRecordService.class)
+class VaccinationRecordServiceTest {
 
     @Autowired
-    private AdoptionRequestService service;
+    private VaccinationRecordService service;
 
     @Autowired
     private TestEntityManager entityManager;
 
     private PodamFactory factory = new PodamFactoryImpl();
 
-    private List<AdoptionRequestEntity> requestList = new ArrayList<>();
+    private List<VaccinationRecordEntity> recordList = new ArrayList<>();
     private List<PetEntity> petList = new ArrayList<>();
-    private List<AdopterEntity> adopterList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -45,9 +45,8 @@ class AdoptionRequestServiceTest {
     }
 
     private void clearData() {
-        entityManager.getEntityManager().createQuery("delete from AdoptionRequestEntity").executeUpdate();
+        entityManager.getEntityManager().createQuery("delete from VaccinationRecordEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from PetEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from AdopterEntity").executeUpdate();
     }
 
     private void insertData() {
@@ -56,37 +55,35 @@ class AdoptionRequestServiceTest {
             entityManager.persist(pet);
             petList.add(pet);
 
-            AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            entityManager.persist(adopter);
-            adopterList.add(adopter);
+            VaccinationRecordEntity record = new VaccinationRecordEntity();
+            record.setPet(pet);
 
-            AdoptionRequestEntity request = factory.manufacturePojo(AdoptionRequestEntity.class);
-            request.setPet(pet);
-            request.setAdopter(adopter);
-            request.setStatus("PENDING");
-
-            entityManager.persist(request);
-            requestList.add(request);
+            entityManager.persist(record);
+            recordList.add(record);
         }
     }
 
     @Test
-    void testCreate() throws Exception {
-        AdoptionRequestEntity entity = factory.manufacturePojo(AdoptionRequestEntity.class);
+    void testCreateRecord() throws Exception {
+        VaccinationRecordEntity entity = new VaccinationRecordEntity();
         entity.setPet(petList.get(0));
-        entity.setAdopter(adopterList.get(0));
-        entity.setStatus("PENDING");
 
-        AdoptionRequestEntity result = service.createAdoptionRequest(entity);
+        VaccinationRecordEntity result = service.createRecord(entity);
 
         assertNotNull(result);
     }
 
     @Test
-    void testCreateInvalid() {
+    void testCreateRecordInvalid() {
         assertThrows(IllegalOperationException.class, () -> {
-            AdoptionRequestEntity entity = new AdoptionRequestEntity();
-            service.createAdoptionRequest(entity);
+            VaccinationRecordEntity entity = new VaccinationRecordEntity();
+            service.createRecord(entity);
         });
+    }
+
+    @Test
+    void testGetRecords() {
+        List<VaccinationRecordEntity> list = service.getRecords();
+        assertEquals(recordList.size(), list.size());
     }
 }

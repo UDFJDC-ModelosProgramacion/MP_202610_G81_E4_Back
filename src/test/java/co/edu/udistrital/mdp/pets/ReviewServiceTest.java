@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.TrialStayService;
+import co.edu.udistrital.mdp.pets.services.ReviewService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,17 +25,17 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-@Import(TrialStayService.class)
-public class TrialStayServiceTest {
+@Import(ReviewService.class)
+public class ReviewServiceTest {
 
     @Autowired
-    private TrialStayService trialStayService;
+    private ReviewService reviewService;
 
     @Autowired
     private TestEntityManager entityManager;
 
     private PodamFactory factory = new PodamFactoryImpl();
-    private List<TrialStayEntity> trialStayList = new ArrayList<>();
+    private List<ReviewEntity> reviewList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -44,7 +44,7 @@ public class TrialStayServiceTest {
     }
 
     private void clearData() {
-        entityManager.getEntityManager().createQuery("delete from TrialStayEntity").executeUpdate();
+        entityManager.getEntityManager().createQuery("delete from ReviewEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from AdoptionEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from PetEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from ShelterEntity").executeUpdate();
@@ -66,81 +66,89 @@ public class TrialStayServiceTest {
             adopter.setLastName("Apellido");
             entityManager.persist(adopter);
 
-            AdoptionEntity adoption = new AdoptionEntity();
+            AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
             adoption.setPet(pet);
             adoption.setAdopter(adopter);
             entityManager.persist(adoption);
 
-            TrialStayEntity trialStay = new TrialStayEntity();
-            trialStay.setPet(pet);
-            trialStay.setAdoption(adoption);
-            trialStay.setStartDate(LocalDate.now());
-            trialStay.setEndDate(LocalDate.now().plusDays(3));
+            ReviewEntity review = new ReviewEntity();
+            review.setComments("Test");
+            review.setRating(5);
+            review.setReviewDate(LocalDate.now());
+            review.setAdopter(adopter);
+            review.setAdoption(adoption);
 
-            entityManager.persist(trialStay);
-            trialStayList.add(trialStay);
+            entityManager.persist(review);
+            reviewList.add(review);
         }
         entityManager.flush();
     }
 
     @Test
-    void testCreateTrialStay() {
+    void testCreateReview() {
+        AdopterEntity adopter = entityManager.persist(factory.manufacturePojo(AdopterEntity.class));
         ShelterEntity shelter = entityManager.persist(factory.manufacturePojo(ShelterEntity.class));
 
         PetEntity pet = factory.manufacturePojo(PetEntity.class);
         pet.setShelter(shelter);
         entityManager.persist(pet);
 
-        AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-        adopter.setFirstName("Juan");
-        adopter.setLastName("Perez");
-        entityManager.persist(adopter);
-
         AdoptionEntity adoption = new AdoptionEntity();
         adoption.setPet(pet);
         adoption.setAdopter(adopter);
         entityManager.persist(adoption);
 
-        
-        TrialStayEntity entity = new TrialStayEntity();
-        entity.setStartDate(LocalDate.now());
-        entity.setEndDate(LocalDate.now().plusDays(5));
-        entity.setResult("OK");
-        TrialStayEntity result = trialStayService.createTrialStay(entity, pet.getId(), adoption.getId());
+        ReviewEntity newReview = new ReviewEntity();
+        newReview.setComments("Nueva review");
+        newReview.setRating(4);
+        newReview.setReviewDate(LocalDate.now());
+        ReviewEntity result = reviewService.createReview(newReview, adoption.getId(), adopter.getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
-
-        TrialStayEntity found = entityManager.find(TrialStayEntity.class, result.getId());
-        assertEquals("OK", found.getResult());
-        assertNotNull(found.getPet());
-        assertNotNull(found.getAdoption());
+        assertEquals(4, result.getRating());
     }
 
     @Test
-    void testSearchTrialStay() {
-        TrialStayEntity entity = trialStayList.get(0);
-        TrialStayEntity result = trialStayService.searchTrialStay(entity.getId());
+    void testSearchReview() {
+        ReviewEntity expected = reviewList.get(0);
+        ReviewEntity result = reviewService.searchReview(expected.getId());
 
         assertNotNull(result);
-        assertEquals(entity.getId(), result.getId());
+        assertEquals(expected.getId(), result.getId());
     }
 
     @Test
-    void testSearchTrialStayNotFound() {
+    void testSearchReviewNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
-            trialStayService.searchTrialStay(999L);
+            reviewService.searchReview(99999L);
         });
     }
 
     @Test
-    void testDeleteTrialStay() {
-        TrialStayEntity entity = trialStayList.get(0);
-        
-        trialStayService.deleteTrialStay(entity.getId());
-        
+    void testUpdateReview() {
+        ReviewEntity original = reviewList.get(0);
+
+        ReviewEntity details = new ReviewEntity();
+        details.setComments("Updated");
+        details.setRating(2);
+        details.setReviewDate(LocalDate.now());
+        ReviewEntity updated = reviewService.updateReview(original.getId(), details);
+
+        assertNotNull(updated);
         entityManager.flush();
-        TrialStayEntity found = entityManager.find(TrialStayEntity.class, entity.getId());
-        assertNull(found);
+        entityManager.clear();
+
+        ReviewEntity db = entityManager.find(ReviewEntity.class, original.getId());
+        assertEquals("Updated", db.getComments());
+        assertEquals(2, db.getRating());
+    }
+
+    @Test
+    void testDeleteReview() {
+        ReviewEntity review = reviewList.get(0);
+        reviewService.deleteReview(review.getId());
+        entityManager.flush();
+        assertNull(entityManager.find(ReviewEntity.class, review.getId()));
     }
 }
