@@ -1,6 +1,5 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
 import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
 import co.edu.udistrital.mdp.pets.repositories.AdoptionTrackingRepository;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @Service
 public class AdoptionTrackingService {
-
     @Autowired
     private AdoptionTrackingRepository repository;
 
@@ -21,7 +19,7 @@ public class AdoptionTrackingService {
     private AdoptionRepository adoptionRepository;
 
     @Transactional
-    public AdoptionTrackingEntity create(AdoptionTrackingEntity tracking) {
+    public AdoptionTrackingEntity createAdoptionTracking(AdoptionTrackingEntity tracking) {
         if (tracking == null) {
             throw new IllegalArgumentException("Tracking cannot be null");
         }
@@ -37,19 +35,22 @@ public class AdoptionTrackingService {
     }
 
     @Transactional(readOnly = true)
-    public List<AdoptionTrackingEntity> findAll() {
-        return repository.findAll();
+    public List<AdoptionTrackingEntity> getAdoptionTrackings() {
+        // Solución Sonar: Uso de .toList() para inmutabilidad
+        return repository.findAll().stream().toList();
     }
 
     @Transactional(readOnly = true)
-    public AdoptionTrackingEntity findById(Long id) {
+    public AdoptionTrackingEntity getAdoptionTracking(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
     }
 
     @Transactional
     public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
-        AdoptionTrackingEntity existing = findById(id);
+        AdoptionTrackingEntity existing = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
+        
         if (tracking.getNextReview() == null) {
             throw new IllegalArgumentException("Next review date cannot be null");
         }
@@ -63,7 +64,9 @@ public class AdoptionTrackingService {
 
     @Transactional
     public void deleteAdoptionTracking(Long id) {
-        AdoptionTrackingEntity tracking = findById(id);
+        AdoptionTrackingEntity tracking = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tracking not found with ID: " + id));
+                
         repository.delete(tracking);
     }
 }

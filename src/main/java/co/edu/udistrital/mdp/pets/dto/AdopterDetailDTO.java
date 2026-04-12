@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -21,12 +20,12 @@ public class AdopterDetailDTO extends AdopterDTO {
             if (entity.getAdoptionRequests() != null) {
                 this.adoptionRequests = entity.getAdoptionRequests().stream()
                         .map(AdoptionRequestDTO::new)
-                        .collect(Collectors.toList());
+                        .toList();
             }
             if (entity.getAdoptions() != null) {
                 this.adoptions = entity.getAdoptions().stream()
                         .map(AdoptionDTO::new)
-                        .collect(Collectors.toList());
+                        .toList();
             }
         }
     }

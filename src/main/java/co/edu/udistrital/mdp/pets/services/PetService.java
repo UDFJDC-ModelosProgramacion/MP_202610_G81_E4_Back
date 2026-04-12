@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PetService {
+    private static final String PET_NOT_FOUND = "Pet not found";
 
     @Autowired
     private PetRepository petRepository;
@@ -34,14 +35,13 @@ public class PetService {
         if (pet.getSpecies() == null || pet.getSpecies().isEmpty())
             throw new IllegalOperationException("Pet species is not valid");
 
-        if (pet.getStatus() == null || pet.getStatus().isEmpty())
-            throw new IllegalOperationException("Pet status is not valid");
-
-        if (pet.getShelter() == null || pet.getShelter().getId() == null)
-            throw new IllegalOperationException("Shelter ID is required");
         if (pet.getStatus() == null || pet.getStatus().isEmpty()) {
             pet.setStatus("AVAILABLE");
         }
+
+        if (pet.getShelter() == null || pet.getShelter().getId() == null)
+            throw new IllegalOperationException("Shelter ID is required");
+            
         ShelterEntity shelterEntity = shelterRepository.findById(pet.getShelter().getId())
                 .orElseThrow(() -> new IllegalOperationException("Shelter does not exist"));
 
@@ -56,14 +56,14 @@ public class PetService {
     @Transactional(readOnly = true)
     public List<PetEntity> getPets() {
         log.info("Searching all pets...");
-        return petRepository.findAll();
+        return petRepository.findAll().stream().toList();
     }
 
     @Transactional(readOnly = true)
     public PetEntity getPet(Long petId) throws EntityNotFoundException {
         log.info("Searching pet with ID: {}", petId);
         return petRepository.findById(petId)
-                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
+                .orElseThrow(() -> new EntityNotFoundException(PET_NOT_FOUND));
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class PetService {
             throws EntityNotFoundException, IllegalOperationException {
         
         PetEntity existing = petRepository.findById(petId)
-                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
+                .orElseThrow(() -> new EntityNotFoundException(PET_NOT_FOUND));
 
         log.info("Updating pet with ID: {}", petId);
 
@@ -96,7 +96,7 @@ public class PetService {
     @Transactional
     public void deletePet(Long petId) throws EntityNotFoundException, IllegalOperationException {
         PetEntity pet = petRepository.findById(petId)
-                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
+                .orElseThrow(() -> new EntityNotFoundException(PET_NOT_FOUND));
 
         log.info("Attempting to delete pet with ID: {}", petId);
 

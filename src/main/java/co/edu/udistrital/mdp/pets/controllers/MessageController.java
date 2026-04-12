@@ -9,66 +9,70 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
+    private static final String ERR_MSG = "message";
 
     @Autowired
     private MessageService service;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody MessageDTO dto) {
+    public ResponseEntity<Object> create(@RequestBody MessageDTO dto) {
         try {
             MessageEntity entity = toEntity(dto);
             MessageEntity saved = service.createMessage(entity);
             return new ResponseEntity<>(new MessageDTO(saved), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(ERR_MSG, "Error: " + e.getMessage()));
         }
     }
 
     @GetMapping
-    public List<MessageDTO> findAll() {
-        List<MessageDTO> list = new ArrayList<>();
-        for (MessageEntity m : service.searchAllMessages()) {
-            list.add(new MessageDTO(m));
-        }
-        return list;
+    public ResponseEntity<List<MessageDTO>> findAll() {
+        List<MessageDTO> list = service.searchAllMessages().stream()
+                .map(MessageDTO::new)
+                .toList();
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findOne(@PathVariable Long id) {
+    public ResponseEntity<Object> findOne(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(new MessageDTO(service.searchMessage(id)));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MessageDTO dto) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody MessageDTO dto) {
         try {
             MessageEntity entity = toEntity(dto);
             return ResponseEntity.ok(new MessageDTO(service.updateMessage(id, entity)));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) { 
+    public ResponseEntity<Object> delete(@PathVariable Long id) { 
         try {
             service.deleteMessage(id, id); 
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 

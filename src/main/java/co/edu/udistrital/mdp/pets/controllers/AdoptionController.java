@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,8 @@ public class AdoptionController {
         List<AdoptionEntity> entities = adoptionService.searchAdoptions();
         List<AdoptionDTO> dtos = entities.stream()
                 .map(AdoptionDTO::new)
-                .collect(Collectors.toList());
+                .toList();
+                
         return ResponseEntity.ok(dtos);
     }
 

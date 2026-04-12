@@ -14,6 +14,8 @@ import java.util.List;
 @Service
 public class DevolutionService {
 
+    private static final String DEVOLUTION_NOT_FOUND = "Devolution not found with ID: ";
+
     @Autowired
     private DevolutionRepository repository;
 
@@ -21,12 +23,13 @@ public class DevolutionService {
     private AdoptionRepository adoptionRepository;
 
     @Transactional
-    public DevolutionEntity create(DevolutionEntity devolution) {
+    public DevolutionEntity createDevolution(DevolutionEntity devolution) {
         if (devolution == null) throw new IllegalArgumentException("Devolution cannot be null");
         
         if (devolution.getAdoption() == null || devolution.getAdoption().getId() == null) {
             throw new IllegalArgumentException("Devolution must be associated with an existing adoption.");
         }
+
         AdoptionEntity adoption = adoptionRepository.findById(devolution.getAdoption().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Adoption not found with ID: " + devolution.getAdoption().getId()));
         
@@ -35,19 +38,21 @@ public class DevolutionService {
     }
 
     @Transactional(readOnly = true)
-    public List<DevolutionEntity> findAll() {
-        return repository.findAll();
+    public List<DevolutionEntity> searchDevolutions() {
+        return repository.findAll().stream().toList();
     }
 
     @Transactional(readOnly = true)
-    public DevolutionEntity findById(Long id) {
+    public DevolutionEntity searchDevolution(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Devolution not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
     }
 
     @Transactional
-    public DevolutionEntity update(Long id, DevolutionEntity devolution) {
-        DevolutionEntity existing = findById(id);
+    public DevolutionEntity updateDevolution(Long id, DevolutionEntity devolution) {
+        DevolutionEntity existing = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
+        
         if (devolution.getReturnDate() == null) {
             throw new IllegalArgumentException("Return date cannot be null");
         }
@@ -61,8 +66,10 @@ public class DevolutionService {
     }
 
     @Transactional
-    public void delete(Long id) {
-        DevolutionEntity devolution = findById(id);
+    public void deleteDevolution(Long id) {
+        DevolutionEntity devolution = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
+        
         repository.delete(devolution);
     }
 }
