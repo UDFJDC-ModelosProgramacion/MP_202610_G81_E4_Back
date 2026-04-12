@@ -36,7 +36,6 @@ public class AdopterService {
             if (!validHousing.contains(ht)) {
                 throw new IllegalArgumentException("Tipo de vivienda inválido");
             }
-
             adopter.setHousingType(ht.substring(0, 1) + ht.substring(1).toLowerCase());
         }
 
@@ -46,7 +45,7 @@ public class AdopterService {
     @Transactional(readOnly = true)
     public AdopterEntity searchAdopter(Long id) {
         return adopterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Adoptante no encontrado con ID: " + id));
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +55,6 @@ public class AdopterService {
 
     @Transactional
     public AdopterEntity updateAdopter(Long id, AdopterEntity adopter) {
-
         AdopterEntity existing = searchAdopter(id);
 
         existing.setFirstName(adopter.getFirstName());
@@ -65,7 +63,6 @@ public class AdopterService {
         existing.setHousingType(adopter.getHousingType());
         existing.setHasChildren(adopter.getHasChildren());
         existing.setHasOtherPets(adopter.getHasOtherPets());
-
         if (adopter.getPreferences() != null) {
             existing.setPreferences(new ArrayList<>(adopter.getPreferences()));
         }
@@ -75,14 +72,15 @@ public class AdopterService {
 
     @Transactional
     public void deleteAdopter(Long id) {
-
         AdopterEntity adopter = searchAdopter(id);
 
         if (adopter.getAdoptionRequests() != null && !adopter.getAdoptionRequests().isEmpty()) {
+            log.error("Error al intentar eliminar adoptante con ID {}: Tiene solicitudes asociadas", id);
             throw new IllegalStateException("Tiene solicitudes asociadas");
         }
 
         adopterRepository.delete(adopter);
+        log.info("Adoptante con ID {} eliminado exitosamente", id);
     }
 
     private void validateRequiredFields(AdopterEntity adopter) {

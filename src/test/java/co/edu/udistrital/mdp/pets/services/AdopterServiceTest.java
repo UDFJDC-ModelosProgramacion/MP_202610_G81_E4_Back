@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.pets;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -138,13 +138,18 @@ public class AdopterServiceTest {
         AdopterEntity entity = adopterList.get(0);
 
         AdoptionRequestEntity request = factory.manufacturePojo(AdoptionRequestEntity.class);
+    
         request.setAdopter(entity);
+        if (entity.getAdoptionRequests() == null) {
+            entity.setAdoptionRequests(new ArrayList<>());
+        }
+        entity.getAdoptionRequests().add(request); 
 
         entityManager.persist(request);
         entityManager.flush();
-
+        entityManager.refresh(entity); 
         assertThrows(IllegalStateException.class, () -> {
-            adopterService.deleteAdopter(entity.getId());
+        adopterService.deleteAdopter(entity.getId());
         });
     }
 }
