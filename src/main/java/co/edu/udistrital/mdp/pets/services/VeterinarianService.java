@@ -40,8 +40,6 @@ public class VeterinarianService {
     public VeterinarianEntity updateVeterinarian(Long id, VeterinarianEntity vet) {
         VeterinarianEntity existing = veterinarianRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Veterinarian not found with ID: " + id));
-
-        // Actualización directa sin restringir el Business ID
         existing.setVeterinarianIdBusiness(vet.getVeterinarianIdBusiness());
         existing.setLastName(vet.getLastName());
         existing.setAvailability(vet.getAvailability());

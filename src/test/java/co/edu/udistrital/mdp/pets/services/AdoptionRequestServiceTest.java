@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.pets;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import co.edu.udistrital.mdp.pets.services.*;
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import jakarta.transaction.Transactional;

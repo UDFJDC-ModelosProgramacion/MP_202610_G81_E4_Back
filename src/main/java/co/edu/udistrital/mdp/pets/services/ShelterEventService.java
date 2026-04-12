@@ -17,7 +17,6 @@ public class ShelterEventService {
 
     @Autowired
     private ShelterEventRepository shelterEventRepository;
-
     @Transactional
     public ShelterEventEntity createShelterEvent(ShelterEventEntity event) {
         if (event.getEventDate() != null && event.getEventDate().isBefore(LocalDateTime.now())) {
@@ -25,15 +24,16 @@ public class ShelterEventService {
         }
 
         if (event.getEventCode() == null) {
-            event.setEventCode((long) (new Random().nextInt(9000) + 1000));
+            event.setEventCode((long) (new Random().nextInt(900000) + 100000));
         }
 
+        log.info("Creando evento con código: {}", event.getEventCode());
         return shelterEventRepository.save(event);
     }
 
     @Transactional(readOnly = true)
     public ShelterEventEntity searchShelterEventByCode(Long eventCode) {
-        return shelterEventRepository.findByEventCode(eventCode.intValue())
+        return shelterEventRepository.findByEventCode(eventCode)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found with code: " + eventCode));
     }
 
@@ -64,6 +64,12 @@ public class ShelterEventService {
     @Transactional
     public void deleteShelterEventByCode(Long eventCode) {
         ShelterEventEntity event = searchShelterEventByCode(eventCode);
+        if (event.getEventDate() != null && event.getEventDate().isAfter(LocalDateTime.now())) {
+            log.error("Intento fallido de eliminar evento futuro con código: {}", eventCode);
+            throw new IllegalStateException("Cannot delete a future event");
+        }
+
         shelterEventRepository.delete(event);
+        log.info("Evento con código {} eliminado con éxito", eventCode);
     }
 }
