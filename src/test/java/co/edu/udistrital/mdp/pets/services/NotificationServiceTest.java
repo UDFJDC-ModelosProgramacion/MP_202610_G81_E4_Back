@@ -121,9 +121,9 @@ class NotificationServiceTest {
         entityManager.persist(recent);
         entityManager.flush();
         Long recentId = recent.getId();
-        assertThrows(IllegalOperationException.class, () -> 
-            notificationService.deleteNotification(recentId)
-        );
+        assertThrows(IllegalOperationException.class, () -> {
+            notificationService.deleteNotification(recentId);
+        });
     }
 
     @Test
