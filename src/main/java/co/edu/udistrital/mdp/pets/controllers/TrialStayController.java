@@ -24,7 +24,7 @@ public class TrialStayController {
         List<TrialStayDTO> list = trialStayService.searchTrialStays()
                 .stream()
                 .map(TrialStayDTO::new)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(list);
     }
 

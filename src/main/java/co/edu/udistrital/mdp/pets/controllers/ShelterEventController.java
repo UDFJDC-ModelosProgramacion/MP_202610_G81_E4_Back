@@ -30,7 +30,7 @@ public class ShelterEventController {
         List<ShelterEventEntity> entities = shelterEventService.searchAllShelterEvents();
         List<ShelterEventDTO> dtos = entities.stream()
                 .map(ShelterEventDTO::new)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(dtos);
     }
 

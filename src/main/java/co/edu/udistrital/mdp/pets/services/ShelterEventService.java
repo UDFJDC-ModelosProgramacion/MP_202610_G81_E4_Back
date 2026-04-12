@@ -2,7 +2,7 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +17,10 @@ public class ShelterEventService {
 
     @Autowired
     private ShelterEventRepository shelterEventRepository;
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String EVENT_NOT_FOUND = "Event not found with code: ";
+
     @Transactional
     public ShelterEventEntity createShelterEvent(ShelterEventEntity event) {
         if (event.getEventDate() != null && event.getEventDate().isBefore(LocalDateTime.now())) {
@@ -24,7 +28,7 @@ public class ShelterEventService {
         }
 
         if (event.getEventCode() == null) {
-            event.setEventCode((long) (new Random().nextInt(900000) + 100000));
+            event.setEventCode((long) (SECURE_RANDOM.nextInt(900000) + 100000));
         }
 
         log.info("Creando evento con código: {}", event.getEventCode());
@@ -34,17 +38,20 @@ public class ShelterEventService {
     @Transactional(readOnly = true)
     public ShelterEventEntity searchShelterEventByCode(Long eventCode) {
         return shelterEventRepository.findByEventCode(eventCode)
-                .orElseThrow(() -> new EntityNotFoundException("Event not found with code: " + eventCode));
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventCode));
     }
 
     @Transactional(readOnly = true)
     public List<ShelterEventEntity> searchAllShelterEvents() {
-        return shelterEventRepository.findAll();
+        log.info("Fetching all shelter events");
+        return shelterEventRepository.findAll().stream().toList();
     }
 
     @Transactional
     public ShelterEventEntity updateShelterEventByCode(Long eventCode, ShelterEventEntity eventData) {
-        ShelterEventEntity existing = searchShelterEventByCode(eventCode);
+        log.info("Updating event with code: {}", eventCode);
+        ShelterEventEntity existing = shelterEventRepository.findByEventCode(eventCode)
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventCode));
         
         existing.setEventType(eventData.getEventType());
         existing.setTitle(eventData.getTitle());
@@ -63,7 +70,9 @@ public class ShelterEventService {
 
     @Transactional
     public void deleteShelterEventByCode(Long eventCode) {
-        ShelterEventEntity event = searchShelterEventByCode(eventCode);
+        ShelterEventEntity event = shelterEventRepository.findByEventCode(eventCode)
+                .orElseThrow(() -> new EntityNotFoundException(EVENT_NOT_FOUND + eventCode));
+                
         if (event.getEventDate() != null && event.getEventDate().isAfter(LocalDateTime.now())) {
             log.error("Intento fallido de eliminar evento futuro con código: {}", eventCode);
             throw new IllegalStateException("Cannot delete a future event");

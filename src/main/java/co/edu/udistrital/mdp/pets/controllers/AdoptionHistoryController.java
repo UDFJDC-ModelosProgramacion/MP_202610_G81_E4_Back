@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,62 +17,65 @@ import java.util.Map;
 @RequestMapping("/adoption-histories")
 public class AdoptionHistoryController {
 
+    // 1. Constante para evitar duplicación de literales (SonarQube)
+    private static final String ERR_MSG = "message";
+
     @Autowired
     private AdoptionHistoryService service;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody AdoptionHistoryDTO dto) {
+    public ResponseEntity<Object> create(@RequestBody AdoptionHistoryDTO dto) {
         try {
             AdoptionHistoryEntity entity = toEntity(dto);
             AdoptionHistoryDTO response = new AdoptionHistoryDTO(service.createAdoptionHistory(entity));
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @GetMapping
     public ResponseEntity<List<AdoptionHistoryDTO>> getAll() {
-        List<AdoptionHistoryDTO> list = new ArrayList<>();
-        for (AdoptionHistoryEntity e : service.getAdoptionHistories()) {
-            list.add(new AdoptionHistoryDTO(e));
-        }
+        // 2. Uso de .toList() en lugar de bucles manuales o collect
+        List<AdoptionHistoryDTO> list = service.getAdoptionHistories().stream()
+                .map(AdoptionHistoryDTO::new)
+                .toList();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
         try {
             AdoptionHistoryEntity entity = service.getAdoptionHistory(id);
             return ResponseEntity.ok(new AdoptionHistoryDTO(entity));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", e.getMessage()));
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AdoptionHistoryDTO dto) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody AdoptionHistoryDTO dto) {
         try {
             AdoptionHistoryEntity entity = toEntity(dto);
             AdoptionHistoryEntity updated = service.updateAdoptionHistory(id, entity);
             return ResponseEntity.ok(new AdoptionHistoryDTO(updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", e.getMessage()));
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
             service.deleteAdoptionHistory(id);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", e.getMessage()));
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 

@@ -4,7 +4,7 @@ import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class AdoptionService {
+    private static final String ADOPTION_NOT_FOUND = "Adopción no encontrada";
 
     @Autowired
     private AdoptionRepository adoptionRepository;
@@ -56,23 +57,23 @@ public class AdoptionService {
         return newAdoption;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AdoptionEntity> searchAdoptions() {
-        return adoptionRepository.findAll();
+        return adoptionRepository.findAll().stream().toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AdoptionEntity searchAdoption(Long id) throws EntityNotFoundException {
         return adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
     }
 
     @Transactional
     public AdoptionEntity updateAdoption(Long id, AdoptionEntity adoptionData) 
-            throws EntityNotFoundException, IllegalOperationException {
-        
+            throws EntityNotFoundException {
+    
         AdoptionEntity existing = adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
 
         if (adoptionData.getStatus() != null) {
             existing.setStatus(adoptionData.getStatus());
@@ -87,7 +88,7 @@ public class AdoptionService {
     @Transactional
     public void deleteAdoption(Long id) throws EntityNotFoundException, IllegalOperationException {
         AdoptionEntity adoption = adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
 
         if (!"FINISHED".equalsIgnoreCase(adoption.getStatus())) {
             throw new IllegalOperationException("Solo se pueden eliminar adopciones con estado FINISHED");
