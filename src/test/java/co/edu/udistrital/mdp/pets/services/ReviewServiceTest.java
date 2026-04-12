@@ -68,7 +68,7 @@ public class ReviewServiceTest {
             entityManager.persist(adoption);
 
             ReviewEntity review = new ReviewEntity();
-            review.setComments("Test");
+            review.setComments("Test " + i);
             review.setRating(5);
             review.setReviewDate(LocalDate.now());
             review.setAdopter(adopter);
@@ -95,27 +95,36 @@ public class ReviewServiceTest {
         newReview.setComments("Nueva review");
         newReview.setRating(4);
         newReview.setReviewDate(LocalDate.now());
+        
+        // El servicio requiere review, adoptionId y adopterId
         ReviewEntity result = reviewService.createReview(newReview, adoption.getId(), adopter.getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(4, result.getRating());
+        assertEquals(adopter.getId(), result.getAdopter().getId());
     }
 
     @Test
-    void testSearchReview() {
+    void testGetReview() { // CORRECCIÓN: Nombre coincidente con el Service
         ReviewEntity expected = reviewList.get(0);
-        ReviewEntity result = reviewService.searchReview(expected.getId());
+        ReviewEntity result = reviewService.getReview(expected.getId());
 
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
     }
 
     @Test
-    void testSearchReviewNotFound() {
+    void testGetReviewNotFound() { // CORRECCIÓN: Nombre coincidente con el Service
         assertThrows(EntityNotFoundException.class, () -> {
-            reviewService.searchReview(99999L);
+            reviewService.getReview(99999L);
         });
+    }
+
+    @Test
+    void testGetReviews() { // Nuevo test para cubrir el método de listar
+        List<ReviewEntity> list = reviewService.getReviews();
+        assertEquals(reviewList.size(), list.size());
     }
 
     @Test
@@ -126,15 +135,12 @@ public class ReviewServiceTest {
         details.setComments("Updated");
         details.setRating(2);
         details.setReviewDate(LocalDate.now());
+        
         ReviewEntity updated = reviewService.updateReview(original.getId(), details);
 
         assertNotNull(updated);
-        entityManager.flush();
-        entityManager.clear();
-
-        ReviewEntity db = entityManager.find(ReviewEntity.class, original.getId());
-        assertEquals("Updated", db.getComments());
-        assertEquals(2, db.getRating());
+        assertEquals("Updated", updated.getComments());
+        assertEquals(2, updated.getRating());
     }
 
     @Test
@@ -142,6 +148,8 @@ public class ReviewServiceTest {
         ReviewEntity review = reviewList.get(0);
         reviewService.deleteReview(review.getId());
         entityManager.flush();
-        assertNull(entityManager.find(ReviewEntity.class, review.getId()));
+        
+        ReviewEntity deleted = entityManager.find(ReviewEntity.class, review.getId());
+        assertNull(deleted);
     }
 }

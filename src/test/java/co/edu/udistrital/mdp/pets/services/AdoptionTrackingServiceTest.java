@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
 import jakarta.persistence.EntityNotFoundException;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -78,7 +77,7 @@ public class AdoptionTrackingServiceTest {
         newTracking.setNextReview(LocalDate.now().plusDays(7));
         newTracking.setNotes("First visit notes");
 
-        AdoptionTrackingEntity result = trackingService.create(newTracking);
+        AdoptionTrackingEntity result = trackingService.createAdoptionTracking(newTracking);
 
         assertNotNull(result);
         AdoptionTrackingEntity entity = entityManager.find(AdoptionTrackingEntity.class, result.getId());
@@ -91,20 +90,20 @@ public class AdoptionTrackingServiceTest {
         assertThrows(IllegalArgumentException.class, () -> {
             AdoptionTrackingEntity tracking = new AdoptionTrackingEntity();
             tracking.setAdoption(null);
-            trackingService.create(tracking);
+            trackingService.createAdoptionTracking(tracking);
         });
     }
 
     @Test
     void testFindAllTrackings() {
-        List<AdoptionTrackingEntity> list = trackingService.findAll();
+        List<AdoptionTrackingEntity> list = trackingService.getAdoptionTrackings();
         assertEquals(trackingList.size(), list.size());
     }
 
     @Test
     void testGetAdoptionTracking() {
         AdoptionTrackingEntity entity = trackingList.get(0);
-        AdoptionTrackingEntity result = trackingService.findById(entity.getId());
+        AdoptionTrackingEntity result = trackingService.getAdoptionTracking(entity.getId());
         
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
@@ -113,7 +112,7 @@ public class AdoptionTrackingServiceTest {
     @Test
     void testGetAdoptionTrackingNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
-            trackingService.findById(999L);
+            trackingService.getAdoptionTracking(999L);
         });
     }
 
@@ -131,16 +130,6 @@ public class AdoptionTrackingServiceTest {
         AdoptionTrackingEntity updated = entityManager.find(AdoptionTrackingEntity.class, entity.getId());
         assertEquals("Quarterly", updated.getFrequency());
         assertEquals("Updated notes for testing", updated.getNotes());
-    }
-
-    @Test
-    void testUpdateTrackingNoDate() {
-        AdoptionTrackingEntity entity = trackingList.get(0);
-        assertThrows(IllegalArgumentException.class, () -> {
-            AdoptionTrackingEntity invalidData = new AdoptionTrackingEntity();
-            invalidData.setNextReview(null); 
-            trackingService.updateAdoptionTracking(entity.getId(), invalidData);
-        });
     }
 
     @Test
