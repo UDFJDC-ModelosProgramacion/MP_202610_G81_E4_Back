@@ -25,7 +25,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(AdopterService.class)
-public class AdopterServiceTest {
+class AdopterServiceTest {
 
     @Autowired
     private AdopterService adopterService;
@@ -76,15 +76,14 @@ public class AdopterServiceTest {
         assertEquals("Apartamento", found.getHousingType());
     }
 
-    @Test
+   @Test
     void testCreateAdopterInvalidHousing() {
         AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
         newEntity.setFirstName("Juan");
         newEntity.setLastName("Perez");
         newEntity.setHousingType("Hotel");
-
         assertThrows(IllegalArgumentException.class, () -> {
-            adopterService.createAdopter(newEntity);
+        adopterService.createAdopter(newEntity);
         });
     }
 
@@ -135,11 +134,9 @@ public class AdopterServiceTest {
     }
 
     @Test
-    void testDeleteAdopterWithRequests() {
+        void testDeleteAdopterWithRequests() {
         AdopterEntity entity = adopterList.get(0);
-
         AdoptionRequestEntity request = factory.manufacturePojo(AdoptionRequestEntity.class);
-    
         request.setAdopter(entity);
         if (entity.getAdoptionRequests() == null) {
             entity.setAdoptionRequests(new ArrayList<>());

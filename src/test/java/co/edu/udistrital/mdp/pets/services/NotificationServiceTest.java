@@ -24,7 +24,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(NotificationService.class)
-public class NotificationServiceTest {
+class NotificationServiceTest {
 
     @Autowired
     private NotificationService notificationService;
@@ -82,9 +82,9 @@ public class NotificationServiceTest {
     void testCreateNotificationNoUser() {
         NotificationEntity entity = factory.manufacturePojo(NotificationEntity.class);
         entity.setUserId(null); 
-        assertThrows(IllegalArgumentException.class, () -> {
-            notificationService.createNotification(entity);
-        });
+        assertThrows(IllegalArgumentException.class, () -> 
+            notificationService.createNotification(entity)
+        );
     }
 
     @Test
@@ -129,11 +129,9 @@ public class NotificationServiceTest {
     @Test
     void testDeleteNotificationSuccess() throws IllegalOperationException {
         NotificationEntity oldNotification = notificationList.get(0);
-        
         notificationService.deleteNotification(oldNotification.getId());
         entityManager.flush();
 
-        NotificationEntity deleted = entityManager.find(NotificationEntity.class, oldNotification.getId());
-        assertNull(deleted);
+        assertNull(entityManager.find(NotificationEntity.class, oldNotification.getId()));
     }
 }

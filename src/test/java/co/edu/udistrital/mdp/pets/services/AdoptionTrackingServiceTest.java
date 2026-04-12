@@ -22,7 +22,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(AdoptionTrackingService.class)
-public class AdoptionTrackingServiceTest {
+class AdoptionTrackingServiceTest {
 
     @Autowired
     private AdoptionTrackingService trackingService;
@@ -89,9 +89,9 @@ public class AdoptionTrackingServiceTest {
     void testCreateTrackingNoAdoption() {
         AdoptionTrackingEntity tracking = new AdoptionTrackingEntity();
         tracking.setAdoption(null);
-        assertThrows(IllegalArgumentException.class, () -> {
-            trackingService.createAdoptionTracking(tracking);
-        });
+        assertThrows(IllegalArgumentException.class, () -> 
+            trackingService.createAdoptionTracking(tracking)
+        );
     }
 
     @Test
@@ -111,9 +111,7 @@ public class AdoptionTrackingServiceTest {
 
     @Test
     void testGetAdoptionTrackingNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            trackingService.getAdoptionTracking(999L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> trackingService.getAdoptionTracking(999L));
     }
 
     @Test

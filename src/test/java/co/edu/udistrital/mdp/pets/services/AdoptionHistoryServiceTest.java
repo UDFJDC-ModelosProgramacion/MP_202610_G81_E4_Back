@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.AdoptionHistoryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -25,7 +24,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(AdoptionHistoryService.class)
-public class AdoptionHistoryServiceTest {
+class AdoptionHistoryServiceTest {
 
     @Autowired
     private AdoptionHistoryService historyService;
@@ -99,14 +98,14 @@ public class AdoptionHistoryServiceTest {
         });
     }
 
-    @Test
+   @Test
     void testCreateAdoptionHistoryEmptyReason() {
         AdoptionHistoryEntity history = factory.manufacturePojo(AdoptionHistoryEntity.class);
         history.setReason("");
         assertThrows(IllegalArgumentException.class, () -> {
             historyService.createAdoptionHistory(history);
         });
-    }
+      }
 
     @Test
     void testGetAdoptionHistory() {

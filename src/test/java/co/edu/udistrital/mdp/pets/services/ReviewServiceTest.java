@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.TestEntityFactory;
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.ReviewService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,7 +26,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(ReviewService.class)
-public class ReviewServiceTest {
+class ReviewServiceTest {
 
     @Autowired
     private ReviewService reviewService;
