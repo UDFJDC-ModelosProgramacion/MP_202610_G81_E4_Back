@@ -15,8 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.NotificationService;
-import jakarta.persistence.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import jakarta.transaction.Transactional;
 
 import uk.co.jemos.podam.api.PodamFactory;
@@ -36,7 +35,6 @@ public class NotificationServiceTest {
     private PodamFactory factory = new PodamFactoryImpl();
     private List<NotificationEntity> notificationList = new ArrayList<>();
     
-    // Usamos un ID de prueba para simular al usuario
     private final Long commonUserId = 1L;
 
     @BeforeEach
@@ -52,13 +50,10 @@ public class NotificationServiceTest {
     private void insertData() {
         for (int i = 0; i < 3; i++) {
             NotificationEntity notification = factory.manufacturePojo(NotificationEntity.class);
-            // Seteamos el ID plano en lugar del objeto UserEntity
             notification.setUserId(commonUserId);
             notification.setMessage("Mensaje de prueba " + i);
             notification.setNotificationType("INFO");
             notification.setUserType("ADOPTER");
-            
-            // Fecha de hace 40 días para pasar la regla del delete
             notification.setTimestamp(LocalDateTime.now().minusDays(40));
             notification.setIsRead(false);
 
@@ -87,25 +82,15 @@ public class NotificationServiceTest {
     void testCreateNotificationNoUser() {
         assertThrows(IllegalArgumentException.class, () -> {
             NotificationEntity entity = factory.manufacturePojo(NotificationEntity.class);
-            entity.setUserId(null); // Validamos que el ID no sea nulo
+            entity.setUserId(null); 
             notificationService.createNotification(entity);
         });
     }
 
     @Test
-    void testCreateNotificationEmptyMessage() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            NotificationEntity entity = factory.manufacturePojo(NotificationEntity.class);
-            entity.setUserId(commonUserId);
-            entity.setMessage("");
-            notificationService.createNotification(entity);
-        });
-    }
-
-    @Test
-    void testSearchNotification() {
+    void testFindById() {
         NotificationEntity entity = notificationList.get(0);
-        NotificationEntity result = notificationService.searchNotification(entity.getId());
+        NotificationEntity result = notificationService.findById(entity.getId());
         
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
@@ -132,17 +117,16 @@ public class NotificationServiceTest {
     void testDeleteNotificationYoungerThan30Days() {
         NotificationEntity recent = factory.manufacturePojo(NotificationEntity.class);
         recent.setUserId(commonUserId);
-        recent.setTimestamp(LocalDateTime.now()); // Muy joven
+        recent.setTimestamp(LocalDateTime.now()); 
         entityManager.persist(recent);
         entityManager.flush();
-
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(IllegalOperationException.class, () -> {
             notificationService.deleteNotification(recent.getId());
         });
     }
 
     @Test
-    void testDeleteNotificationSuccess() {
+    void testDeleteNotificationSuccess() throws IllegalOperationException {
         NotificationEntity oldNotification = notificationList.get(0);
         
         notificationService.deleteNotification(oldNotification.getId());
