@@ -60,7 +60,8 @@ public class VaccineService {
     @Transactional
     public VaccineEntity updateVaccine(Long id, VaccineEntity vaccineDetails) throws IllegalOperationException {
         log.info("Actualizando vacuna con ID: {}", id);
-        VaccineEntity existing = getVaccine(id);
+        VaccineEntity existing = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(VACCINE_NOT_FOUND + id));
 
         existing.setVaccineName(vaccineDetails.getVaccineName());
         existing.setApplicationDate(vaccineDetails.getApplicationDate());
@@ -74,7 +75,8 @@ public class VaccineService {
     @Transactional
     public void deleteVaccine(Long id) {
         log.info("Eliminando vacuna con ID: {}", id);
-        VaccineEntity vaccineToDelete = getVaccine(id);
+        VaccineEntity vaccineToDelete = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(VACCINE_NOT_FOUND + id));
         repository.delete(vaccineToDelete);
     }
 }
