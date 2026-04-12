@@ -3,6 +3,8 @@ package co.edu.udistrital.mdp.pets.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+// Importar la exclusión de Podam
+import uk.co.jemos.podam.common.PodamExclude; 
 import java.util.List;
 import java.util.ArrayList;
 
@@ -35,12 +37,14 @@ public class AdopterEntity extends BaseEntity {
     @Column(name = "preference")
     private List<String> preferences = new ArrayList<>();
 
+    @PodamExclude 
     @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("adopter")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<AdoptionRequestEntity> adoptionRequests = new ArrayList<>();
 
+    @PodamExclude 
     @OneToMany(mappedBy = "adopter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("adopter")
     @ToString.Exclude
