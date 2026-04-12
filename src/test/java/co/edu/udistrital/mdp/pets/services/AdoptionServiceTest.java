@@ -2,7 +2,6 @@ package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +17,13 @@ import co.edu.udistrital.mdp.pets.TestEntityFactory;
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import co.edu.udistrital.mdp.pets.services.AdoptionService;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
 @Import(AdoptionService.class)
-public class AdoptionServiceTest {
+class AdoptionServiceTest {
 
     @Autowired
     private AdoptionService adoptionService;

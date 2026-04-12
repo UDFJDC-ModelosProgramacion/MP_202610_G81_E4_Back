@@ -1,5 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
+import co.edu.udistrital.mdp.pets.dto.AdoptionDTO;
 import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDTO;
 import co.edu.udistrital.mdp.pets.entities.AdoptionEntity; // Importación necesaria
 import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
@@ -16,23 +17,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/adoption-trackings")
 public class AdoptionTrackingController {
-    
-    // Constante para evitar duplicación del literal "message" según Sonar
     private static final String ERR_MSG = "message";
 
     @Autowired
     private AdoptionTrackingService service;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody AdoptionTrackingDTO dto) {
-        try {
-            AdoptionTrackingEntity entity = toEntity(dto);
-            // Asegúrate de que el método en el servicio sea el correcto (createAdoptionTracking)
-            AdoptionTrackingDTO response = new AdoptionTrackingDTO(service.createAdoptionTracking(entity));
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
-        }
+    public ResponseEntity<AdoptionTrackingDTO> create(@RequestBody AdoptionTrackingDTO trackingDTO) {
+        AdoptionTrackingEntity created = service.createAdoptionTracking(toEntity(trackingDTO));
+        return new ResponseEntity<>(new AdoptionTrackingDTO(created), HttpStatus.CREATED);
     }
 
     @GetMapping

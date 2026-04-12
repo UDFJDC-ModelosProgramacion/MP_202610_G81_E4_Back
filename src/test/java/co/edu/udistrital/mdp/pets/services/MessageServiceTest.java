@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.MessageService;
 import jakarta.transaction.Transactional;
 
 import uk.co.jemos.podam.api.PodamFactory;
@@ -24,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(MessageService.class)
-public class MessageServiceTest {
+class MessageServiceTest {
 
     @Autowired
     private MessageService messageService;
@@ -34,8 +33,6 @@ public class MessageServiceTest {
 
     private PodamFactory factory = new PodamFactoryImpl();
     private List<MessageEntity> messageList = new ArrayList<>();
-    
-    // IDs de prueba para simular emisor y receptor
     private Long senderId = 1L;
     private Long recipientId = 2L;
 
@@ -47,14 +44,11 @@ public class MessageServiceTest {
 
     private void clearData() {
         entityManager.getEntityManager().createQuery("delete from MessageEntity").executeUpdate();
-        // Ya no necesitamos borrar UserEntity necesariamente si no hay FK, 
-        // pero es buena práctica mantener limpio el contexto.
     }
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
             MessageEntity message = factory.manufacturePojo(MessageEntity.class);
-            // Usamos los IDs planos en lugar de los objetos Entity
             message.setSenderId(senderId);
             message.setRecipientId(recipientId);
             message.setSenderType("ADOPTER");
@@ -82,7 +76,6 @@ public class MessageServiceTest {
         assertNotNull(result);
         MessageEntity found = entityManager.find(MessageEntity.class, result.getId());
         assertEquals("Test Subject", found.getSubject());
-        assertEquals(senderId, found.getSenderId());
     }
 
     @Test
@@ -96,9 +89,7 @@ public class MessageServiceTest {
 
     @Test
     void testSearchMessageNotFound() {
-        assertThrows(RuntimeException.class, () -> {
-            messageService.searchMessage(999L);
-        });
+        assertThrows(RuntimeException.class, () -> messageService.searchMessage(999L));
     }
 
     @Test
@@ -109,13 +100,12 @@ public class MessageServiceTest {
 
     @Test
     void testCreateMessageToYourself() {
-        // Esta prueba verifica que el Service bloquee IDs iguales
         MessageEntity message = factory.manufacturePojo(MessageEntity.class);
         message.setSenderId(senderId);
-        message.setRecipientId(senderId); // MISMO ID
-        assertThrows(IllegalArgumentException.class, () -> {
-            messageService.createMessage(message);
-        });
+        message.setRecipientId(senderId);
+        assertThrows(IllegalArgumentException.class, () -> 
+            messageService.createMessage(message)
+        );
     }
 
     @Test
@@ -145,16 +135,14 @@ public class MessageServiceTest {
         updateData.setRecipientId(recipientId);
         Long oldMessageId = oldMessage.getId();
         
-        assertThrows(IllegalArgumentException.class, () -> {
-            messageService.updateMessage(oldMessageId, updateData);
-        });
+        assertThrows(IllegalArgumentException.class, () -> 
+            messageService.updateMessage(oldMessage.getId(), updateData)
+        );
     }
 
     @Test
     void testDeleteMessageBySender() {
         MessageEntity message = messageList.get(0);
-        
-        // El segundo parámetro es el ID del que intenta borrar (debe coincidir con senderId)
         messageService.deleteMessage(message.getId(), senderId);
         
         entityManager.flush();

@@ -22,7 +22,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(DevolutionService.class)
-public class DevolutionServiceTest {
+class DevolutionServiceTest {
 
     @Autowired
     private DevolutionService devolutionService;
@@ -88,9 +88,9 @@ public class DevolutionServiceTest {
     void testCreateDevolutionNoAdoption() {
         DevolutionEntity devolution = new DevolutionEntity();
         devolution.setAdoption(null);
-        assertThrows(IllegalArgumentException.class, () -> {
-            devolutionService.createDevolution(devolution);
-        });
+        assertThrows(IllegalArgumentException.class, () -> 
+            devolutionService.createDevolution(devolution)
+        );
     }
 
     @Test
@@ -110,9 +110,9 @@ public class DevolutionServiceTest {
 
     @Test
     void testFindDevolutionNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            devolutionService.searchDevolution(999L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> 
+            devolutionService.searchDevolution(999L)
+        );
     }
 
     @Test
