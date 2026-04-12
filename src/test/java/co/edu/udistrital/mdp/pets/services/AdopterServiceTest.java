@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.AdopterService;
+
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
