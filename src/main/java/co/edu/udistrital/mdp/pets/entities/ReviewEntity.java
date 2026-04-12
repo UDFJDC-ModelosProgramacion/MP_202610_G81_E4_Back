@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "reviews")
@@ -19,13 +22,15 @@ public class ReviewEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String comments;
     private Integer rating;
-    private LocalDateTime reviewDate;
-
-    @OneToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "adoption_id")
-    private AdoptionEntity adoption;
+    private LocalDate reviewDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopter_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
     private AdopterEntity adopter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id")
+    @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
+    private AdoptionEntity adoption;
 }

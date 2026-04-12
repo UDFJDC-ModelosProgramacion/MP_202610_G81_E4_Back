@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.ToString;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,9 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MessageEntity extends BaseEntity {
 
+    @Column(name = "sender_type")
     private String senderType;
+
+    @Column(name = "recipient_type")
     private String recipientType;
+
     private LocalDateTime timestamp;
+    
     private String subject;
 
     @Column(columnDefinition = "TEXT")
@@ -27,13 +30,9 @@ public class MessageEntity extends BaseEntity {
 
     private Boolean isRead;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
-    private UserEntity sender;
+    @Column(name = "sender_id")
+    private Long senderId;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id")
-    private UserEntity recipient;
+    @Column(name = "recipient_id")
+    private Long recipientId;
 }

@@ -84,21 +84,26 @@ description: >-
   This endpoint supports partial updates. You only need to include the fields
   you want to modify in the request body. All other fields will retain their
   current values.
-url: "{{base_url}}/update/{{ultimo_id_shelter}}"
+url: http://localhost:8080/api/shelters/1
 method: PUT
 body:
   type: json
   content: "{\r
 
-    \    \"name\": \"Orejitas y Colas - Sede Norte\",\r
+    \r
+
+    \    \"name\": \"Refugio Actualizado\",\r
 
     \    \"city\": \"Bogotá\",\r
 
-    \    \"address\": \"Calle 123 #45-67\",\r
+    \    \"address\": \"Nueva Avenida 123\",\r
 
-    \    \"phone\": \"3001234567\",\r
+    \    \"phone\": \"3009998877\",\r
 
-    \    \"email\": \"contacto@orejitas.com\"\r
+    \    \"email\": \"nuevo_email@refugio.com\"\r
+
+    \r
 
     }"
+examples: ./.resources/Update Shelter.resources/examples
 order: 3000

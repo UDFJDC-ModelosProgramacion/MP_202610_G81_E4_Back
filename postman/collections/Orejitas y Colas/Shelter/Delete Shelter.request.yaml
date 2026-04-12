@@ -15,18 +15,18 @@ description: >-
 
 
   - **Method**: `DELETE`
-
+      
   - **Endpoint**: `/delete/{id}`
-
+      
   - **Content-Type**: Not required for DELETE requests
-
+      
 
   ### Path Parameters
 
 
   | Parameter | Type | Required | Description |
 
-  |-----------|------|----------|-------------|
+  | --- | --- | --- | --- |
 
   | `id` | Long | Yes | The unique identifier of the shelter to delete |
 
@@ -45,7 +45,7 @@ description: >-
 
   | Status Code | Description |
 
-  |-------------|-------------|
+  | --- | --- |
 
   | 204 | Success - Shelter deleted successfully |
 
@@ -61,6 +61,30 @@ description: >-
   reviews, events, and adoption records. Ensure you understand the cascade
   behavior before performing this operation. Consider archiving instead of
   deleting if you need to maintain historical records.
-url: "{{base_url}}/delete/{{ultimo_id_shelter}}"
+url: http://localhost:8080/api/shelters/1
 method: DELETE
+body:
+  type: text
+  content: "{\r
+
+    \    \"name\": \"Refugio Distrital\",\r
+
+    \    \"city\": \"Bogotá\",\r
+
+    \    \"address\": \"Calle 123 #45-67\",\r
+
+    \    \"phone\": \"3101234567\",\r
+
+    \    \"email\": \"contacto@refugio.edu.co\",\r
+
+    \    \"description\": \"Sede principal de atención a mascotas\",\r
+
+    \    \"photos\": [\"http://link-foto1.jpg\"],\r
+
+    \    \"videos\": []\r
+
+    }\r
+
+    \r\n"
+examples: ./.resources/Delete Shelter.resources/examples
 order: 4000

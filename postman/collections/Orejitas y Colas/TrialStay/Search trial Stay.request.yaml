@@ -75,6 +75,7 @@ description: >-
   The trial stay resource includes all attributes defined in the TrialStay
   entity, providing a complete view of the trial adoption period and its current
   status.
-url: "{{base_url}}/search/{{ultimo_id_trial_stay}}"
+url: http://localhost:8080/api/trial-stays
 method: GET
+examples: ./.resources/Search trial Stay.resources/examples
 order: 3000

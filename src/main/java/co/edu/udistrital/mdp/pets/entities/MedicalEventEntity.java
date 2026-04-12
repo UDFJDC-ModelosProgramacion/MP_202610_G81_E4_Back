@@ -29,4 +29,5 @@ public class MedicalEventEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "veterinarian_id")
     private VeterinarianEntity veterinarian;
+    
 }

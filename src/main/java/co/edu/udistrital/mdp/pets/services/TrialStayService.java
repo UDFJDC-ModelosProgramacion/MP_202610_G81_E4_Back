@@ -1,73 +1,62 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import java.util.List;
-
+import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
+import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
+import co.edu.udistrital.mdp.pets.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-import jakarta.persistence.EntityNotFoundException;
-
-import co.edu.udistrital.mdp.pets.repositories.TrialStayRepository;
-import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
-import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
-
-@Slf4j
 @Service
 public class TrialStayService {
+    @Autowired private TrialStayRepository trialStayRepository;
+    @Autowired private PetRepository petRepository;
+    @Autowired private AdoptionRepository adoptionRepository;
 
-    @Autowired
-    private TrialStayRepository trialStayRepository;
-
-    public TrialStayEntity createTrialStay(TrialStayEntity trialStay) {
-        log.info("Creating TrialStay");
-        if (trialStay == null) {
-            throw new IllegalArgumentException("TrialStay cannot be null");
-        }
-        if (trialStay.getStartDate() == null || trialStay.getEndDate() == null) {
-            throw new IllegalArgumentException("Start date and end date cannot be null");
-        }
-        if (trialStay.getAdoption() == null) {
-            throw new IllegalArgumentException("Adoption process cannot be null");
-        }
-        TrialStayEntity savedTrialStay = trialStayRepository.save(trialStay);
-        log.info("TrialStay created with id: {}", savedTrialStay.getId());
-        return savedTrialStay;
-    }
-    public TrialStayEntity searchTrialStay(Long id) {
-        log.info("Searching TrialStay with id: {}", id);
-        return trialStayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
-    }
-    public List<TrialStayEntity> searchAllTrialStays() {
-        log.info("Searching all TrialStays");
-        return trialStayRepository.findAll();
-    }
-    public TrialStayEntity updateTrialStay(Long id, TrialStayEntity trialStay) {
-        log.info("Updating TrialStay with id: {}", id);
-        TrialStayEntity existing = trialStayRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
-        if (trialStay.getStartDate() == null || trialStay.getEndDate() == null) {
-            throw new IllegalArgumentException("Start date and end date cannot be null");
-        }
-        existing.setStartDate(trialStay.getStartDate());
-        existing.setEndDate(trialStay.getEndDate());
-        existing.setResult(trialStay.getResult());
-        existing.setObservations(trialStay.getObservations());
-        existing.setPet(trialStay.getPet());
-        existing.setAdoption(trialStay.getAdoption());
+    @Transactional
+    public TrialStayEntity createTrialStay(TrialStayEntity trialStay, Long petId, Long adoptionId) {
+        trialStay.setPet(petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException("Pet not found")));
+        var adoption = adoptionRepository.findById(adoptionId)
+                .orElseThrow(() -> new EntityNotFoundException("Adoption not found"));
         
-        TrialStayEntity updatedTrialStay = trialStayRepository.save(existing);
-        log.info("TrialStay updated with id: {}", updatedTrialStay.getId());
-        return updatedTrialStay;
+        trialStay.setAdoption(adoption);
+        adoption.setTrialStay(trialStay); 
+
+        return trialStayRepository.save(trialStay);
     }
+
+    @Transactional(readOnly = true)
+    public List<TrialStayEntity> searchTrialStays() { return trialStayRepository.findAll(); }
+
+    @Transactional(readOnly = true)
+    public TrialStayEntity searchTrialStay(Long id) {
+        return trialStayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found"));
+    }
+
+    @Transactional
+    public TrialStayEntity updateTrialStay(Long id, TrialStayEntity details) {
+        TrialStayEntity existing = searchTrialStay(id);
+        existing.setStartDate(details.getStartDate());
+        existing.setEndDate(details.getEndDate());
+        existing.setResult(details.getResult());
+        existing.setObservations(details.getObservations());
+        return trialStayRepository.save(existing);
+    }
+
+    @Transactional
     public void deleteTrialStay(Long id) {
-        log.info("Deleting TrialStay with id: {}", id);
-        TrialStayEntity trialStay = trialStayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
-        if (trialStay.getAdoption() != null) {
-            throw new IllegalStateException("Cannot delete TrialStay with an associated adoption process");
-        }
-        trialStayRepository.delete(trialStay);
+    TrialStayEntity trialStay = trialStayRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
+    AdoptionEntity adoption = trialStay.getAdoption();
+    if (adoption != null) {
+        adoption.setTrialStay(null);
+        adoptionRepository.save(adoption);
     }
+    trialStayRepository.delete(trialStay);
+}
 }
 
 

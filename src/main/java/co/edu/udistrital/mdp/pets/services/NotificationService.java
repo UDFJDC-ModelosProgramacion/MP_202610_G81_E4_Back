@@ -1,89 +1,102 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
-import co.edu.udistrital.mdp.pets.entities.Notification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import co.edu.udistrital.mdp.pets.entities.NotificationEntity;
+import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class NotificationService {
 
     @Autowired
     private NotificationRepository notificationRepository;
 
-    public Notification createNotification(Notification n) {
-
-        if (n.getUserId() == null) {
-            throw new IllegalArgumentException("User required");
+    @Transactional
+    public NotificationEntity createNotification(NotificationEntity notification) {
+        log.info("Creating Notification");
+        
+        if (notification == null) {
+            throw new IllegalArgumentException("Notification cannot be null");
+        }
+        
+        if (notification.getUserId() == null) {
+            throw new IllegalArgumentException("Notification must be assigned to a user ID");
+        }
+        
+        if (notification.getMessage() == null || notification.getMessage().isEmpty()) {
+            throw new IllegalArgumentException("Notification message cannot be empty");
         }
 
-        if (n.getMessage() == null || n.getMessage().isEmpty()) {
-            throw new IllegalArgumentException("Message required");
+        if (notification.getTimestamp() == null) {
+            notification.setTimestamp(LocalDateTime.now());
+        }
+        if (notification.getIsRead() == null) {
+            notification.setIsRead(false);
         }
 
-        String[] validTypes = {
-                "MESSAGE",
-                "ADOPTION",
-                "SYSTEM"
-        };
-
-        boolean valid = false;
-
-        for (String t : validTypes) {
-            if (t.equals(n.getType())) {
-                valid = true;
-            }
-        }
-
-        if (!valid) {
-            throw new IllegalArgumentException("Invalid type");
-        }
-
-        n.setTimestamp(LocalDateTime.now());
-        n.setRead(false);
-
-        return notificationRepository.save(n);
+        NotificationEntity savedNotification = notificationRepository.save(notification);
+        log.info("Notification created with id: {} for user id: {}", savedNotification.getId(), notification.getUserId());
+        return savedNotification;
     }
 
+    @Transactional(readOnly = true)
+    public NotificationEntity searchNotification(Long id) {
+        log.info("Searching Notification with id: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        return notificationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Notification not found with id: " + id));
+    }
 
-    public Notification updateNotification(Long id, Notification updated) {
+    @Transactional(readOnly = true)
+    public List<NotificationEntity> searchNotifications() {
+        log.info("Searching all notifications");
+        return notificationRepository.findAll();
+    }
 
-        Notification existing =
-                notificationRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Not found"));
+    @Transactional
+    public NotificationEntity updateNotification(Long id, NotificationEntity notification) {
+        log.info("Updating Notification with id: {}", id);
+        
+        if (id == null || notification == null) {
+            throw new IllegalArgumentException("Id and Notification object cannot be null");
+        }
 
+        NotificationEntity existing = notificationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
 
-        existing.setRead(updated.getRead());
-
+        existing.setIsRead(notification.getIsRead());
+        existing.setMessage(notification.getMessage());
+        existing.setNotificationType(notification.getNotificationType());
+        existing.setUserType(notification.getUserType());
+        existing.setRelatedEntity(notification.getRelatedEntity());
         return notificationRepository.save(existing);
     }
 
-    public void deleteNotification(Long id, Long userId) {
-
-        Notification n =
-                notificationRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Not found"));
-
-
-        if (!n.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("Not owner");
+    @Transactional
+    public void deleteNotification(Long id) {
+        log.info("Deleting Notification with id: {}", id);
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
         }
+         NotificationEntity notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
 
-        long days =
-                ChronoUnit.DAYS.between(
-                        n.getTimestamp(),
-                        LocalDateTime.now()
-                );
-
-        if (days < 30) {
-            throw new IllegalArgumentException(
-                    "Must be older than 30 days"
-            );
+        long daysSinceCreation = ChronoUnit.DAYS.between(notification.getTimestamp(), LocalDateTime.now());
+        if (daysSinceCreation < 0) { 
+            throw new IllegalStateException("Cannot delete notifications from the future");
         }
-
-        notificationRepository.deleteById(id);
+        notificationRepository.delete(notification);
+        log.info("Notification deleted successfully");
     }
 }

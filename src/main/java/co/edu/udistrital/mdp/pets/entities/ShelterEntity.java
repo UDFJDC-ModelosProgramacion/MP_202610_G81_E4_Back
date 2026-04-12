@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import uk.co.jemos.podam.common.PodamExclude;
-
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "shelters")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"pets", "veterinarians", "events"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShelterEntity extends BaseEntity {
@@ -40,16 +40,19 @@ public class ShelterEntity extends BaseEntity {
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("shelter")
     private List<PetEntity> pets;
 
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("shelter")
     private List<VeterinarianEntity> veterinarians;
 
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("shelter")
     private List<ShelterEventEntity> events;
 }
 
