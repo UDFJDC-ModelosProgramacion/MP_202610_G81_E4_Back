@@ -76,14 +76,13 @@ public class MessageController {
         }
     }
 
-    private MessageEntity toEntity(MessageDTO dto) {
+        private MessageEntity toEntity(MessageDTO dto) {
         if (dto == null) return null;
-        
         MessageEntity e = new MessageEntity();
         e.setId(dto.getId());
         e.setSubject(dto.getSubject());
         e.setContent(dto.getContent());
-        e.setIsRead(dto.getIsRead() != null ? dto.getIsRead() : false);
+        e.setIsRead(Boolean.TRUE.equals(dto.getIsRead())); 
         e.setTimestamp(dto.getTimestamp() != null ? dto.getTimestamp() : LocalDateTime.now());
         e.setSenderId(dto.getSenderId());
         e.setRecipientId(dto.getRecipientId());
