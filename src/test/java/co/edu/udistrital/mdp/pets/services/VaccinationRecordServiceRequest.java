@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import co.edu.udistrital.mdp.pets.services.VaccinationRecordService;
 import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
 import co.edu.udistrital.mdp.pets.entities.PetEntity;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -64,7 +63,7 @@ class VaccinationRecordServiceTest {
     }
 
     @Test
-    void testCreateRecord() throws Exception {
+    void testCreateRecord() throws Exception { 
         VaccinationRecordEntity entity = new VaccinationRecordEntity();
         entity.setPet(petList.get(0));
 
@@ -75,10 +74,9 @@ class VaccinationRecordServiceTest {
 
     @Test
     void testCreateRecordInvalid() {
-        assertThrows(IllegalOperationException.class, () -> {
-            VaccinationRecordEntity entity = new VaccinationRecordEntity();
-            service.createRecord(entity);
-        });
+        VaccinationRecordEntity entity = new VaccinationRecordEntity();
+        
+        assertThrows(IllegalOperationException.class, () -> service.createRecord(entity));
     }
 
     @Test

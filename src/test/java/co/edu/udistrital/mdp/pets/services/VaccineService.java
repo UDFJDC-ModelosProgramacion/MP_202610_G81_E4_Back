@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-
-import co.edu.udistrital.mdp.pets.services.VaccineService;
 import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
 import co.edu.udistrital.mdp.pets.entities.VaccineEntity;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -71,16 +69,13 @@ class VaccineServiceTest {
         entity.setVaccineName("Parvo");
 
         VaccineEntity result = service.createVaccine(entity);
-
         assertNotNull(result);
     }
 
     @Test
     void testCreateVaccineInvalid() {
-        assertThrows(IllegalOperationException.class, () -> {
-            VaccineEntity entity = new VaccineEntity();
-            service.createVaccine(entity);
-        });
+        VaccineEntity entity = new VaccineEntity();
+        assertThrows(IllegalOperationException.class, () -> service.createVaccine(entity));
     }
 
     @Test

@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.ReportService;
 import jakarta.persistence.EntityNotFoundException;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -23,7 +22,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(ReportService.class)
-public class ReportServiceTest {
+class ReportServiceTest {
 
     @Autowired
     private ReportService reportService;
@@ -83,12 +82,13 @@ public class ReportServiceTest {
 
     @Test
     void testCreateReportInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            ReportEntity entity = new ReportEntity();
-            entity.setReportType(""); 
-            entity.setShelter(null);
-            reportService.createReport(entity);
-        });
+        ReportEntity entity = new ReportEntity();
+        entity.setReportType(""); 
+        entity.setShelter(null);
+
+        assertThrows(IllegalArgumentException.class, () -> 
+            reportService.createReport(entity)
+        );
     }
 
     @Test
@@ -123,8 +123,6 @@ public class ReportServiceTest {
 
     @Test
     void testGetReportNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            reportService.getReport(999L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> reportService.getReport(999L));
     }
 }
