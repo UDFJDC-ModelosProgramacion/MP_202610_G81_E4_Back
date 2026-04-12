@@ -81,19 +81,19 @@ public class VeterinarianServiceTest {
 
     @Test
     void testCreateVeterinarianInvalidSpecialty() {
+        VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
+        entity.setShelter(commonShelter);
+        entity.setSpecialties(Arrays.asList("Neurology"));
         assertThrows(IllegalArgumentException.class, () -> {
-            VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
-            entity.setShelter(commonShelter);
-            entity.setSpecialties(Arrays.asList("Neurology"));
             veterinarianService.createVeterinarian(entity);
         });
     }
 
     @Test
     void testCreateVeterinarianNoShelter() {
+        VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
+        entity.setShelter(null);
         assertThrows(IllegalArgumentException.class, () -> {
-            VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
-            entity.setShelter(null);
             veterinarianService.createVeterinarian(entity);
         });
     }
@@ -137,9 +137,9 @@ public class VeterinarianServiceTest {
         VeterinarianEntity entity = veterinarianList.get(0);
         VeterinarianEntity newEntity = factory.manufacturePojo(VeterinarianEntity.class);
         newEntity.setVeterinarianIdBusiness(8888L);
-
+        Long entityId = entity.getId();
         assertThrows(IllegalArgumentException.class, () -> {
-            veterinarianService.updateVeterinarian(entity.getId(), newEntity);
+            veterinarianService.updateVeterinarian(entityId, newEntity);
         });
     }
 
@@ -160,9 +160,9 @@ public class VeterinarianServiceTest {
         adoption.setVeterinarian(entity);
         entityManager.persist(adoption);
         entityManager.flush();
-
+        Long entityId = entity.getId();
         assertThrows(IllegalStateException.class, () -> {
-            veterinarianService.deleteVeterinarian(entity.getId());
+            veterinarianService.deleteVeterinarian(entityId);
         });
     }
 }

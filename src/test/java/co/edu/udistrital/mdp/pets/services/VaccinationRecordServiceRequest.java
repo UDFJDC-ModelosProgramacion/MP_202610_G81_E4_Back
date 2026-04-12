@@ -55,11 +55,11 @@ class VaccinationRecordServiceTest {
             entityManager.persist(pet);
             petList.add(pet);
 
-            VaccinationRecordEntity record = new VaccinationRecordEntity();
-            record.setPet(pet);
+            VaccinationRecordEntity vaccinationRecord = new VaccinationRecordEntity();
+            vaccinationRecord.setPet(pet);
 
-            entityManager.persist(record);
-            recordList.add(record);
+            entityManager.persist(vaccinationRecord);
+            recordList.add(vaccinationRecord);
         }
     }
 

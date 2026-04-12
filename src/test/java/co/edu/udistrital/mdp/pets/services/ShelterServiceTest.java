@@ -84,41 +84,41 @@ public class ShelterServiceTest {
     }
     @Test
     void testCreateShelterNoName() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setName("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setName("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoCity() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setCity("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setCity("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoAddress() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setAddress("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setAddress("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoPhone() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setPhone("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setPhone("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoEmail() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setEmail("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setEmail("");
             shelterService.createShelter(entity);
         });
     }
@@ -188,9 +188,9 @@ public class ShelterServiceTest {
 
         entityManager.persist(pet);
         shelter.getPets().add(pet);
-
+        Long shelterId = shelter.getId();
         assertThrows(IllegalStateException.class, () -> {
-            shelterService.deleteShelter(shelter.getId());
+            shelterService.deleteShelter(shelterId);
         });
     }
 }

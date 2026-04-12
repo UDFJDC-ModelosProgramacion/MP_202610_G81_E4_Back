@@ -83,10 +83,10 @@ public class ReportServiceTest {
 
     @Test
     void testCreateReportInvalid() {
+        ReportEntity entity = new ReportEntity();
+        entity.setReportType(""); 
+        entity.setShelter(null);        
         assertThrows(IllegalArgumentException.class, () -> {
-            ReportEntity entity = new ReportEntity();
-            entity.setReportType(""); 
-            entity.setShelter(null);
             reportService.createReport(entity);
         });
     }

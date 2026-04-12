@@ -80,9 +80,9 @@ public class NotificationServiceTest {
 
     @Test
     void testCreateNotificationNoUser() {
+        NotificationEntity entity = factory.manufacturePojo(NotificationEntity.class);
+        entity.setUserId(null); 
         assertThrows(IllegalArgumentException.class, () -> {
-            NotificationEntity entity = factory.manufacturePojo(NotificationEntity.class);
-            entity.setUserId(null); 
             notificationService.createNotification(entity);
         });
     }
@@ -118,10 +118,11 @@ public class NotificationServiceTest {
         NotificationEntity recent = factory.manufacturePojo(NotificationEntity.class);
         recent.setUserId(commonUserId);
         recent.setTimestamp(LocalDateTime.now()); 
+        Long recentId = recent.getId();
         entityManager.persist(recent);
         entityManager.flush();
         assertThrows(IllegalOperationException.class, () -> {
-            notificationService.deleteNotification(recent.getId());
+            notificationService.deleteNotification(recentId);
         });
     }
 
