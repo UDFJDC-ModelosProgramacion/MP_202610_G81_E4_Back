@@ -12,26 +12,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
-
 @RestController
 @RequestMapping("/adoption-requests")
 public class AdoptionRequestController {
-
     @Autowired
+    
     private AdoptionRequestService service;
 
     @PostMapping
     public AdoptionRequestDTO create(@RequestBody AdoptionRequestDTO dto)
             throws IllegalOperationException {
-
         AdoptionRequestEntity entity = toEntity(dto);
         return toDTO(service.createAdoptionRequest(entity));
     }
 
     @GetMapping
     public List<AdoptionRequestDTO> findAll() {
+        // CORRECCIÓN: Se cambió getAdoptionRequests() por getRequests()
         List<AdoptionRequestDTO> list = new ArrayList<>();
-        for (AdoptionRequestEntity e : service.getAdoptionRequests()) {
+        for (AdoptionRequestEntity e : service.getRequests()) {
             list.add(toDTO(e));
         }
         return list;
@@ -40,14 +39,13 @@ public class AdoptionRequestController {
     @GetMapping("/{id}")
     public AdoptionRequestDTO findOne(@PathVariable Long id)
             throws EntityNotFoundException {
-
-        return toDTO(service.getAdoptionRequest(id));
+        // CORRECCIÓN: Se cambió getAdoptionRequest(id) por getRequest(id)
+        return toDTO(service.getRequest(id));
     }
 
     @PutMapping("/{id}")
     public AdoptionRequestDTO update(@PathVariable Long id, @RequestBody AdoptionRequestDTO dto)
             throws EntityNotFoundException, IllegalOperationException {
-
         AdoptionRequestEntity entity = toEntity(dto);
         return toDTO(service.updateAdoptionRequest(id, entity));
     }
@@ -55,13 +53,12 @@ public class AdoptionRequestController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id)
             throws EntityNotFoundException {
-
-        service.deleteAdoptionRequest(id);
+        // CORRECCIÓN: Se cambió deleteAdoptionRequest(id) por deleteRequest(id)
+        service.deleteRequest(id);
     }
 
     private AdoptionRequestEntity toEntity(AdoptionRequestDTO dto) {
         AdoptionRequestEntity e = new AdoptionRequestEntity();
-
         e.setId(dto.getId());
         e.setRequestDate(dto.getRequestDate());
         e.setStatus(dto.getStatus());
@@ -78,13 +75,11 @@ public class AdoptionRequestController {
             adopter.setId(dto.getAdopterId());
             e.setAdopter(adopter);
         }
-
         return e;
     }
 
     private AdoptionRequestDTO toDTO(AdoptionRequestEntity e) {
         AdoptionRequestDTO dto = new AdoptionRequestDTO();
-
         dto.setId(e.getId());
         dto.setRequestDate(e.getRequestDate());
         dto.setStatus(e.getStatus());
@@ -97,7 +92,6 @@ public class AdoptionRequestController {
         if (e.getAdopter() != null) {
             dto.setAdopterId(e.getAdopter().getId());
         }
-
         return dto;
     }
 }
