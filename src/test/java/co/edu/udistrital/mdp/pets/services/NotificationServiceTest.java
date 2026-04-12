@@ -118,12 +118,11 @@ class NotificationServiceTest {
         NotificationEntity recent = factory.manufacturePojo(NotificationEntity.class);
         recent.setUserId(commonUserId);
         recent.setTimestamp(LocalDateTime.now()); 
-        Long recentId = recent.getId();
         entityManager.persist(recent);
         entityManager.flush();
-
+        Long recentId = recent.getId();
         assertThrows(IllegalOperationException.class, () -> 
-            notificationService.deleteNotification(recent.getId())
+            notificationService.deleteNotification(recentId)
         );
     }
 
