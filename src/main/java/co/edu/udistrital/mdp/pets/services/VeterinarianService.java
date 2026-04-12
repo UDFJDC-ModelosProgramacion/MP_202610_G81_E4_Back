@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import co.edu.udistrital.mdp.pets.entities.VeterinarianEntity;
+import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
 import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
 
 @Service
@@ -14,6 +16,8 @@ public class VeterinarianService {
 
     @Autowired
     private VeterinarianRepository veterinarianRepository;
+    @Autowired
+    private AdoptionRepository adoptionRepository;
 
     private static final List<String> VALID_SPECIALTIES = Arrays.asList(
             "General", "Surgery", "Dentistry", "Cardiology", "Dermatology"
@@ -40,13 +44,16 @@ public class VeterinarianService {
     public VeterinarianEntity updateVeterinarian(Long id, VeterinarianEntity vet) {
         VeterinarianEntity existing = veterinarianRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Veterinarian not found with ID: " + id));
+        if (!existing.getVeterinarianIdBusiness().equals(vet.getVeterinarianIdBusiness())) {
+            throw new IllegalArgumentException("Business ID cannot be changed");
+        }
         existing.setVeterinarianIdBusiness(vet.getVeterinarianIdBusiness());
         existing.setLastName(vet.getLastName());
         existing.setAvailability(vet.getAvailability());
         
         if (vet.getSpecialties() != null) {
             validateSpecialties(vet.getSpecialties());
-            existing.setSpecialties(vet.getSpecialties());
+            existing.setSpecialties(new ArrayList<>(vet.getSpecialties()));
         }
 
         if (vet.getShelter() != null && vet.getShelter().getId() != null) {
@@ -59,6 +66,9 @@ public class VeterinarianService {
     @Transactional
     public void deleteVeterinarian(Long id) {
         VeterinarianEntity vet = searchVeterinarian(id);
+        if (!adoptionRepository.findByVeterinarianId(id).isEmpty()) {
+        throw new IllegalStateException("Cannot delete veterinarian with adoptions");
+    }
         veterinarianRepository.delete(vet);
     }
 
