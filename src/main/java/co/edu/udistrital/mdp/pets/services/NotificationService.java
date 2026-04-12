@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,18 +84,14 @@ public class NotificationService {
 
     @Transactional
     public void deleteNotification(Long id) {
-        log.info("Deleting Notification with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
-         NotificationEntity notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+        NotificationEntity notification = searchNotification(id);
 
-        long daysSinceCreation = ChronoUnit.DAYS.between(notification.getTimestamp(), LocalDateTime.now());
-        if (daysSinceCreation < 0) { 
-            throw new IllegalStateException("Cannot delete notifications from the future");
-        }
-        notificationRepository.delete(notification);
-        log.info("Notification deleted successfully");
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+    
+        if (notification.getTimestamp().isAfter(thirtyDaysAgo)) {
+            throw new IllegalStateException("No se pueden eliminar notificaciones con menos de 30 días de antigüedad");
+     }
+
+    notificationRepository.delete(notification);
     }
 }
