@@ -23,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(MessageService.class)
-class MessageServiceTest {
+class MessageServiceTest { 
 
     @Autowired
     private MessageService messageService;
@@ -103,9 +103,7 @@ class MessageServiceTest {
         MessageEntity message = factory.manufacturePojo(MessageEntity.class);
         message.setSenderId(senderId);
         message.setRecipientId(senderId);
-        assertThrows(IllegalArgumentException.class, () -> 
-            messageService.createMessage(message)
-        );
+        assertThrows(IllegalArgumentException.class, () -> messageService.createMessage(message));
     }
 
     @Test
@@ -133,11 +131,8 @@ class MessageServiceTest {
         MessageEntity updateData = new MessageEntity();
         updateData.setSenderId(senderId);
         updateData.setRecipientId(recipientId);
-        Long oldMessageId = oldMessage.getId();
-        
-        assertThrows(IllegalArgumentException.class, () -> 
-            messageService.updateMessage(oldMessage.getId(), updateData)
-        );
+        Long idToUpdate = oldMessage.getId(); 
+        assertThrows(IllegalArgumentException.class, () -> messageService.updateMessage(idToUpdate, updateData));
     }
 
     @Test
