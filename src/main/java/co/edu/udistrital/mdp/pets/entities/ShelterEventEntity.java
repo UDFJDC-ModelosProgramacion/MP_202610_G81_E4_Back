@@ -44,6 +44,6 @@ public class ShelterEventEntity extends BaseEntity {
     private int registeredCount;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shelter_id")
-    @JsonIgnoreProperties("shelterEvents") 
+    @JsonIgnoreProperties("events") 
     private ShelterEntity shelter;
 }

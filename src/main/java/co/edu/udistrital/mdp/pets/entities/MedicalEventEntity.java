@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "medical_events")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"pet", "veterinarian"})
 public class MedicalEventEntity extends BaseEntity {
 
     private String eventType;

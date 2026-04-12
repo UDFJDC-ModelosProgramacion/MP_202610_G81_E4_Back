@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "devolutions")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"adoption"})
 public class DevolutionEntity extends BaseEntity {
 
     private LocalDate returnDate;

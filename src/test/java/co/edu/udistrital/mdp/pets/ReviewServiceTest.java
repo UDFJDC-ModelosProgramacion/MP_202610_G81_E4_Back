@@ -54,21 +54,16 @@ public class ReviewServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
-            ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+            ShelterEntity shelter = TestEntityFactory.createShelter(factory);
             entityManager.persist(shelter);
 
-            PetEntity pet = factory.manufacturePojo(PetEntity.class);
-            pet.setShelter(shelter);
+            PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
             entityManager.persist(pet);
 
-            AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            adopter.setFirstName("Nombre");
-            adopter.setLastName("Apellido");
+            AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
             entityManager.persist(adopter);
 
-            AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
-            adoption.setPet(pet);
-            adoption.setAdopter(adopter);
+            AdoptionEntity adoption = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
             entityManager.persist(adoption);
 
             ReviewEntity review = new ReviewEntity();
@@ -86,16 +81,13 @@ public class ReviewServiceTest {
 
     @Test
     void testCreateReview() {
-        AdopterEntity adopter = entityManager.persist(factory.manufacturePojo(AdopterEntity.class));
-        ShelterEntity shelter = entityManager.persist(factory.manufacturePojo(ShelterEntity.class));
+        AdopterEntity adopter = entityManager.persist(TestEntityFactory.createAdopter(factory));
+        ShelterEntity shelter = entityManager.persist(TestEntityFactory.createShelter(factory));
 
-        PetEntity pet = factory.manufacturePojo(PetEntity.class);
-        pet.setShelter(shelter);
+        PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
         entityManager.persist(pet);
 
-        AdoptionEntity adoption = new AdoptionEntity();
-        adoption.setPet(pet);
-        adoption.setAdopter(adopter);
+        AdoptionEntity adoption = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
         entityManager.persist(adoption);
 
         ReviewEntity newReview = new ReviewEntity();
