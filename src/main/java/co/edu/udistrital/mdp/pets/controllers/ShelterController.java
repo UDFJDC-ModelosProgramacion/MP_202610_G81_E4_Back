@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/shelters")
@@ -23,7 +22,7 @@ public class ShelterController {
         List<ShelterEntity> entities = shelterService.getShelters();
         List<ShelterDTO> dtos = entities.stream()
                 .map(ShelterDTO::new)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(dtos);
     }
 

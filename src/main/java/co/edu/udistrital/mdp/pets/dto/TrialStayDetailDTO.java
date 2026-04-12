@@ -9,15 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class TrialStayDetailDTO extends TrialStayDTO {
+
     private AdoptionDTO adoption;
 
     public TrialStayDetailDTO(TrialStayEntity entity) {
         super(entity);
 
-        if (entity != null) {
-            if (entity.getAdoption() != null) {
-                this.adoption = new AdoptionDTO(entity.getAdoption());
-            }
+        if (entity != null && entity.getAdoption() != null) {
+            this.adoption = new AdoptionDTO(entity.getAdoption());
         }
     }
 }

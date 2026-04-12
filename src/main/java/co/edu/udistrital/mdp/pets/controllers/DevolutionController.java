@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import co.edu.udistrital.mdp.pets.dto.DevolutionDTO;
-import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
 import co.edu.udistrital.mdp.pets.services.DevolutionService;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,84 +9,54 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/devolutions")
 public class DevolutionController {
+    private static final String ERR_MSG = "message";
 
     @Autowired
-    private DevolutionService service;
+    private DevolutionService devolutionService;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody DevolutionDTO dto) {
+    public ResponseEntity<Object> create(@RequestBody DevolutionEntity devolution) {
         try {
-            DevolutionEntity entity = toEntity(dto);
-            DevolutionDTO response = new DevolutionDTO(service.create(entity));
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            DevolutionEntity created = devolutionService.createDevolution(devolution);
+            return new ResponseEntity<>(new DevolutionDTO(created), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @GetMapping
     public ResponseEntity<List<DevolutionDTO>> getAll() {
-        List<DevolutionDTO> list = new ArrayList<>();
-        for (DevolutionEntity e : service.findAll()) {
-            list.add(new DevolutionDTO(e));
-        }
-        return ResponseEntity.ok(list);
+        List<DevolutionDTO> dtos = devolutionService.searchDevolutions().stream()
+                .map(DevolutionDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(new DevolutionDTO(service.findById(id)));
+            DevolutionEntity entity = devolutionService.searchDevolution(id);
+            return ResponseEntity.ok(new DevolutionDTO(entity));
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody DevolutionDTO dto) {
-        try {
-            DevolutionEntity entity = toEntity(dto);
-            return ResponseEntity.ok(new DevolutionDTO(service.update(id, entity)));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
-            service.delete(id);
+            devolutionService.deleteDevolution(id);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(ERR_MSG, e.getMessage()));
         }
-    }
-
-    private DevolutionEntity toEntity(DevolutionDTO dto) {
-        if (dto == null) return null;
-        DevolutionEntity e = new DevolutionEntity();
-        e.setReturnDate(dto.getReturnDate());
-        e.setReason(dto.getReason());
-        e.setDetailedDescription(dto.getDetailedDescription());
-        e.setPetState(dto.getPetState());
-
-        if (dto.getAdoptionId() != null) {
-            AdoptionEntity adoption = new AdoptionEntity();
-            adoption.setId(dto.getAdoptionId());
-            e.setAdoption(adoption);
-        }
-        return e;
     }
 }
