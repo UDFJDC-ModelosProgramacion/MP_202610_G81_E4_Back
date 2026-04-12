@@ -87,9 +87,9 @@ public class AdoptionTrackingServiceTest {
 
     @Test
     void testCreateTrackingNoAdoption() {
+        AdoptionTrackingEntity tracking = new AdoptionTrackingEntity();
+        tracking.setAdoption(null);
         assertThrows(IllegalArgumentException.class, () -> {
-            AdoptionTrackingEntity tracking = new AdoptionTrackingEntity();
-            tracking.setAdoption(null);
             trackingService.createAdoptionTracking(tracking);
         });
     }

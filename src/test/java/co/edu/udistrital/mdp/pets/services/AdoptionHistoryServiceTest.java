@@ -92,18 +92,18 @@ public class AdoptionHistoryServiceTest {
 
     @Test
     void testCreateAdoptionHistoryNoAdoption() {
+        AdoptionHistoryEntity history = factory.manufacturePojo(AdoptionHistoryEntity.class);
+        history.setAdoption(null);
         assertThrows(IllegalArgumentException.class, () -> {
-            AdoptionHistoryEntity history = factory.manufacturePojo(AdoptionHistoryEntity.class);
-            history.setAdoption(null);
             historyService.createAdoptionHistory(history);
         });
     }
 
     @Test
     void testCreateAdoptionHistoryEmptyReason() {
+        AdoptionHistoryEntity history = factory.manufacturePojo(AdoptionHistoryEntity.class);
+        history.setReason("");
         assertThrows(IllegalArgumentException.class, () -> {
-            AdoptionHistoryEntity history = factory.manufacturePojo(AdoptionHistoryEntity.class);
-            history.setReason("");
             historyService.createAdoptionHistory(history);
         });
     }
