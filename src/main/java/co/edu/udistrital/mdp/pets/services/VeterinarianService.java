@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import co.edu.udistrital.mdp.pets.entities.VeterinarianEntity;
+import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
 import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +20,8 @@ public class VeterinarianService {
 
     @Autowired
     private VeterinarianRepository veterinarianRepository;
+    @Autowired
+    private AdoptionRepository adoptionRepository;
 
     @Autowired
     @Lazy
@@ -58,7 +62,7 @@ public class VeterinarianService {
         
         if (vet.getSpecialties() != null) {
             validateSpecialties(vet.getSpecialties());
-            existing.setSpecialties(vet.getSpecialties());
+            existing.setSpecialties(new ArrayList<>(vet.getSpecialties()));
         }
 
         if (vet.getShelter() != null && vet.getShelter().getId() != null) {
