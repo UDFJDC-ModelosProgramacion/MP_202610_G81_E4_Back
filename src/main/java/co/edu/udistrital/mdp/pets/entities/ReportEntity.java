@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "reports")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"shelter"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportEntity extends BaseEntity {

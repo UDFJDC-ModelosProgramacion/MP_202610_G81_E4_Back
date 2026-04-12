@@ -29,8 +29,8 @@ public class ReviewEntity extends BaseEntity {
     @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
     private AdopterEntity adopter;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adoption_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adoption_id", unique = true)
     @JsonIgnoreProperties({"reviews", "hibernateLazyInitializer", "handler"}) 
     private AdoptionEntity adoption;
 }

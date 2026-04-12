@@ -3,6 +3,8 @@ package co.edu.udistrital.mdp.pets.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+// IMPORTANTE: Agregar este import para la exclusión de Podam
+import uk.co.jemos.podam.common.PodamExclude; 
 
 import java.time.LocalDate;
 
@@ -19,6 +21,7 @@ public class AdoptionRequestEntity extends BaseEntity {
     private String status;
     private String motivation;
 
+    @PodamExclude 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopter_id")
     @JsonIgnore 
@@ -26,6 +29,7 @@ public class AdoptionRequestEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     private AdopterEntity adopter;
 
+    @PodamExclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id")
     @JsonIgnore 
@@ -33,6 +37,7 @@ public class AdoptionRequestEntity extends BaseEntity {
     @EqualsAndHashCode.Exclude
     private PetEntity pet;
 
+    @PodamExclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "veterinarian_id") 
     @JsonIgnore 
