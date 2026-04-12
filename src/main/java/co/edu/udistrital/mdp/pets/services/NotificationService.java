@@ -1,12 +1,13 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
-import co.edu.udistrital.mdp.pets.entities.Notification;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import co.edu.udistrital.mdp.pets.entities.Notification;
+import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
 
 @Service
 public class NotificationService {
@@ -16,38 +17,36 @@ public class NotificationService {
 
     public Notification createNotification(Notification n) {
 
-        if (n.getUserId() == null) {
-            throw new IllegalArgumentException("User required");
-        }
-
-        if (n.getMessage() == null || n.getMessage().isEmpty()) {
-            throw new IllegalArgumentException("Message required");
-        }
-
-        String[] validTypes = {
-                "MESSAGE",
-                "ADOPTION",
-                "SYSTEM"
-        };
-
-        boolean valid = false;
-
-        for (String t : validTypes) {
-            if (t.equals(n.getType())) {
-                valid = true;
-            }
-        }
-
-        if (!valid) {
-            throw new IllegalArgumentException("Invalid type");
-        }
-
-        n.setTimestamp(LocalDateTime.now());
-        n.setRead(false);
-
-        return notificationRepository.save(n);
+    if (n.getUserId() == null) {
+        throw new IllegalArgumentException("UserId required");
     }
 
+    if (n.getMessage() == null || n.getMessage().isEmpty()) {
+        throw new IllegalArgumentException("Message required");
+    }
+
+    String[] validTypes = { "MESSAGE", "ADOPTION", "SYSTEM" };
+
+    boolean valid = false;
+
+    for (String t : validTypes) {
+        if (t.equals(n.getNotificationType())) {
+            valid = true;
+        }
+    }
+
+    if (!valid) {
+        throw new IllegalArgumentException("Invalid type");
+    }
+
+    // 🔥 FIX CLAVE
+    n.setUserType("ADOPTER");
+
+    n.setTimestamp(LocalDateTime.now());
+    n.setIsRead(false);
+
+    return notificationRepository.save(n);
+}
 
     public Notification updateNotification(Long id, Notification updated) {
 
@@ -56,7 +55,7 @@ public class NotificationService {
                         .orElseThrow(() -> new RuntimeException("Not found"));
 
 
-        existing.setRead(updated.getRead());
+        existing.setIsRead(updated.getIsRead());
 
         return notificationRepository.save(existing);
     }

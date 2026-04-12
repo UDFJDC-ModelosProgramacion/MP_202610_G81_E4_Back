@@ -1,18 +1,20 @@
 package co.edu.udistrital.mdp.ZZZ.services;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import co.edu.udistrital.mdp.pets.entities.Notification;
 import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
 import co.edu.udistrital.mdp.pets.services.NotificationService;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
@@ -29,7 +31,7 @@ class NotificationServiceTest {
         Notification n = new Notification();
         n.setUserId(1L);
         n.setMessage("Nueva adopción");
-        n.setType("ADOPTION");
+        n.setUserType("ADOPTION");
 
         when(notificationRepository.save(any(Notification.class)))
                 .thenReturn(n);
@@ -37,7 +39,7 @@ class NotificationServiceTest {
         Notification result = notificationService.createNotification(n);
 
         assertNotNull(result.getTimestamp());
-        assertFalse(result.getRead());
+        assertFalse(result.getIsRead());
 
         verify(notificationRepository).save(n);
     }
@@ -48,7 +50,7 @@ class NotificationServiceTest {
         Notification n = new Notification();
         n.setUserId(1L);
         n.setMessage("Test notification");
-        n.setType("INVALID");
+        n.setUserType("INVALID");
 
         assertThrows(
                 IllegalArgumentException.class,

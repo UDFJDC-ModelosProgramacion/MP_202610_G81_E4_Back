@@ -1,11 +1,15 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
@@ -15,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Notification extends BaseEntity {
     
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id")
     private Long userId;
     
     @Column(name = "user_type", nullable = false, length = 50)
@@ -39,9 +43,11 @@ public class Notification extends BaseEntity {
     // ==================== RELACIONES ====================
     
     // Relación con Usuario
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    /*
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "user_id")
+private User user;
+*/
     
     @PrePersist
     protected void onCreate() {

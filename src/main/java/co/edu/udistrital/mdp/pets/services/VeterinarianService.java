@@ -1,11 +1,13 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
-import co.edu.udistrital.mdp.pets.entities.Veterinarian;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import co.edu.udistrital.mdp.pets.entities.Veterinarian;
+import co.edu.udistrital.mdp.pets.repositories.VeterinarianRepository;
 
 @Service
 public class VeterinarianService {
@@ -60,9 +62,9 @@ public class VeterinarianService {
         }
         
 
-        if (!shelterRepository.existsById(updatedVet.getShelterId())) {
-             throw new IllegalArgumentException("Shelter does not exist");
-        }
+//        if (!shelterRepository.existsById(updatedVet.getShelterId())) {
+//             throw new IllegalArgumentException("Shelter does not exist");
+//        }
         
         existing.setAvailability(updatedVet.getAvailability());
         existing.setShelterId(updatedVet.getShelterId());
@@ -75,14 +77,14 @@ public class VeterinarianService {
             .orElseThrow(() -> new RuntimeException("Veterinarian not found"));
         
  
-        if (adoptionRepository.countByVeterinarian(id) > 0) {
-             throw new IllegalStateException("Cannot delete vet with assigned adoptions");
-        }
+//        if (adoptionRepository.countByVeterinarian(id) > 0) {
+//             throw new IllegalStateException("Cannot delete vet with assigned adoptions");
+//        }
         
 
-        if (medicalEventRepository.countPendingByVet(id) > 0) {
-             throw new IllegalStateException("Cannot delete vet with pending medical events");
-        }
+//        if (medicalEventRepository.countPendingByVet(id) > 0) {
+//             throw new IllegalStateException("Cannot delete vet with pending medical events");
+//        }
         
         veterinarianRepository.deleteById(id);
     }
