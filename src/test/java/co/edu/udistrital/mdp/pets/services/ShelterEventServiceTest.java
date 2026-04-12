@@ -122,9 +122,9 @@ public class ShelterEventServiceTest {
     void testDeleteFutureEventThrowsException() {
         // La lógica dice: NO se pueden borrar eventos futuros
         ShelterEventEntity futureEvent = eventList.get(0); 
-        
+        Long futureEventCode = futureEvent.getEventCode();
         assertThrows(IllegalStateException.class, () -> {
-            eventService.deleteShelterEventByCode(futureEvent.getEventCode());
+            eventService.deleteShelterEventByCode(futureEventCode);
         });
     }
 

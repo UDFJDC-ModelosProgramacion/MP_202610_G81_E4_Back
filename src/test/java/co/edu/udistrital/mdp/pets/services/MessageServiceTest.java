@@ -110,10 +110,10 @@ public class MessageServiceTest {
     @Test
     void testCreateMessageToYourself() {
         // Esta prueba verifica que el Service bloquee IDs iguales
+        MessageEntity message = factory.manufacturePojo(MessageEntity.class);
+        message.setSenderId(senderId);
+        message.setRecipientId(senderId); // MISMO ID
         assertThrows(IllegalArgumentException.class, () -> {
-            MessageEntity message = factory.manufacturePojo(MessageEntity.class);
-            message.setSenderId(senderId);
-            message.setRecipientId(senderId); // MISMO ID
             messageService.createMessage(message);
         });
     }
@@ -143,9 +143,10 @@ public class MessageServiceTest {
         MessageEntity updateData = new MessageEntity();
         updateData.setSenderId(senderId);
         updateData.setRecipientId(recipientId);
+        Long oldMessageId = oldMessage.getId();
         
         assertThrows(IllegalArgumentException.class, () -> {
-            messageService.updateMessage(oldMessage.getId(), updateData);
+            messageService.updateMessage(oldMessageId, updateData);
         });
     }
 

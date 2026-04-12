@@ -86,9 +86,9 @@ public class DevolutionServiceTest {
 
     @Test
     void testCreateDevolutionNoAdoption() {
+        DevolutionEntity devolution = new DevolutionEntity();
+        devolution.setAdoption(null);
         assertThrows(IllegalArgumentException.class, () -> {
-            DevolutionEntity devolution = new DevolutionEntity();
-            devolution.setAdoption(null);
             devolutionService.createDevolution(devolution);
         });
     }

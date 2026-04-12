@@ -36,6 +36,7 @@ public class AdopterServiceTest {
     private PodamFactory factory = new PodamFactoryImpl();
     private List<AdopterEntity> adopterList = new ArrayList<>();
 
+
     @BeforeEach
     void setUp() {
         clearData();
@@ -77,12 +78,12 @@ public class AdopterServiceTest {
 
     @Test
     void testCreateAdopterInvalidHousing() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
-            newEntity.setFirstName("Juan");
-            newEntity.setLastName("Perez");
-            newEntity.setHousingType("Hotel");
+        AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
+        newEntity.setFirstName("Juan");
+        newEntity.setLastName("Perez");
+        newEntity.setHousingType("Hotel");
 
+        assertThrows(IllegalArgumentException.class, () -> {
             adopterService.createAdopter(newEntity);
         });
     }
@@ -144,12 +145,12 @@ public class AdopterServiceTest {
             entity.setAdoptionRequests(new ArrayList<>());
         }
         entity.getAdoptionRequests().add(request); 
-
         entityManager.persist(request);
         entityManager.flush();
         entityManager.refresh(entity); 
+        Long adopterId = entity.getId();
         assertThrows(IllegalStateException.class, () -> {
-        adopterService.deleteAdopter(entity.getId());
+            adopterService.deleteAdopter(adopterId);
         });
     }
 }
