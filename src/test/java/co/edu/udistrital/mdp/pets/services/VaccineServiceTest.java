@@ -71,6 +71,22 @@ class VaccineServiceTest {
         VaccineEntity result = service.createVaccine(entity);
         assertNotNull(result);
     }
+    @Test
+    void testCreateVaccinewWithValidRecordFlow() throws Exception {
+        VaccinationRecordEntity vaccinationRecord = new VaccinationRecordEntity();
+        entityManager.persist(vaccinationRecord);
+        entityManager.flush();
+
+        VaccineEntity entity = new VaccineEntity();
+        entity.setVaccineName("Parvo");
+        entity.setVaccinationRecord(vaccinationRecord);
+
+        VaccineEntity result = service.createVaccine(entity);
+
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        assertEquals(vaccinationRecord.getId(), result.getVaccinationRecord().getId());
+    }
 
     @Test
     void testCreateVaccineInvalid() {
