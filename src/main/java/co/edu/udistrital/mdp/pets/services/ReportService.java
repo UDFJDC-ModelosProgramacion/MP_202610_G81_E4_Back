@@ -33,19 +33,27 @@ public class ReportService {
     }
 
     public ReportEntity updateReport(Long id, ReportEntity report) {
-        log.info("Updating report with id: {}", id);
-        ReportEntity existing = getReport(id);
-        validateReport(report);
-
+    log.info("Updating report with id: {}", id);
+    ReportEntity existing = getReport(id);
+    
+    if (report.getReportType() != null && !report.getReportType().isEmpty()) {
         existing.setReportType(report.getReportType());
-        existing.setStartDate(report.getStartDate());
-        existing.setEndDate(report.getEndDate());
-        existing.setData(report.getData());
-        existing.setGenerationDate(report.getGenerationDate());
-        existing.setShelter(report.getShelter());
-
-        return repository.save(existing);
     }
+    if (report.getStartDate() != null) {
+        existing.setStartDate(report.getStartDate());
+    }
+    if (report.getEndDate() != null) {
+        existing.setEndDate(report.getEndDate());
+    }
+    if (report.getData() != null) {
+        existing.setData(report.getData());
+    }
+    if (report.getGenerationDate() != null) {
+        existing.setGenerationDate(report.getGenerationDate());
+    }
+    
+    return repository.save(existing);
+}
 
     public void deleteReport(Long id) {
         log.info("Deleting report with id: {}", id);

@@ -108,15 +108,12 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8999/api/adoption-tracking",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptiontrackings",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-tracking"
+            "adoptiontrackings"
           ]
         }
       },
@@ -124,20 +121,32 @@
     },
     {
       "name": "Get Adoption Tracking By Id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8999/api/adoption-tracking/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptiontrackings/{{adoptiontracking_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-tracking",
-            "1"
+            "adoptiontrackings",
+            "{{adoptiontracking_id_1}}"
           ]
         }
       },
@@ -176,15 +185,12 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8999/api/adoption-tracking",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptiontrackings",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-tracking"
+            "adoptiontrackings"
           ]
         }
       },
@@ -220,16 +226,13 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8999/api/adoption-tracking/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptiontrackings/{{adoptiontracking_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-tracking",
-            "1"
+            "adoptiontrackings",
+            "{{adoptiontracking_id_1}}"
           ]
         }
       },
@@ -256,16 +259,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:8999/api/adoption-tracking/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptiontrackings/{{adoptiontracking_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-tracking",
-            "1"
+            "adoptiontrackings",
+            "{{adoptiontracking_id_1}}"
           ]
         }
       },
@@ -297,15 +297,12 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8999/api/adoption-history",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptionhistories",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-history"
+            "adoptionhistories"
           ]
         }
       },
@@ -330,16 +327,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8999/api/adoption-history/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptionhistories/{{adoptionhistory_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-history",
-            "1"
+            "adoptionhistories",
+            "{{adoptionhistory_id_1}}"
           ]
         }
       },
@@ -414,7 +408,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"reason\": \"Actualización de historial\",\r\n    \"detail\": \"Nueva información registrada\",\r\n    \"date\": \"2026-04-01\"\r\n}",
+          "raw": "{\r\n    \"reason\": \"Adopción muy exitosa\",\r\n    \"detail\": \"El animal se adaptó perfectamente\",\r\n    \"date\": \"2026-03-25\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -422,16 +416,13 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8999/api/adoption-history/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptionhistories/{{adoptionhistory_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-history",
-            "1"
+            "adoptionhistories",
+            "{{adoptionhistory_id_1}}"
           ]
         }
       },
@@ -462,16 +453,13 @@
           "raw": "{\r\n    \"reason\": \"Actualización de historial\",\r\n    \"detail\": \"Nueva información registrada\",\r\n    \"date\": \"2026-04-01\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/adoption-history/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/adoptionhistories/{{adoptionhistory_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "adoption-history",
-            "1"
+            "adoptionhistories",
+            "{{adoptionhistory_id_1}}"
           ]
         }
       },
@@ -510,15 +498,12 @@
           "raw": "{\r\n    \"reason\": \"Adopción exitosa\",\r\n    \"detail\": \"El animal se adaptó bien\",\r\n    \"date\": \"2026-03-22\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/devolution",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/devolutions",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "devolution"
+            "devolutions"
           ]
         }
       },
@@ -537,16 +522,13 @@
           "raw": "{\r\n    \"reason\": \"Actualización de historial\",\r\n    \"detail\": \"Nueva información registrada\",\r\n    \"date\": \"2026-04-01\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/devolution/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/devolutions/{{devolution_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "devolution",
-            "1"
+            "devolutions",
+            "{{devolution_id_1}}"
           ]
         }
       },
@@ -629,16 +611,13 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8999/api/devolution/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/devolutions/{{devolution_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "devolution",
-            "1"
+            "devolutions",
+            "{{devolution_id_1}}"
           ]
         }
       },
@@ -669,16 +648,13 @@
           "raw": "{\r\n    \"reason\": \"Motivo actualizado\",\r\n    \"detailedDescription\": \"Nueva descripción\",\r\n    \"petState\": \"En recuperación\",\r\n    \"returnDate\": \"2026-04-01\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/devolution/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/devolutions/{{devolution_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "devolution",
-            "1"
+            "devolutions",
+            "{{devolution_id_1}}"
           ]
         }
       },
@@ -717,15 +693,12 @@
           "raw": "{\r\n    \"reason\": \"No puede cuidarlo\",\r\n    \"detailedDescription\": \"El adoptante se mudó a otro país\",\r\n    \"petState\": \"Saludable\",\r\n    \"returnDate\": \"2026-03-22\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/report",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/reports",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "report"
+            "reports"
           ]
         }
       },
@@ -733,24 +706,24 @@
     },
     {
       "name": "Get Report By Id",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
-        "method": "DELETE",
+        "method": "GET",
         "header": [],
         "body": {
           "mode": "raw",
           "raw": "{\r\n    \"reason\": \"Motivo actualizado\",\r\n    \"detailedDescription\": \"Nueva descripción\",\r\n    \"petState\": \"En recuperación\",\r\n    \"returnDate\": \"2026-04-01\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/report/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/reports/{{report_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "report",
-            "1"
+            "reports",
+            "{{report_id_1}}"
           ]
         }
       },
@@ -825,7 +798,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"reportType\": \"Trimestral\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-03-31\",\r\n    \"data\": \"Datos actualizados del reporte\",\r\n    \"generationDate\": \"2026-03-22\"\r\n}",
+          "raw": "{\r\n    \"reportType\": \"Trimestral\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-03-31\",\r\n    \"data\": \"Datos actualizados\",\r\n    \"generationDate\": \"2026-04-01\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -833,16 +806,13 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8999/api/report/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/reports/{{report_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "report",
-            "1"
+            "reports",
+            "{{report_id_1}}"
           ]
         }
       },
@@ -873,16 +843,445 @@
           "raw": "{\r\n    \"reportType\": \"Trimestral\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-03-31\",\r\n    \"data\": \"Datos actualizados del reporte\",\r\n    \"generationDate\": \"2026-03-22\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:8999/api/report/1",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/reports/{{report_id_1}}",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8999",
           "path": [
-            "api",
-            "report",
-            "1"
+            "reports",
+            "{{report_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Adoption Tracking Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptiontrackings/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptiontrackings",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Adoption Tracking Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"frequency\": \"Semanal\",\r\n    \"notes\": \"test\",\r\n    \"nextReview\": \"2026-05-01\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adoptiontrackings/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptiontrackings",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Adoption Tracking Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptiontrackings/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptiontrackings",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Adoption History Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptionhistories/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptionhistories",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Adoption History Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"frequency\": \"Semanal\",\r\n    \"notes\": \"test\",\r\n    \"nextReview\": \"2026-05-01\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adoptionhistories/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptionhistories",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Adoption History Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptionhistories/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptionhistories",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Devolution Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/devolutions/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "devolutions",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Devolution Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"frequency\": \"Semanal\",\r\n    \"notes\": \"test\",\r\n    \"nextReview\": \"2026-05-01\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/devolutions/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "devolutions",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Devolution Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/devolutions/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "devolutions",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Report Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reports/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Report Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"frequency\": \"Semanal\",\r\n    \"notes\": \"test\",\r\n    \"nextReview\": \"2026-05-01\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/reports/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "0"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Report Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reports/0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "0"
           ]
         }
       },

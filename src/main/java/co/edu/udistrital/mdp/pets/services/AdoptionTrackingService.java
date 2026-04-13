@@ -37,19 +37,22 @@ public class AdoptionTrackingService {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adoption tracking with id " + id + " does not exist"));
     }
-    public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
-        log.info("Updating adoption tracking with id: {}", id);
-        AdoptionTrackingEntity existing = getAdoptionTracking(id);
-        
-        if (tracking.getNextReview() == null) {
-            throw new IllegalArgumentException("Next review date cannot be null");
-        }
+   public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
+    log.info("Updating adoption tracking with id: {}", id);
+    AdoptionTrackingEntity existing = getAdoptionTracking(id);
+    
+    if (tracking.getFrequency() != null && !tracking.getFrequency().isEmpty()) {
         existing.setFrequency(tracking.getFrequency());
-        existing.setNotes(tracking.getNotes());
-        existing.setNextReview(tracking.getNextReview());
-        
-        return repository.save(existing);
     }
+    if (tracking.getNotes() != null) {
+        existing.setNotes(tracking.getNotes());
+    }
+    if (tracking.getNextReview() != null) {
+        existing.setNextReview(tracking.getNextReview());
+    }
+    
+    return repository.save(existing);
+}
     public void deleteAdoptionTracking(Long id) {
         log.info("Deleting adoption tracking with id: {}", id);
         AdoptionTrackingEntity tracking = getAdoptionTracking(id);
