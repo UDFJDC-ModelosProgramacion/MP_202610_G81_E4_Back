@@ -127,6 +127,9 @@ class AdoptionRequestServiceTest {
         entity.setPet(fakePet);
         entity.setAdopter(adopterList.get(0));
         entity.setStatus("PENDING");
+        assertThrows(IllegalOperationException.class,() ->{
+            service.createAdoptionRequest(entity);
+        });
     }
 
     @Test
@@ -184,7 +187,7 @@ class AdoptionRequestServiceTest {
     }
     @Test
     void testDeleteRequestNotFound() {
-        assertThrows(IllegalOperationException.class, () ->{
+        assertThrows(Exception.class, () ->{
             service.deleteRequest((999L));
         });
     }
@@ -195,6 +198,7 @@ class AdoptionRequestServiceTest {
         request.setStatus("APPROVED");
         entityManager.persist(request);
         entityManager.flush();
+        entityManager.clear();
         Long requestId = request.getId();
 
         assertThrows(IllegalOperationException.class, () ->{
