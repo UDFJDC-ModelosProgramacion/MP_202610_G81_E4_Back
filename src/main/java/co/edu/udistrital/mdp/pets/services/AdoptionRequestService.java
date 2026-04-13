@@ -71,21 +71,27 @@ public class AdoptionRequestService {
     public AdoptionRequestEntity updateAdoptionRequest(Long id, AdoptionRequestEntity request)
             throws EntityNotFoundException, IllegalOperationException {
 
-        if (!adoptionRequestRepository.existsById(id))
-            throw new EntityNotFoundException(REQUEST_NOT_FOUND);
+        AdoptionRequestEntity existing = adoptionRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(REQUEST_NOT_FOUND));
 
         if (request.getStatus() == null || request.getStatus().isEmpty())
             throw new IllegalOperationException("Status is invalid");
 
-        request.setId(id);
-        return adoptionRequestRepository.save(request);
+        existing.setStatus(request.getStatus());
+        existing.setMotivation(request.getMotivation());
+        existing.setRequestDate(request.getRequestDate());
+
+        return adoptionRequestRepository.save(existing);
     }
 
     @Transactional
-    public void deleteRequest(Long id) throws EntityNotFoundException {
+    public void deleteRequest(Long id) throws EntityNotFoundException, IllegalOperationException {
         log.info("Deleting request: {}", id);
-        if (!adoptionRequestRepository.existsById(id))
-            throw new EntityNotFoundException(REQUEST_NOT_FOUND + id);
+        AdoptionRequestEntity existing = adoptionRequestRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(REQUEST_NOT_FOUND + id));
+        if ("APPROVED".equals(existing.getStatus()))
+            throw new IllegalOperationException("Cannot delete an approved adoption request");
+
         adoptionRequestRepository.deleteById(id);
     }
 }
