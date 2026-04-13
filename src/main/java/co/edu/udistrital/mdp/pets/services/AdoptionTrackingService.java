@@ -1,75 +1,61 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
-import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
 import co.edu.udistrital.mdp.pets.repositories.AdoptionTrackingRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate; 
 import java.util.List;
 
+@Slf4j
 @Service
 public class AdoptionTrackingService {
+
     @Autowired
     private AdoptionTrackingRepository repository;
-
-    @Autowired
-    private AdoptionRepository adoptionRepository;
-
-    // buena practica recomendada por sonar, prevencion de falsos positivos
-    private static final String TRACKING_NOT_FOUND = "Tracking not found with ID: ";
-
-    @Transactional
     public AdoptionTrackingEntity createAdoptionTracking(AdoptionTrackingEntity tracking) {
-        if (tracking == null) {
-            throw new IllegalArgumentException("Tracking cannot be null");
-        }
+        log.info("Creating adoption tracking");
         
-        if (tracking.getAdoption() == null || tracking.getAdoption().getId() == null) {
-            throw new IllegalArgumentException("Tracking must be associated with an existing adoption.");
+        if (tracking.getAdoption() == null) {
+            throw new IllegalArgumentException("Tracking must have an associated adoption");
         }
-
-        adoptionRepository.findById(tracking.getAdoption().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Adoption not found with ID: " + tracking.getAdoption().getId()));
+        if (tracking.getFrequency() == null || tracking.getFrequency().isEmpty()) {
+            throw new IllegalArgumentException("Frequency cannot be null or empty");
+        }
         
         return repository.save(tracking);
     }
-
-    @Transactional(readOnly = true)
     public List<AdoptionTrackingEntity> getAdoptionTrackings() {
-        // Solución Sonar: Uso de .toList() para inmutabilidad
-        return repository.findAll().stream().toList();
+        log.info("Searching all adoption trackings");
+        return repository.findAll();
     }
-
-    @Transactional(readOnly = true)
     public AdoptionTrackingEntity getAdoptionTracking(Long id) {
+        log.info("Searching adoption tracking with id: {}", id);
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
+                .orElseThrow(() -> new EntityNotFoundException("Adoption tracking with id " + id + " does not exist"));
     }
-
-    @Transactional
-    public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
-        AdoptionTrackingEntity existing = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
-        
-        if (tracking.getNextReview() == null) {
-            throw new IllegalArgumentException("Next review date cannot be null");
-        }
-        
-        if (tracking.getFrequency() != null) existing.setFrequency(tracking.getFrequency());
-        if (tracking.getNotes() != null) existing.setNotes(tracking.getNotes());
+   public AdoptionTrackingEntity updateAdoptionTracking(Long id, AdoptionTrackingEntity tracking) {
+    log.info("Updating adoption tracking with id: {}", id);
+    AdoptionTrackingEntity existing = getAdoptionTracking(id);
+    
+    if (tracking.getFrequency() != null && !tracking.getFrequency().isEmpty()) {
+        existing.setFrequency(tracking.getFrequency());
+    }
+    if (tracking.getNotes() != null) {
+        existing.setNotes(tracking.getNotes());
+    }
+    if (tracking.getNextReview() != null) {
         existing.setNextReview(tracking.getNextReview());
-        
-        return repository.save(existing);
     }
-
-    @Transactional
+    
+    return repository.save(existing);
+}
     public void deleteAdoptionTracking(Long id) {
-        AdoptionTrackingEntity tracking = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(TRACKING_NOT_FOUND + id));
-                
+        log.info("Deleting adoption tracking with id: {}", id);
+        AdoptionTrackingEntity tracking = getAdoptionTracking(id);
         repository.delete(tracking);
     }
 }

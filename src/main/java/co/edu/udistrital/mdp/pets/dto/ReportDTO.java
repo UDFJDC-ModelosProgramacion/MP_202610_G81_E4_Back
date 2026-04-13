@@ -1,33 +1,18 @@
 package co.edu.udistrital.mdp.pets.dto;
 
-import co.edu.udistrital.mdp.pets.entities.ReportEntity;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 public class ReportDTO {
-
     private Long id;
     private String reportType;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date endDate;
     private String data;
-    private LocalDate generationDate;
-    private Long shelterId;
-
-    public ReportDTO(ReportEntity entity) {
-        if (entity != null) {
-            this.id = entity.getId();
-            this.reportType = entity.getReportType();
-            this.startDate = entity.getStartDate();
-            this.endDate = entity.getEndDate();
-            this.data = entity.getData();
-            this.generationDate = entity.getGenerationDate();
-            if (entity.getShelter() != null) {
-                this.shelterId = entity.getShelter().getId();
-            }
-        }
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date generationDate;
 }

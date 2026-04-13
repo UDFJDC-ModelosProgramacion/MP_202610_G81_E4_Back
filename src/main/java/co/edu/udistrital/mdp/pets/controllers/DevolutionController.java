@@ -1,62 +1,59 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.dto.DevolutionDTO;
-import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
-import co.edu.udistrital.mdp.pets.services.DevolutionService;
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import co.edu.udistrital.mdp.pets.dto.DevolutionDTO;
+import co.edu.udistrital.mdp.pets.dto.DevolutionDetailDTO;
+import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
+import co.edu.udistrital.mdp.pets.services.DevolutionService;
 
 @RestController
 @RequestMapping("/devolutions")
 public class DevolutionController {
-    private static final String ERR_MSG = "message";
 
     @Autowired
     private DevolutionService devolutionService;
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestBody DevolutionEntity devolution) {
-        try {
-            DevolutionEntity created = devolutionService.createDevolution(devolution);
-            return new ResponseEntity<>(new DevolutionDTO(created), HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
-        }
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<DevolutionDTO>> getAll() {
-        List<DevolutionDTO> dtos = devolutionService.searchDevolutions().stream()
-                .map(DevolutionDTO::new)
-                .toList();
-        return ResponseEntity.ok(dtos);
+    @ResponseStatus(HttpStatus.OK)
+    public List<DevolutionDetailDTO> findAll() {
+        List<DevolutionEntity> entities = devolutionService.getDevolutions();
+        return modelMapper.map(entities, new TypeToken<List<DevolutionDetailDTO>>() {}.getType());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        try {
-            DevolutionEntity entity = devolutionService.searchDevolution(id);
-            return ResponseEntity.ok(new DevolutionDTO(entity));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(ERR_MSG, e.getMessage()));
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public DevolutionDetailDTO findOne(@PathVariable Long id) {
+        DevolutionEntity entity = devolutionService.getDevolution(id);
+        return modelMapper.map(entity, DevolutionDetailDTO.class);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public DevolutionDTO create(@RequestBody DevolutionDTO devolutionDTO) {
+        DevolutionEntity entity = devolutionService.createDevolution(
+                modelMapper.map(devolutionDTO, DevolutionEntity.class));
+        return modelMapper.map(entity, DevolutionDTO.class);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DevolutionDTO update(@PathVariable Long id, @RequestBody DevolutionDTO devolutionDTO) {
+        DevolutionEntity entity = devolutionService.updateDevolution(id,
+                modelMapper.map(devolutionDTO, DevolutionEntity.class));
+        return modelMapper.map(entity, DevolutionDTO.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
-        try {
-            devolutionService.deleteDevolution(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(ERR_MSG, e.getMessage()));
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        devolutionService.deleteDevolution(id);
     }
 }

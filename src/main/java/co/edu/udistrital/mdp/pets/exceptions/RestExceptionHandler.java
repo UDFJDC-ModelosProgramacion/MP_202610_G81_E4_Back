@@ -13,13 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    /**
-     * Handles EntityNotFoundException. Created to encapsulate errors with more
-     * detail than javax.persistence.EntityNotFoundException.
-     *
-     * @param ex the EntityNotFoundException
-     * @return the ApiError object
-     */
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(
             EntityNotFoundException ex) {
@@ -28,12 +21,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
-    /**
-     * Handles IllegalOperationException.
-     *
-     * @param ex the IllegalOperationException
-     * @return the ApiError object
-     */
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    protected ResponseEntity<Object> handleJpaEntityNotFound(
+            jakarta.persistence.EntityNotFoundException ex) {
+        ApiError apiError = new ApiError(NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     @ExceptionHandler(IllegalOperationException.class)
     protected ResponseEntity<Object> handleIllegalOperation(
             IllegalOperationException ex) {
