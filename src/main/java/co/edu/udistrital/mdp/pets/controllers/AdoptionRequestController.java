@@ -52,7 +52,7 @@ public class AdoptionRequestController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, IllegalOperationException {
         // CORRECCIÓN: Se cambió deleteAdoptionRequest(id) por deleteRequest(id)
         service.deleteRequest(id);
     }
