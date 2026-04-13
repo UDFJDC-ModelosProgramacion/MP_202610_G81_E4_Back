@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.ShelterEntity;
 import co.edu.udistrital.mdp.pets.entities.ShelterEventEntity;
-import co.edu.udistrital.mdp.pets.services.ShelterEventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -24,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(ShelterEventService.class)
-public class ShelterEventServiceTest {
+class ShelterEventServiceTest {
 
     @Autowired
     private ShelterEventService eventService;
@@ -49,16 +48,13 @@ public class ShelterEventServiceTest {
     }
 
     private void insertData() {
-        // Creamos un shelter base para todos los eventos del test
         sharedShelter = factory.manufacturePojo(ShelterEntity.class);
         entityManager.persist(sharedShelter);
 
         for (int i = 0; i < 3; i++) {
             ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
             event.setShelter(sharedShelter);
-            event.setEventDate(LocalDateTime.now().plusDays(5)); // Fecha futura para que sea válido
-            
-            // Importante: No seteamos eventCode manualmente si es autoincremental
+            event.setEventDate(LocalDateTime.now().plusDays(5));
             ShelterEventEntity persisted = entityManager.persistFlushFind(event);
             eventList.add(persisted);
         }
@@ -68,7 +64,7 @@ public class ShelterEventServiceTest {
     void testCreateShelterEventSuccess() {
         ShelterEventEntity newEvent = factory.manufacturePojo(ShelterEventEntity.class);
         newEvent.setShelter(sharedShelter);
-        newEvent.setEventDate(LocalDateTime.now().plusDays(2)); // Futuro
+        newEvent.setEventDate(LocalDateTime.now().plusDays(2));
 
         ShelterEventEntity result = eventService.createShelterEvent(newEvent);
 
@@ -81,11 +77,11 @@ public class ShelterEventServiceTest {
     void testCreateEventPastDateThrowsException() {
         ShelterEventEntity event = factory.manufacturePojo(ShelterEventEntity.class);
         event.setShelter(sharedShelter);
-        event.setEventDate(LocalDateTime.now().minusDays(1)); // PASADO: Debe fallar
+        event.setEventDate(LocalDateTime.now().minusDays(1));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            eventService.createShelterEvent(event);
-        });
+        assertThrows(IllegalArgumentException.class, () -> 
+            eventService.createShelterEvent(event)
+        );
     }
 
     @Test
@@ -99,9 +95,7 @@ public class ShelterEventServiceTest {
 
     @Test
     void testSearchEventNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            eventService.searchShelterEventByCode(9999L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> eventService.searchShelterEventByCode(9999L));
     }
 
     @Test
@@ -120,20 +114,16 @@ public class ShelterEventServiceTest {
 
     @Test
     void testDeleteFutureEventThrowsException() {
-        // La lógica dice: NO se pueden borrar eventos futuros
         ShelterEventEntity futureEvent = eventList.get(0); 
-        
-        assertThrows(IllegalStateException.class, () -> {
-            eventService.deleteShelterEventByCode(futureEvent.getEventCode());
-        });
+        Long code = futureEvent.getEventCode();
+        assertThrows(IllegalStateException.class, () -> eventService.deleteShelterEventByCode(code));
     }
 
     @Test
     void testDeletePastEventSuccess() {
-        // Creamos manualmente un evento que YA PASÓ para poder borrarlo
         ShelterEventEntity pastEvent = factory.manufacturePojo(ShelterEventEntity.class);
         pastEvent.setShelter(sharedShelter);
-        pastEvent.setEventDate(LocalDateTime.now().minusDays(10)); // Hace 10 días
+        pastEvent.setEventDate(LocalDateTime.now().minusDays(10));
         
         ShelterEventEntity persisted = entityManager.persistFlushFind(pastEvent);
         Long code = persisted.getEventCode();

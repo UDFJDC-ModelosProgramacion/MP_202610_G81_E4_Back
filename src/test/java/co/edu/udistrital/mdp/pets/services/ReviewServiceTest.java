@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,8 +14,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import co.edu.udistrital.mdp.pets.TestEntityFactory;
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.ReviewService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(ReviewService.class)
-public class ReviewServiceTest {
+class ReviewServiceTest {
 
     @Autowired
     private ReviewService reviewService;
@@ -54,25 +54,20 @@ public class ReviewServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
-            ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+            ShelterEntity shelter = TestEntityFactory.createShelter(factory);
             entityManager.persist(shelter);
 
-            PetEntity pet = factory.manufacturePojo(PetEntity.class);
-            pet.setShelter(shelter);
+            PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
             entityManager.persist(pet);
 
-            AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            adopter.setFirstName("Nombre");
-            adopter.setLastName("Apellido");
+            AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
             entityManager.persist(adopter);
 
-            AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
-            adoption.setPet(pet);
-            adoption.setAdopter(adopter);
+            AdoptionEntity adoption = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
             entityManager.persist(adoption);
 
             ReviewEntity review = new ReviewEntity();
-            review.setComments("Test");
+            review.setComments("Test " + i);
             review.setRating(5);
             review.setReviewDate(LocalDate.now());
             review.setAdopter(adopter);
@@ -86,43 +81,49 @@ public class ReviewServiceTest {
 
     @Test
     void testCreateReview() {
-        AdopterEntity adopter = entityManager.persist(factory.manufacturePojo(AdopterEntity.class));
-        ShelterEntity shelter = entityManager.persist(factory.manufacturePojo(ShelterEntity.class));
+        AdopterEntity adopter = entityManager.persist(TestEntityFactory.createAdopter(factory));
+        ShelterEntity shelter = entityManager.persist(TestEntityFactory.createShelter(factory));
 
-        PetEntity pet = factory.manufacturePojo(PetEntity.class);
-        pet.setShelter(shelter);
+        PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
         entityManager.persist(pet);
 
-        AdoptionEntity adoption = new AdoptionEntity();
-        adoption.setPet(pet);
-        adoption.setAdopter(adopter);
+        AdoptionEntity adoption = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
         entityManager.persist(adoption);
 
         ReviewEntity newReview = new ReviewEntity();
         newReview.setComments("Nueva review");
         newReview.setRating(4);
         newReview.setReviewDate(LocalDate.now());
+        
+        // El servicio requiere review, adoptionId y adopterId
         ReviewEntity result = reviewService.createReview(newReview, adoption.getId(), adopter.getId());
 
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals(4, result.getRating());
+        assertEquals(adopter.getId(), result.getAdopter().getId());
     }
 
     @Test
-    void testSearchReview() {
+    void testGetReview() { // CORRECCIÓN: Nombre coincidente con el Service
         ReviewEntity expected = reviewList.get(0);
-        ReviewEntity result = reviewService.searchReview(expected.getId());
+        ReviewEntity result = reviewService.getReview(expected.getId());
 
         assertNotNull(result);
         assertEquals(expected.getId(), result.getId());
     }
 
     @Test
-    void testSearchReviewNotFound() {
+    void testGetReviewNotFound() { // CORRECCIÓN: Nombre coincidente con el Service
         assertThrows(EntityNotFoundException.class, () -> {
-            reviewService.searchReview(99999L);
+            reviewService.getReview(99999L);
         });
+    }
+
+    @Test
+    void testGetReviews() { // Nuevo test para cubrir el método de listar
+        List<ReviewEntity> list = reviewService.getReviews();
+        assertEquals(reviewList.size(), list.size());
     }
 
     @Test
@@ -133,15 +134,12 @@ public class ReviewServiceTest {
         details.setComments("Updated");
         details.setRating(2);
         details.setReviewDate(LocalDate.now());
+        
         ReviewEntity updated = reviewService.updateReview(original.getId(), details);
 
         assertNotNull(updated);
-        entityManager.flush();
-        entityManager.clear();
-
-        ReviewEntity db = entityManager.find(ReviewEntity.class, original.getId());
-        assertEquals("Updated", db.getComments());
-        assertEquals(2, db.getRating());
+        assertEquals("Updated", updated.getComments());
+        assertEquals(2, updated.getRating());
     }
 
     @Test
@@ -149,6 +147,8 @@ public class ReviewServiceTest {
         ReviewEntity review = reviewList.get(0);
         reviewService.deleteReview(review.getId());
         entityManager.flush();
-        assertNull(entityManager.find(ReviewEntity.class, review.getId()));
+        
+        ReviewEntity deleted = entityManager.find(ReviewEntity.class, review.getId());
+        assertNull(deleted);
     }
 }

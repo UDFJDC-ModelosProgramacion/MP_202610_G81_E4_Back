@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-
-import co.edu.udistrital.mdp.pets.services.VaccineService;
 import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
 import co.edu.udistrital.mdp.pets.entities.VaccineEntity;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -51,12 +49,12 @@ class VaccineServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
-            VaccinationRecordEntity record = new VaccinationRecordEntity();
-            entityManager.persist(record);
-            recordList.add(record);
+            VaccinationRecordEntity vaccinationRecord = new VaccinationRecordEntity();
+            entityManager.persist(vaccinationRecord);
+            recordList.add(vaccinationRecord);
 
             VaccineEntity vaccine = factory.manufacturePojo(VaccineEntity.class);
-            vaccine.setVaccinationRecord(record);
+            vaccine.setVaccinationRecord(vaccinationRecord);
             vaccine.setVaccineName("Rabies");
 
             entityManager.persist(vaccine);
@@ -71,16 +69,29 @@ class VaccineServiceTest {
         entity.setVaccineName("Parvo");
 
         VaccineEntity result = service.createVaccine(entity);
+        assertNotNull(result);
+    }
+    @Test
+    void testCreateVaccinewWithValidRecordFlow() throws Exception {
+        VaccinationRecordEntity vaccinationRecord = new VaccinationRecordEntity();
+        entityManager.persist(vaccinationRecord);
+        entityManager.flush();
+
+        VaccineEntity entity = new VaccineEntity();
+        entity.setVaccineName("Parvo");
+        entity.setVaccinationRecord(vaccinationRecord);
+
+        VaccineEntity result = service.createVaccine(entity);
 
         assertNotNull(result);
+        assertNotNull(result.getId());
+        assertEquals(vaccinationRecord.getId(), result.getVaccinationRecord().getId());
     }
 
     @Test
     void testCreateVaccineInvalid() {
-        assertThrows(IllegalOperationException.class, () -> {
-            VaccineEntity entity = new VaccineEntity();
-            service.createVaccine(entity);
-        });
+        VaccineEntity entity = new VaccineEntity();
+        assertThrows(IllegalOperationException.class, () -> service.createVaccine(entity));
     }
 
     @Test

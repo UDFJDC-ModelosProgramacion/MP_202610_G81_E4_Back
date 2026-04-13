@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.AdopterService;
+
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(AdopterService.class)
-public class AdopterServiceTest {
+class AdopterServiceTest {
 
     @Autowired
     private AdopterService adopterService;
@@ -35,6 +35,7 @@ public class AdopterServiceTest {
 
     private PodamFactory factory = new PodamFactoryImpl();
     private List<AdopterEntity> adopterList = new ArrayList<>();
+
 
     @BeforeEach
     void setUp() {
@@ -75,15 +76,14 @@ public class AdopterServiceTest {
         assertEquals("Apartamento", found.getHousingType());
     }
 
-    @Test
+   @Test
     void testCreateAdopterInvalidHousing() {
+        AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
+        newEntity.setFirstName("Juan");
+        newEntity.setLastName("Perez");
+        newEntity.setHousingType("Hotel");
         assertThrows(IllegalArgumentException.class, () -> {
-            AdopterEntity newEntity = factory.manufacturePojo(AdopterEntity.class);
-            newEntity.setFirstName("Juan");
-            newEntity.setLastName("Perez");
-            newEntity.setHousingType("Hotel");
-
-            adopterService.createAdopter(newEntity);
+        adopterService.createAdopter(newEntity);
         });
     }
 
@@ -134,17 +134,20 @@ public class AdopterServiceTest {
     }
 
     @Test
-    void testDeleteAdopterWithRequests() {
+        void testDeleteAdopterWithRequests() {
         AdopterEntity entity = adopterList.get(0);
-
         AdoptionRequestEntity request = factory.manufacturePojo(AdoptionRequestEntity.class);
         request.setAdopter(entity);
-
+        if (entity.getAdoptionRequests() == null) {
+            entity.setAdoptionRequests(new ArrayList<>());
+        }
+        entity.getAdoptionRequests().add(request); 
         entityManager.persist(request);
         entityManager.flush();
-
+        entityManager.refresh(entity); 
+        Long adopterId = entity.getId();
         assertThrows(IllegalStateException.class, () -> {
-            adopterService.deleteAdopter(entity.getId());
+            adopterService.deleteAdopter(adopterId);
         });
     }
 }

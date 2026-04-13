@@ -1,69 +1,76 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import co.edu.udistrital.mdp.pets.dto.ReviewDTO;
+import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
+import co.edu.udistrital.mdp.pets.services.ReviewService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import co.edu.udistrital.mdp.pets.dto.ReviewDTO;
-import co.edu.udistrital.mdp.pets.entities.ReviewEntity;
-import co.edu.udistrital.mdp.pets.services.ReviewService;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
 
+    private static final String ERR_MSG = "message";
+
     @Autowired
-    private ReviewService reviewService;
+    private ReviewService service;
+
+    @PostMapping
+    public ResponseEntity<Object> create(@RequestBody ReviewDTO dto) {
+        try {
+            // Se pasan los 3 parámetros que requiere el service
+            ReviewEntity saved = service.createReview(
+                toEntity(dto), 
+                dto.getAdoptionId(), 
+                dto.getAdopterId()
+            );
+            return new ResponseEntity<>(new ReviewDTO(saved), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(ERR_MSG, e.getMessage()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERR_MSG, e.getMessage()));
+        }
+    }
 
     @GetMapping
-    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-        List<ReviewDTO> reviews = reviewService.searchReviews()
-                .stream()
+    public ResponseEntity<List<ReviewDTO>> getAll() {
+        return ResponseEntity.ok(service.getReviews().stream()
                 .map(ReviewDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(reviews);
+                .toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
-        ReviewEntity entity = reviewService.searchReview(id);
-        return ResponseEntity.ok(new ReviewDTO(entity));
-    }
-
-    @PostMapping
-    public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDTO) {
-        ReviewEntity reviewEntity = new ReviewEntity();
-        reviewEntity.setComments(reviewDTO.getComments());
-        reviewEntity.setRating(reviewDTO.getRating());
-        reviewEntity.setReviewDate(reviewDTO.getReviewDate());
-
-        ReviewEntity savedEntity = reviewService.createReview(
-                reviewEntity, 
-                reviewDTO.getAdoptionId(), 
-                reviewDTO.getAdopterId()
-        );
-        
-        return new ResponseEntity<>(new ReviewDTO(savedEntity), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-        ReviewEntity reviewDetails = new ReviewEntity();
-        reviewDetails.setComments(reviewDTO.getComments());
-        reviewDetails.setRating(reviewDTO.getRating());
-        reviewDetails.setReviewDate(reviewDTO.getReviewDate());
-
-        ReviewEntity updatedEntity = reviewService.updateReview(id, reviewDetails);
-        return ResponseEntity.ok(new ReviewDTO(updatedEntity));
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(new ReviewDTO(service.getReview(id)));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERR_MSG, e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
-        reviewService.deleteReview(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
+        try {
+            service.deleteReview(id);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERR_MSG, e.getMessage()));
+        }
+    }
+
+    private ReviewEntity toEntity(ReviewDTO dto) {
+        if (dto == null) return null;
+        ReviewEntity e = new ReviewEntity();
+        e.setId(dto.getId());
+        e.setRating(dto.getRating());
+        e.setComments(dto.getComments()); // Corregido de 'comment' a 'comments'
+        e.setReviewDate(dto.getReviewDate());
+        return e;
     }
 }

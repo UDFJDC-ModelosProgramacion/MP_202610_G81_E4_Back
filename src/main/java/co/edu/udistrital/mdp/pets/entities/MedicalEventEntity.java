@@ -3,14 +3,14 @@ package co.edu.udistrital.mdp.pets.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Entity
 @Table(name = "medical_events")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"pet", "veterinarian"})
 public class MedicalEventEntity extends BaseEntity {
 
     private String eventType;
@@ -20,13 +20,16 @@ public class MedicalEventEntity extends BaseEntity {
     private String treatment;
 
     @ElementCollection
-    private List<String> attachments;
+    @CollectionTable(name = "medical_event_entity_attachments", joinColumns = @JoinColumn(name = "medical_event_entity_id"))
+    @Column(name = "attachment")
+    private List<String> attachments = new ArrayList<>(); 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "veterinarian_id")
     private VeterinarianEntity veterinarian;
+    
 }

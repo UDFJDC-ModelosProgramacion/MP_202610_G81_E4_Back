@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import uk.co.jemos.podam.common.PodamExclude; 
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,11 +41,13 @@ public class PetEntity extends BaseEntity {
 
     private String status;
 
+    @PodamExclude 
     @ToString.Exclude
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("pet")
     private List<VaccinationRecordEntity> vaccinationRecords;
 
+    @PodamExclude 
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "shelter_id")

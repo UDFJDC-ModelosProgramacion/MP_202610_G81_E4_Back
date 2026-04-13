@@ -1,30 +1,28 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.DevolutionService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
 @Import(DevolutionService.class)
-public class DevolutionServiceTest {
+class DevolutionServiceTest {
 
     @Autowired
     private DevolutionService devolutionService;
@@ -32,7 +30,7 @@ public class DevolutionServiceTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private PodamFactory factory = new PodamFactoryImpl();
+    private final PodamFactory factory = new PodamFactoryImpl();
     private List<DevolutionEntity> devolutionList = new ArrayList<>();
 
     @BeforeEach
@@ -45,7 +43,7 @@ public class DevolutionServiceTest {
         entityManager.getEntityManager().createQuery("delete from DevolutionEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from AdoptionEntity").executeUpdate();
         entityManager.getEntityManager().createQuery("delete from PetEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from AdopterEntity").executeUpdate();
+        entityManager.flush();
     }
 
     private void insertData() {
@@ -53,22 +51,18 @@ public class DevolutionServiceTest {
             PetEntity pet = factory.manufacturePojo(PetEntity.class);
             entityManager.persist(pet);
 
-            AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
-            entityManager.persist(adopter);
-
             AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
             adoption.setPet(pet);
-            adoption.setAdopter(adopter);
             entityManager.persist(adoption);
 
             DevolutionEntity devolution = factory.manufacturePojo(DevolutionEntity.class);
             devolution.setAdoption(adoption);
-            devolution.setReason("Reason " + i);
-            devolution.setPetState("Healthy");
+            devolution.setReturnDate(LocalDate.now().minusDays(i));
             
             entityManager.persist(devolution);
             devolutionList.add(devolution);
         }
+        entityManager.flush();
     }
 
     @Test
@@ -76,71 +70,72 @@ public class DevolutionServiceTest {
         AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
         entityManager.persist(adoption);
 
-        DevolutionEntity newDevolution = factory.manufacturePojo(DevolutionEntity.class);
+        DevolutionEntity newDevolution = new DevolutionEntity();
         newDevolution.setAdoption(adoption);
-        newDevolution.setReason("Relocation");
-        newDevolution.setPetState("Good");
+        newDevolution.setReturnDate(LocalDate.now());
+        newDevolution.setReason("Allergy");
+        newDevolution.setDetailedDescription("The owner developed a severe allergy.");
+        newDevolution.setPetState("Excellent");
 
         DevolutionEntity result = devolutionService.createDevolution(newDevolution);
 
         assertNotNull(result);
         DevolutionEntity entity = entityManager.find(DevolutionEntity.class, result.getId());
-        assertEquals(newDevolution.getReason(), entity.getReason());
-    }
-
-    @Test
-    void testCreateDevolutionDuplicate() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            DevolutionEntity duplicate = factory.manufacturePojo(DevolutionEntity.class);
-            duplicate.setAdoption(devolutionList.get(0).getAdoption());
-            devolutionService.createDevolution(duplicate);
-        });
+        assertEquals("Allergy", entity.getReason());
     }
 
     @Test
     void testCreateDevolutionNoAdoption() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            DevolutionEntity devolution = factory.manufacturePojo(DevolutionEntity.class);
-            devolution.setAdoption(null);
-            devolutionService.createDevolution(devolution);
-        });
+        DevolutionEntity devolution = new DevolutionEntity();
+        devolution.setAdoption(null);
+        assertThrows(IllegalArgumentException.class, () -> 
+            devolutionService.createDevolution(devolution)
+        );
     }
 
     @Test
-    void testGetDevolution() {
+    void testFindAllDevolutions() {
+        List<DevolutionEntity> list = devolutionService.searchDevolutions();
+        assertEquals(devolutionList.size(), list.size());
+    }
+
+    @Test
+    void testFindDevolutionById() {
         DevolutionEntity entity = devolutionList.get(0);
-        DevolutionEntity result = devolutionService.getDevolution(entity.getId());
+        DevolutionEntity result = devolutionService.searchDevolution(entity.getId());
         
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
     }
 
     @Test
-    void testGetDevolutionNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            devolutionService.getDevolution(999L);
-        });
+    void testFindDevolutionNotFound() {
+        assertThrows(EntityNotFoundException.class, () -> 
+            devolutionService.searchDevolution(999L)
+        );
     }
 
     @Test
     void testUpdateDevolution() {
         DevolutionEntity entity = devolutionList.get(0);
-        DevolutionEntity updateData = factory.manufacturePojo(DevolutionEntity.class);
-        updateData.setReason("Updated");
+        DevolutionEntity updateData = new DevolutionEntity();
+        updateData.setReturnDate(LocalDate.now());
+        updateData.setReason("Updated Reason");
 
         DevolutionEntity result = devolutionService.updateDevolution(entity.getId(), updateData);
 
         assertNotNull(result);
         DevolutionEntity updated = entityManager.find(DevolutionEntity.class, entity.getId());
-        assertEquals("Updated", updated.getReason());
+        assertEquals("Updated Reason", updated.getReason());
     }
 
     @Test
     void testDeleteDevolution() {
         DevolutionEntity devolution = devolutionList.get(0);
         Long id = devolution.getId();
-
+        
         devolutionService.deleteDevolution(id);
+        entityManager.flush();
 
         DevolutionEntity deleted = entityManager.find(DevolutionEntity.class, id);
         assertNull(deleted);

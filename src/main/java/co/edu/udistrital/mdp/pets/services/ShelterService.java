@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ShelterService {
+    private static final String SHELTER_NOT_FOUND = "Shelter not found";
 
     @Autowired
     private ShelterRepository shelterRepository;
@@ -27,7 +28,7 @@ public class ShelterService {
     @Transactional(readOnly = true)
     public List<ShelterEntity> getShelters() {
         log.info("Searching all shelter entities");
-        return shelterRepository.findAll();
+        return shelterRepository.findAll().stream().toList();
     }
 
     @Transactional(readOnly = true)
@@ -37,7 +38,7 @@ public class ShelterService {
             throw new IllegalArgumentException("Id cannot be null");
         }
         return shelterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
+                .orElseThrow(() -> new EntityNotFoundException(SHELTER_NOT_FOUND));
     }
 
     @Transactional
@@ -48,7 +49,7 @@ public class ShelterService {
         }
 
         ShelterEntity existing = shelterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
+                .orElseThrow(() -> new EntityNotFoundException(SHELTER_NOT_FOUND));
 
         existing.setName(shelter.getName());
         existing.setCity(shelter.getCity());
@@ -66,9 +67,9 @@ public class ShelterService {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
-        
+
         ShelterEntity shelter = shelterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Shelter not found"));
+                .orElseThrow(() -> new EntityNotFoundException(SHELTER_NOT_FOUND));
 
         if (shelter.getPets() != null && !shelter.getPets().isEmpty()) {
             throw new IllegalStateException("Cannot delete shelter with associated pets");

@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Entity
 @Table(name = "adoption_histories") 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"adoption"})
 public class AdoptionHistoryEntity extends BaseEntity {
 
     private LocalDate date;

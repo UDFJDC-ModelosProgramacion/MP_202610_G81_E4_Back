@@ -1,69 +1,75 @@
 package co.edu.udistrital.mdp.pets.services;
 
+import co.edu.udistrital.mdp.pets.entities.AdoptionEntity;
 import co.edu.udistrital.mdp.pets.entities.DevolutionEntity;
+import co.edu.udistrital.mdp.pets.repositories.AdoptionRepository;
 import co.edu.udistrital.mdp.pets.repositories.DevolutionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 public class DevolutionService {
+
+    private static final String DEVOLUTION_NOT_FOUND = "Devolution not found with ID: ";
 
     @Autowired
     private DevolutionRepository repository;
 
-    /**
-     * Crea una devolución verificando que no exista una previa para la misma adopción.
-     */
+    @Autowired
+    private AdoptionRepository adoptionRepository;
+
+    @Transactional
     public DevolutionEntity createDevolution(DevolutionEntity devolution) {
-        log.info("Creating devolution for adoption: {}", devolution.getAdoption());
-
-        if (devolution.getAdoption() == null) {
-            throw new IllegalArgumentException("Devolution must be linked to an adoption.");
-        }
+        if (devolution == null) throw new IllegalArgumentException("Devolution cannot be null");
         
-        if (devolution.getReason() == null || devolution.getReason().isEmpty()) {
-            throw new IllegalArgumentException("Reason cannot be empty.");
+        if (devolution.getAdoption() == null || devolution.getAdoption().getId() == null) {
+            throw new IllegalArgumentException("Devolution must be associated with an existing adoption.");
         }
 
-        // Validación de duplicados usando el método de tu Repositorio
-        List<DevolutionEntity> existing = repository.findByAdoption(devolution.getAdoption());
-        if (!existing.isEmpty()) {
-            throw new IllegalArgumentException("A devolution already exists for this adoption.");
-        }
-
+        AdoptionEntity adoption = adoptionRepository.findById(devolution.getAdoption().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Adoption not found with ID: " + devolution.getAdoption().getId()));
+        
+        devolution.setAdoption(adoption);
         return repository.save(devolution);
     }
 
-    public DevolutionEntity getDevolution(Long id) {
+    @Transactional(readOnly = true)
+    public List<DevolutionEntity> searchDevolutions() {
+        return repository.findAll().stream().toList();
+    }
+
+    @Transactional(readOnly = true)
+    public DevolutionEntity searchDevolution(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Devolution not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
     }
 
-    public List<DevolutionEntity> getDevolutions() {
-        return repository.findAll();
-    }
-
+    @Transactional
     public DevolutionEntity updateDevolution(Long id, DevolutionEntity devolution) {
-        DevolutionEntity existing = getDevolution(id);
+        DevolutionEntity existing = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
         
-        if (devolution.getReason() == null || devolution.getReason().isEmpty()) {
-            throw new IllegalArgumentException("Reason cannot be empty.");
+        if (devolution.getReturnDate() == null) {
+            throw new IllegalArgumentException("Return date cannot be null");
         }
-
-        existing.setReason(devolution.getReason());
-        existing.setDetailedDescription(devolution.getDetailedDescription());
-        existing.setPetState(devolution.getPetState());
+        
+        existing.setReturnDate(devolution.getReturnDate());
+        if (devolution.getReason() != null) existing.setReason(devolution.getReason());
+        if (devolution.getDetailedDescription() != null) existing.setDetailedDescription(devolution.getDetailedDescription());
+        if (devolution.getPetState() != null) existing.setPetState(devolution.getPetState());
         
         return repository.save(existing);
     }
 
+    @Transactional
     public void deleteDevolution(Long id) {
-        DevolutionEntity devolution = getDevolution(id);
+        DevolutionEntity devolution = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DEVOLUTION_NOT_FOUND + id));
+        
         repository.delete(devolution);
     }
 }

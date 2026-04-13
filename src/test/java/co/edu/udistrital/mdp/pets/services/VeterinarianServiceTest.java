@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.VeterinarianService;
+
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(VeterinarianService.class)
-public class VeterinarianServiceTest {
+class VeterinarianServiceTest {
 
     @Autowired
     private VeterinarianService veterinarianService;
@@ -81,21 +81,18 @@ public class VeterinarianServiceTest {
 
     @Test
     void testCreateVeterinarianInvalidSpecialty() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
-            entity.setShelter(commonShelter);
-            entity.setSpecialties(Arrays.asList("Neurology"));
-            veterinarianService.createVeterinarian(entity);
-        });
+        VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
+        entity.setShelter(commonShelter);
+        entity.setSpecialties(Arrays.asList("Neurology"));
+        
+        assertThrows(IllegalArgumentException.class, () -> veterinarianService.createVeterinarian(entity));
     }
 
     @Test
     void testCreateVeterinarianNoShelter() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
-            entity.setShelter(null);
-            veterinarianService.createVeterinarian(entity);
-        });
+        VeterinarianEntity entity = factory.manufacturePojo(VeterinarianEntity.class);
+        entity.setShelter(null);
+        assertThrows(IllegalArgumentException.class, () -> veterinarianService.createVeterinarian(entity));
     }
 
     @Test
@@ -109,9 +106,7 @@ public class VeterinarianServiceTest {
 
     @Test
     void testSearchVeterinarianNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            veterinarianService.searchVeterinarian(0L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> veterinarianService.searchVeterinarian(0L));
     }
 
     @Test
@@ -137,10 +132,9 @@ public class VeterinarianServiceTest {
         VeterinarianEntity entity = veterinarianList.get(0);
         VeterinarianEntity newEntity = factory.manufacturePojo(VeterinarianEntity.class);
         newEntity.setVeterinarianIdBusiness(8888L);
+        Long entityId = entity.getId();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            veterinarianService.updateVeterinarian(entity.getId(), newEntity);
-        });
+        assertThrows(IllegalArgumentException.class, () -> veterinarianService.updateVeterinarian(entityId, newEntity));
     }
 
     @Test
@@ -155,14 +149,13 @@ public class VeterinarianServiceTest {
     @Test
     void testDeleteVeterinarianWithAdoptionsFails() {
         VeterinarianEntity entity = veterinarianList.get(0);
+        Long entityId = entity.getId();
         
         AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
         adoption.setVeterinarian(entity);
         entityManager.persist(adoption);
         entityManager.flush();
 
-        assertThrows(IllegalStateException.class, () -> {
-            veterinarianService.deleteVeterinarian(entity.getId());
-        });
+        assertThrows(IllegalStateException.class, () -> veterinarianService.deleteVeterinarian(entityId));
     }
 }

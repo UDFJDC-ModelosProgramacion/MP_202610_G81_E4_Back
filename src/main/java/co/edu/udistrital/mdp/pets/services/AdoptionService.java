@@ -4,7 +4,7 @@ import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class AdoptionService {
+    private static final String ADOPTION_NOT_FOUND = "Adopción no encontrada";
 
     @Autowired
     private AdoptionRepository adoptionRepository;
@@ -24,7 +25,8 @@ public class AdoptionService {
     private AdopterRepository adopterRepository;
 
     @Transactional
-    public AdoptionEntity createAdoption(AdoptionEntity adoption) throws IllegalOperationException, EntityNotFoundException {
+    public AdoptionEntity createAdoption(AdoptionEntity adoption) 
+            throws IllegalOperationException, EntityNotFoundException {
         log.info("Iniciando creación de adopción");
 
         if (adoption.getPet() == null || adoption.getPet().getId() == null) {
@@ -37,13 +39,12 @@ public class AdoptionService {
         PetEntity pet = petRepository.findById(adoption.getPet().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Mascota no encontrada"));
 
-        if (pet.getStatus() == null || !pet.getStatus().equalsIgnoreCase("AVAILABLE")) {
-            throw new IllegalOperationException("La mascota no está disponible");
-        }
-
         AdopterEntity adopter = adopterRepository.findById(adoption.getAdopter().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Adoptante no encontrado"));
 
+        if (pet.getStatus() == null || !pet.getStatus().equalsIgnoreCase("AVAILABLE")) {
+            throw new IllegalOperationException("La mascota con ID " + pet.getId() + " no está disponible para adopción");
+        }
         adoption.setPet(pet);
         adoption.setAdopter(adopter);
         
@@ -51,32 +52,36 @@ public class AdoptionService {
         petRepository.save(pet);
 
         AdoptionEntity newAdoption = adoptionRepository.save(adoption);
-        log.info("Adopción creada con ID: {}", newAdoption.getId());
+        log.info("Adopción creada exitosamente con ID: {}", newAdoption.getId());
         
         return newAdoption;
     }
-
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AdoptionEntity> searchAdoptions() {
-        return adoptionRepository.findAll();
+        return adoptionRepository.findAll().stream().toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AdoptionEntity searchAdoption(Long id) throws EntityNotFoundException {
         return adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
     }
 
     @Transactional
     public AdoptionEntity updateAdoption(Long id, AdoptionEntity adoptionData) 
-            throws EntityNotFoundException, IllegalOperationException {
-        
+            throws EntityNotFoundException, IllegalOperationException { 
+    
         AdoptionEntity existing = adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
+
+        if ("FINISHED".equalsIgnoreCase(existing.getStatus())) {
+            throw new IllegalOperationException("No se puede modificar una adopción con estado FINISHED");
+        }
 
         if (adoptionData.getStatus() != null) {
             existing.setStatus(adoptionData.getStatus());
         }
+        
         if (adoptionData.getAdoptionDate() != null) {
             existing.setAdoptionDate(adoptionData.getAdoptionDate());
         }
@@ -84,16 +89,20 @@ public class AdoptionService {
         return adoptionRepository.save(existing);
     }
 
-    @Transactional
-    public void deleteAdoption(Long id) throws EntityNotFoundException, IllegalOperationException {
+   @Transactional
+    public void deleteAdoption(Long id) 
+            throws EntityNotFoundException, IllegalOperationException {
+        log.info("Intentando eliminar adopción con ID: {}", id);
+
         AdoptionEntity adoption = adoptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopción no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
 
         if (!"FINISHED".equalsIgnoreCase(adoption.getStatus())) {
-            throw new IllegalOperationException("Solo se pueden eliminar adopciones con estado FINISHED");
+            log.warn("Intento fallido de eliminar adopción no finalizada: {}", id);
+            throw new IllegalOperationException("Solo se pueden eliminar adopciones con estado FINISHED para preservar el historial activo.");
         }
-
         adoptionRepository.delete(adoption);
+        log.info("Adopción ID {} eliminada correctamente", id);
     }
 }
 

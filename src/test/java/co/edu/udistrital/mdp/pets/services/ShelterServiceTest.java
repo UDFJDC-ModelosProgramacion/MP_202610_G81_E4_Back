@@ -1,4 +1,4 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.services.ShelterService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(ShelterService.class)
-public class ShelterServiceTest {
+class ShelterServiceTest {
 
     @Autowired
     private ShelterService shelterService;
@@ -56,6 +55,7 @@ public class ShelterServiceTest {
             shelterList.add(shelter);
         }
     }
+
     @Test
     void testCreateShelter() {
         ShelterEntity newEntity = factory.manufacturePojo(ShelterEntity.class);
@@ -76,52 +76,56 @@ public class ShelterServiceTest {
         assertEquals(newEntity.getPhone(), entity.getPhone());
         assertEquals(newEntity.getEmail(), entity.getEmail());
     }
+
     @Test
     void testCreateShelterNull() {
         assertThrows(IllegalArgumentException.class, () -> {
             shelterService.createShelter(null);
         });
     }
+
     @Test
     void testCreateShelterNoName() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setName("");
-            shelterService.createShelter(entity);
-        });
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setName("");
+        assertThrows(IllegalArgumentException.class, () -> 
+            shelterService.createShelter(entity)
+        );
     }
+
     @Test
     void testCreateShelterNoCity() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setCity("");
-            shelterService.createShelter(entity);
-        });
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setCity("");
+        assertThrows(IllegalArgumentException.class, () -> shelterService.createShelter(entity));
     }
+
     @Test
     void testCreateShelterNoAddress() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setAddress("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setAddress("");
             shelterService.createShelter(entity);
         });
     }
+
     @Test
     void testCreateShelterNoPhone() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setPhone("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setPhone("");
             shelterService.createShelter(entity);
         });
     }
     @Test
     void testCreateShelterNoEmail() {
+        ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
+        entity.setEmail("");
         assertThrows(IllegalArgumentException.class, () -> {
-            ShelterEntity entity = factory.manufacturePojo(ShelterEntity.class);
-            entity.setEmail("");
             shelterService.createShelter(entity);
         });
     }
+
     @Test
     void testSearchShelter() {
         ShelterEntity entity = shelterList.get(0);
@@ -131,18 +135,19 @@ public class ShelterServiceTest {
         assertNotNull(result);
         assertEquals(entity.getId(), result.getId());
     }
+
     @Test
     void testSearchShelterNullId() {
         assertThrows(IllegalArgumentException.class, () -> {
             shelterService.searchShelter(null);
         });
     }
+
     @Test
     void testSearchShelterNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            shelterService.searchShelter(0L);
-        });
+        assertThrows(EntityNotFoundException.class, () -> shelterService.searchShelter(0L));
     }
+
     @Test
     void testUpdateShelter() {
 
@@ -178,20 +183,18 @@ public class ShelterServiceTest {
 
         assertNull(deleted);
     }
+
     @Test
     void testDeleteShelterWithPets() {
-
         ShelterEntity shelter = shelterList.get(0);
-
         PetEntity pet = factory.manufacturePojo(PetEntity.class);
         pet.setShelter(shelter);
 
         entityManager.persist(pet);
         shelter.getPets().add(pet);
 
-        assertThrows(IllegalStateException.class, () -> {
-            shelterService.deleteShelter(shelter.getId());
-        });
+        Long shelterId = shelter.getId();
+        assertThrows(IllegalStateException.class, () -> shelterService.deleteShelter(shelterId));
     }
 }
     

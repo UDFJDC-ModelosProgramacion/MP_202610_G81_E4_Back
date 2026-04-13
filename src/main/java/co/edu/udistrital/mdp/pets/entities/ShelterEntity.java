@@ -8,12 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.ToString;
 import uk.co.jemos.podam.common.PodamExclude;
 import java.util.List;
+import java.util.ArrayList; 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "shelters")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"pets", "veterinarians", "events"})
+@EqualsAndHashCode(callSuper = true, exclude = {"pets", "veterinarians", "events", "photos", "videos"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShelterEntity extends BaseEntity {
@@ -30,30 +31,30 @@ public class ShelterEntity extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "shelter_photos", joinColumns = @JoinColumn(name = "shelter_id"))
     @Column(name = "photo_url")
-    private List<String> photos;
+    private List<String> photos = new ArrayList<>(); 
 
     @ElementCollection
     @CollectionTable(name = "shelter_videos", joinColumns = @JoinColumn(name = "shelter_id"))
     @Column(name = "video_url")
-    private List<String> videos;
+    private List<String> videos = new ArrayList<>(); 
 
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("shelter")
-    private List<PetEntity> pets;
+    private List<PetEntity> pets = new ArrayList<>(); 
 
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("shelter")
-    private List<VeterinarianEntity> veterinarians;
+    private List<VeterinarianEntity> veterinarians = new ArrayList<>(); 
 
     @PodamExclude
     @ToString.Exclude
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("shelter")
-    private List<ShelterEventEntity> events;
+    private List<ShelterEventEntity> events = new ArrayList<>(); 
 }
 
     

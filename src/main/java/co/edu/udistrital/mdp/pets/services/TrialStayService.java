@@ -5,22 +5,30 @@ import co.edu.udistrital.mdp.pets.entities.TrialStayEntity;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class TrialStayService {
+    private static final String NOT_FOUND = "Trial Stay not found";
+    private static final String PET_NOT_FOUND = "Pet not found";
+    private static final String ADOPTION_NOT_FOUND = "Adoption not found";
+
     @Autowired private TrialStayRepository trialStayRepository;
     @Autowired private PetRepository petRepository;
     @Autowired private AdoptionRepository adoptionRepository;
+    @Autowired
+    @Lazy
+    private TrialStayService self;
 
     @Transactional
     public TrialStayEntity createTrialStay(TrialStayEntity trialStay, Long petId, Long adoptionId) {
         trialStay.setPet(petRepository.findById(petId)
-                .orElseThrow(() -> new EntityNotFoundException("Pet not found")));
+                .orElseThrow(() -> new EntityNotFoundException(PET_NOT_FOUND)));
         var adoption = adoptionRepository.findById(adoptionId)
-                .orElseThrow(() -> new EntityNotFoundException("Adoption not found"));
+                .orElseThrow(() -> new EntityNotFoundException(ADOPTION_NOT_FOUND));
         
         trialStay.setAdoption(adoption);
         adoption.setTrialStay(trialStay); 
@@ -29,16 +37,19 @@ public class TrialStayService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrialStayEntity> searchTrialStays() { return trialStayRepository.findAll(); }
+    public List<TrialStayEntity> searchTrialStays() { 
+        return trialStayRepository.findAll().stream().toList(); 
+    }
 
     @Transactional(readOnly = true)
     public TrialStayEntity searchTrialStay(Long id) {
-        return trialStayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found"));
+        return trialStayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
     }
 
     @Transactional
     public TrialStayEntity updateTrialStay(Long id, TrialStayEntity details) {
-        TrialStayEntity existing = searchTrialStay(id);
+        TrialStayEntity existing = self.searchTrialStay(id);
+        
         existing.setStartDate(details.getStartDate());
         existing.setEndDate(details.getEndDate());
         existing.setResult(details.getResult());
@@ -48,15 +59,16 @@ public class TrialStayService {
 
     @Transactional
     public void deleteTrialStay(Long id) {
-    TrialStayEntity trialStay = trialStayRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Trial Stay not found"));
-    AdoptionEntity adoption = trialStay.getAdoption();
-    if (adoption != null) {
-        adoption.setTrialStay(null);
-        adoptionRepository.save(adoption);
+        TrialStayEntity trialStay = trialStayRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+        
+        AdoptionEntity adoption = trialStay.getAdoption();
+        if (adoption != null) {
+            adoption.setTrialStay(null);
+            adoptionRepository.save(adoption);
+        }
+        trialStayRepository.delete(trialStay);
     }
-    trialStayRepository.delete(trialStay);
-}
 }
 
 

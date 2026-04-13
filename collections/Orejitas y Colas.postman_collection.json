@@ -9,6 +9,1239 @@
   },
   "item": [
     {
+      "name": "Adoption History",
+      "item": [
+        {
+          "name": "Get All Adoption Histories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of adoption histories > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-histories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-histories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Adoption History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"adoption_history_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"date\": \"2026-04-11\",\r\n    \"reason\": \"Seguimiento primer mes\",\r\n    \"detail\": \"La mascota se ha adaptado perfectamente a su nuevo hogar. Muestra buen apetito.\",\r\n    \"adoptionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-histories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-histories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Adoption History By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption history  with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-histories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-histories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Adoption History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption history with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"date\": \"2026-04-11\",\r\n    \"reason\": \"Seguimiento corregido\",\r\n    \"detail\": \"Actualización: El dueño informa que ya completó el esquema de vacunación.\",\r\n    \"adoptionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-histories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-histories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Adoption History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption history with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\": \"Actualización de historial\",\r\n    \"detail\": \"Nueva información registrada\",\r\n    \"date\": \"2026-04-01\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-histories/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-histories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Adoption Tracking",
+      "item": [
+        {
+          "name": "Get All Adoption Trackings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of adoption trackings > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-trackings",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-trackings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Adoption Tracking By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption tracking with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-trackings/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-trackings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Adoption Tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"devolution_tracking_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"frequency\": \"Monthly\",\r\n    \"notes\": \"The pet has adapted well. Next vaccine is due soon.\",\r\n    \"nextReview\": \"2026-05-15\",\r\n    \"adoptionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-trackings",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-trackings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Adoption Tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption tracking  with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"frequency\": \"Semanal\",\r\n    \"notes\": \"Revisión actualizada\",\r\n    \"nextReview\": \"2026-05-01\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-trackings/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-trackings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Adoption Tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adoption tracking with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-trackings/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-trackings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Devolution",
+      "item": [
+        {
+          "name": "Get All Devolutions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of devolutions > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\": \"Adopción exitosa\",\r\n    \"detail\": \"El animal se adaptó bien\",\r\n    \"date\": \"2026-03-22\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/devolutions",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "devolutions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Devolution",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"devolution_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"returnDate\": \"2026-04-11\",\r\n    \"reason\": \"Relocation\",\r\n    \"detailedDescription\": \"The adopter is moving to another country and cannot take the pet.\",\r\n    \"petState\": \"Healthy\",\r\n    \"adoptionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/devolutions",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "devolutions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Devolution",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The devolution with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\": \"Motivo actualizado\",\r\n    \"detailedDescription\": \"Nueva descripción\",\r\n    \"petState\": \"En recuperación\",\r\n    \"returnDate\": \"2026-04-01\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/devolutions/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "devolutions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Devolution",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The devolution with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"returnDate\": \"2026-04-12\",\r\n    \"reason\": \"Updated: Behavioral issues\",\r\n    \"detailedDescription\": \"The pet has shown aggression towards other animals in the household.\",\r\n    \"petState\": \"Agitated but physically healthy\",\r\n    \"adoptionId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/devolutions/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "devolutions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Devolution By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The devolution with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\": \"Actualización de historial\",\r\n    \"detail\": \"Nueva información registrada\",\r\n    \"date\": \"2026-04-01\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/devolutions/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "devolutions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Report",
+      "item": [
+        {
+          "name": "Get All Reports",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of reports > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\": \"No puede cuidarlo\",\r\n    \"detailedDescription\": \"El adoptante se mudó a otro país\",\r\n    \"petState\": \"Saludable\",\r\n    \"returnDate\": \"2026-03-22\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/reports",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Report By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The report with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reports",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The report with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reportType\": \"Trimestral\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-03-31\",\r\n    \"data\": \"Datos actualizados del reporte\",\r\n    \"generationDate\": \"2026-03-22\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/reports/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reports",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The report with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reportType\": \"Trimestral\",\r\n    \"startDate\": \"2026-01-01\",\r\n    \"endDate\": \"2026-03-31\",\r\n    \"data\": \"Datos actualizados del reporte\",\r\n    \"generationDate\": \"2026-03-22\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/reports/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reports",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"report_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reportType\": \"MENSUAL\",\r\n    \"startDate\": \"2026-04-01\",\r\n    \"endDate\": \"2026-04-30\",\r\n    \"data\": \"Informe de prueba\",\r\n    \"generationDate\": \"2026-04-11\",\r\n    \"shelterId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/reports",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Shelter",
       "item": [
         {
@@ -167,7 +1400,7 @@
                   "\r",
                   "   var data = pm.response.json();\r",
                   "\r",
-                  "   pm.expect(data.apierror.message).to.eql(\"The autor with the given id was not found\");\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");\r",
                   "\r",
                   "});"
                 ],
@@ -490,7 +1723,7 @@
                   "\r",
                   "   var data = pm.response.json();\r",
                   "\r",
-                  "   pm.expect(data.apierror.message).to.eql(\"The autor with the given id was not found\");\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The review with the given id was not found\");\r",
                   "\r",
                   "});"
                 ],
@@ -502,8 +1735,12 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [],
-                "type": "text/javascript"
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -677,7 +1914,7 @@
                   "\r",
                   "   var data = pm.response.json();\r",
                   "\r",
-                  "   pm.expect(data.apierror.message).to.eql(\"The adopter with the given id was not found\");\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The trial stay  with the given id was not found\");\r",
                   "\r",
                   "});"
                 ],
@@ -689,8 +1926,12 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [],
-                "type": "text/javascript"
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -789,6 +2030,44 @@
         },
         {
           "name": "Search trial Stay",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The trial stay with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -873,6 +2152,42 @@
         },
         {
           "name": "Search Trial Stays",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of trial stays > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -962,6 +2277,38 @@
         },
         {
           "name": "Search Shelter Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of Shelter Events > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -990,6 +2337,44 @@
         },
         {
           "name": "Update Shelter Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter events with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [],
@@ -1022,6 +2407,44 @@
         },
         {
           "name": "Search Shelters Events",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter event  with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -1045,6 +2468,44 @@
         },
         {
           "name": "Delete Shelter Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter event with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2031,6 +3492,2016 @@
               "path": [
                 "api",
                 "pets",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "veterinarian",
+      "item": [
+        {
+          "name": "Vaccinations",
+          "item": [
+            {
+              "name": "Vaccines",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/vaccines",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "vaccines"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "201 - Vaccine registered",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccines",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccines"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"Vaccine registered successfully\",\n    \"id\": 1\n}"
+                },
+                {
+                  "name": "404 - Vaccination record not found",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccines",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccines"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\r\n  \"error\": \"Vaccination record does not exist\"\r\n}"
+                },
+                {
+                  "name": "409 - Duplicate vaccine application",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccines",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccines"
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\r\n    \"error\": \"Vaccine already applied on this date\"\r\n}"
+                },
+                {
+                  "name": "400 - Invalid vaccination dates",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccines",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccines"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"error\": \"Next application date must be after application date\"\n}"
+                },
+                {
+                  "name": "403 - Unauthorized veterinarian",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vaccinationRecordId\": 1,\r\n  \"vaccineName\": \"Rabies\",\r\n  \"applicationDate\": \"2025-01-10\",\r\n  \"nextApplicationDate\": \"2026-01-10\",\r\n  \"batchNumber\": \"ABC123\",\r\n  \"observations\": \"hassle-free application\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccines",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccines"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\r\n  \"error\": \"Only veterinarians can register vaccines\"\r\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Create Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()",
+                  "",
+                  "pm.globals.set(\"veterinarian_id_1\", data.id);",
+                  "",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "",
+                  "   pm.response.to.have.status(201);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"veterinarianIdBusiness\": 999001,\n    \"lastName\": \"Sanchez\",\n    \"specialties\": [\"General\"],\n    \"availability\": \"Tarde\",\n    \"shelterId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Veterinarians",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of shelters > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "",
+                  "   pm.response.to.have.status(200);",
+                  "",
+                  "});",
+                  "",
+                  "pm.test(\"Status code is 404\", function () {",
+                  "",
+                  "   pm.response.to.have.status(404);",
+                  "",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "",
+                  "   var data = pm.response.json();",
+                  "",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"veterinarianIdBusiness\": 102030,\n    \"lastName\": \"Cárdenas\",\n    \"availability\": \"Mañana\",\n    \"specialties\": [\"Surgery\"], \n    \"shelterId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Veterinarian",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The adopter with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/veterinarians/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "veterinarians",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Medical Events",
+      "item": [
+        {
+          "name": "Medical events",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"petId\": 1,\r\n  \"eventType\": \"surgey\",\r\n  \"eventDate\": \"2025-02-10\",\r\n  \"description\": \"Leg operation\",\r\n  \"diagnosis\": \"Fracture\",\r\n  \"treatment\": \"surgey and rest\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/medical-events",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "medical-events"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 - Medical event created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"petId\": 1,\r\n  \"eventType\": \"surgey\",\r\n  \"eventDate\": \"2025-02-10\",\r\n  \"description\": \"Leg operation\",\r\n  \"diagnosis\": \"Fracture\",\r\n  \"treatment\": \"surgey and rest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/medical-events",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "medical-events"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n    \"message\": \"Medical event created successfully\",\r\n    \"id\": 1\r\n}"
+            },
+            {
+              "name": "404 - Pet not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"petId\": 1,\r\n  \"eventType\": \"surgey\",\r\n  \"eventDate\": \"2025-02-10\",\r\n  \"description\": \"Leg operation\",\r\n  \"diagnosis\": \"Fracture\",\r\n  \"treatment\": \"surgey and rest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/medical-events",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "medical-events"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Pet does not exist\"\r\n}"
+            },
+            {
+              "name": "403 - Unauthorized veterinarian",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"petId\": 1,\r\n  \"eventType\": \"surgey\",\r\n  \"eventDate\": \"2025-02-10\",\r\n  \"description\": \"Leg operation\",\r\n  \"diagnosis\": \"Fracture\",\r\n  \"treatment\": \"surgey and rest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/medical-events",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "medical-events"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Only veterinarians can create medical events\"\n}"
+            },
+            {
+              "name": "400 - Invalid event date",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"petId\": 1,\r\n  \"eventType\": \"surgey\",\r\n  \"eventDate\": \"2025-02-10\",\r\n  \"description\": \"Leg operation\",\r\n  \"diagnosis\": \"Fracture\",\r\n  \"treatment\": \"surgey and rest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/medical-events",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "medical-events"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Event date cannot be in the future\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Adoption Request",
+      "item": [
+        {
+          "name": "Vaccination records",
+          "item": [
+            {
+              "name": "Vaccination records",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"petId\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/vaccination-records",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "vaccination-records"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "201 - Vaccination record created",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"petId\": 1\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccination-records",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccination-records"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\r\n    \"message\": \"Vaccination record created succesfully\",\r\n    \"id\":1\r\n}"
+                },
+                {
+                  "name": "404 - Pet not found",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"petId\": 1\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccination-records",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccination-records"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\r\n  \"error\": \"Pet does not exist\"\r\n}"
+                },
+                {
+                  "name": "409 - Vaccination record already exists",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"petId\": 1\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccination-records",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccination-records"
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\r\n  \"error\": \"Pet already has a vaccination record\"\r\n}"
+                },
+                {
+                  "name": "400 - Invalid input data",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"petId\": 1\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8080/api/vaccination-records",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8080",
+                      "path": [
+                        "api",
+                        "vaccination-records"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "description": "",
+                      "type": "text"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"error\": \"Invalid input data\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Adoptions Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-requests"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 - Adoption Request created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/adoption-requests",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "adoption-requests"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"message\": \"Adoption request created successfully\",\r\n  \"id\": 1,\r\n  \"status\": \"PENDING\"\r\n}"
+            },
+            {
+              "name": "409 - Pet not available",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/adoption-requests",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "adoption-requests"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Pet is not available for adoption\"\r\n}"
+            },
+            {
+              "name": "409 - Duplicate adoption request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/adoption-requests",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "adoption-requests"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Adopter already has an active request for this pet\"\r\n}"
+            },
+            {
+              "name": "404 - Pet or adopter not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/adoption-requests",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "adoption-requests"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Pet or adopter does not exist\"\r\n}"
+            },
+            {
+              "name": "400 - Invalid request data",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"petId\": 1,\r\n    \"adopterId\": 2,\r\n    \"motivation\": \"i love this dog, i wanna cuddle and protect it\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/adoption-requests",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "adoption-requests"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Invalid input data\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "Approve adoption request",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-requests/1/approve",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-requests",
+                "1",
+                "approve"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - Adoption request approved",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"message\": \"Adoption request approved\",\r\n  \"status\": \"APPROVED\"\r\n}"
+            },
+            {
+              "name": "409 - Request already processed",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"error\": \"Request already approved or rejected\"\r\n}"
+            },
+            {
+              "name": "404 - Request not found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Adoption request not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "reject adoption request",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/adoption-requests/1/reject",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "adoption-requests",
+                "1",
+                "reject"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - Adoption request rejected",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/adoption-requests/1/reject",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "adoption-requests",
+                    "1",
+                    "reject"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\r\n  \"message\": \"Adoption request rejected\",\r\n  \"status\": \"REJECTED\"\r\n}"
+            },
+            {
+              "name": "409 - Request already processed",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/adoption-requests/1/reject",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "adoption-requests",
+                    "1",
+                    "reject"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Request already approved or rejected\"\n}"
+            },
+            {
+              "name": "404 - Request not found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/adoption-requests/1/reject",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "adoption-requests",
+                    "1",
+                    "reject"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Adoption request not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "item": [
+        {
+          "name": "Create Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()\r",
+                  "\r",
+                  "pm.globals.set(\"veterinarian_id_1\", data.id);\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(201);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"senderId\": 1,\r\n    \"senderType\": \"ADOPTER\",\r\n    \"recipientId\": 2,\r\n    \"recipientType\": \"SHELTER\",\r\n    \"subject\": \"Interés en adopción\",\r\n    \"content\": \"Hola, ¿cómo puedo iniciar el proceso?\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Messages",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of message > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"senderId\": 1,\r\n    \"recipientId\": 2,\r\n    \"subject\": \"Consulta sobre adopción (Actualizado)\",\r\n    \"content\": \"Hola, ya vi los requisitos, ¿podemos agendar una cita para conocer a Toby?\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The message with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "messages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notification",
+      "item": [
+        {
+          "name": "Create Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json()",
+                  "",
+                  "pm.globals.set(\"notification_id_1\", data.id);",
+                  "",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "",
+                  "   pm.response.to.have.status(201);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"userType\": \"ADOPTER\",\r\n    \"notificationType\": \"INFO\",\r\n    \"message\": \"Mensaje de prueba para el taller\",\r\n    \"relatedEntity\": \"PET_SHELTER\",\r\n    \"isRead\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The shelter with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Number of notifications > ' + 0, function () {\r",
+                  "\r",
+                  "   var data = pm.response.json()\r",
+                  "\r",
+                  "   pm.expect(data.length).to.greaterThan(0)\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(200);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The  veterinarian with the given id was not found\");\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"userType\": \"ADOPTER\",\r\n    \"notificationType\": \"ALERT\",\r\n    \"message\": \"Actualización de prueba sin fecha\",\r\n    \"isRead\": true,\r\n    \"relatedEntity\": \"PET_SHELTER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(204);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "\r",
+                  "   pm.response.to.have.status(404);\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Get expected error message\", function () {\r",
+                  "\r",
+                  "   var data = pm.response.json();\r",
+                  "\r",
+                  "   pm.expect(data.apierror.message).to.eql(\"The message with the given id was not found\");\r",
+                  "\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
                 "1"
               ]
             }

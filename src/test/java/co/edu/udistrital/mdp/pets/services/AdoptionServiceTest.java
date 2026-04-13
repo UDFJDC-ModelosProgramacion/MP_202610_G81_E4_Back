@@ -1,8 +1,7 @@
-package co.edu.udistrital.mdp.ZZZ.services;
+package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,17 +13,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
+import co.edu.udistrital.mdp.pets.TestEntityFactory;
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import co.edu.udistrital.mdp.pets.services.AdoptionService;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
 @Import(AdoptionService.class)
-public class AdoptionServiceTest {
+class AdoptionServiceTest {
 
     @Autowired
     private AdoptionService adoptionService;
@@ -51,22 +50,16 @@ public class AdoptionServiceTest {
 
     private void insertData() {
         for (int i = 0; i < 3; i++) {
-            ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+            ShelterEntity shelter = TestEntityFactory.createShelter(factory);
             entityManager.persist(shelter);
 
-            PetEntity pet = factory.manufacturePojo(PetEntity.class);
-            pet.setShelter(shelter);
-            pet.setStatus("AVAILABLE"); 
+            PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
             entityManager.persist(pet);
 
-            AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
+            AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
             entityManager.persist(adopter);
 
-            AdoptionEntity adoption = factory.manufacturePojo(AdoptionEntity.class);
-            adoption.setPet(pet);
-            adoption.setAdopter(adopter);
-            adoption.setAdoptionDate(LocalDate.now());
-            adoption.setStatus("IN_PROGRESS");
+            AdoptionEntity adoption = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
 
             entityManager.persist(adoption);
             adoptionList.add(adoption);
@@ -76,22 +69,16 @@ public class AdoptionServiceTest {
 
     @Test
     void testCreateAdoption() throws IllegalOperationException, EntityNotFoundException {
-        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+        ShelterEntity shelter = TestEntityFactory.createShelter(factory);
         entityManager.persist(shelter);
 
-        PetEntity pet = factory.manufacturePojo(PetEntity.class);
-        pet.setShelter(shelter);
-        pet.setStatus("AVAILABLE");
+        PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
         entityManager.persist(pet);
 
-        AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
+        AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
         entityManager.persist(adopter);
 
-        AdoptionEntity newEntity = new AdoptionEntity();
-        newEntity.setPet(pet);
-        newEntity.setAdopter(adopter);
-        newEntity.setAdoptionDate(LocalDate.now());
-        newEntity.setStatus("IN_PROGRESS");
+        AdoptionEntity newEntity = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
 
         AdoptionEntity result = adoptionService.createAdoption(newEntity);
         
@@ -104,21 +91,16 @@ public class AdoptionServiceTest {
     @Test
     void testCreateAdoptionPetNotAvailable() {
     assertThrows(IllegalOperationException.class, () -> {
-        ShelterEntity shelter = factory.manufacturePojo(ShelterEntity.class);
+        ShelterEntity shelter = TestEntityFactory.createShelter(factory);
         entityManager.persist(shelter);
 
-        PetEntity pet = factory.manufacturePojo(PetEntity.class);
-        pet.setShelter(shelter);
-        pet.setStatus("ADOPTED");
+        PetEntity pet = TestEntityFactory.createPet(factory, shelter, "ADOPTED");
         entityManager.persist(pet);
 
-        AdopterEntity adopter = factory.manufacturePojo(AdopterEntity.class);
+        AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
         entityManager.persist(adopter);
 
-        AdoptionEntity entity = new AdoptionEntity();
-        entity.setPet(pet);
-        entity.setAdopter(adopter);
-        entity.setAdoptionDate(LocalDate.now());
+        AdoptionEntity entity = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
         adoptionService.createAdoption(entity);
     });
 }

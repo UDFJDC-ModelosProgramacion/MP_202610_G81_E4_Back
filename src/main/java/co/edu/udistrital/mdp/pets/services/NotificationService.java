@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,92 +9,89 @@ import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.NotificationEntity;
 import co.edu.udistrital.mdp.pets.repositories.NotificationRepository;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class NotificationService {
+    private static final String NOTIF_NOT_FOUND = "Notification not found with id: ";
 
     @Autowired
     private NotificationRepository notificationRepository;
 
     @Transactional
     public NotificationEntity createNotification(NotificationEntity notification) {
-        log.info("Creating Notification");
-        
         if (notification == null) {
             throw new IllegalArgumentException("Notification cannot be null");
         }
-        if (notification.getUser() == null) {
-            throw new IllegalArgumentException("Notification must be assigned to a user");
+        if (notification.getUserId() == null) {
+            throw new IllegalArgumentException("Notification must be assigned to a user ID");
         }
         if (notification.getMessage() == null || notification.getMessage().isEmpty()) {
             throw new IllegalArgumentException("Notification message cannot be empty");
         }
-
-        notification.setTimestamp(LocalDateTime.now());
-        notification.setIsRead(false);
-
-        NotificationEntity savedNotification = notificationRepository.save(notification);
-        log.info("Notification created with id: {} for user: {}", savedNotification.getId(), notification.getUser().getId());
-        return savedNotification;
+        if (notification.getTimestamp() == null) {
+            notification.setTimestamp(LocalDateTime.now());
+        }
+        if (notification.getIsRead() == null) {
+            notification.setIsRead(false);
+        }
+        return notificationRepository.save(notification);
     }
 
     @Transactional(readOnly = true)
-    public NotificationEntity searchNotification(Long id) {
-        log.info("Searching Notification with id: {}", id);
+    public NotificationEntity findById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
         return notificationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Notification not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(NOTIF_NOT_FOUND + id));
     }
 
     @Transactional(readOnly = true)
-    public List<NotificationEntity> searchNotifications() {
-        log.info("Searching all notifications");
-        return notificationRepository.findAll();
+    public List<NotificationEntity> findAll() {
+        return notificationRepository.findAll().stream().toList();
     }
 
     @Transactional
     public NotificationEntity updateNotification(Long id, NotificationEntity notification) {
-        log.info("Updating Notification with id: {}", id);
-        
         if (id == null || notification == null) {
             throw new IllegalArgumentException("Id and Notification object cannot be null");
         }
-
         NotificationEntity existing = notificationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
-
+                .orElseThrow(() -> new EntityNotFoundException(NOTIF_NOT_FOUND + id));
+        
         existing.setIsRead(notification.getIsRead());
         existing.setMessage(notification.getMessage());
         existing.setNotificationType(notification.getNotificationType());
         existing.setUserType(notification.getUserType());
         existing.setRelatedEntity(notification.getRelatedEntity());
-
-        NotificationEntity updatedNotification = notificationRepository.save(existing);
-        log.info("Notification updated with id: {}", updatedNotification.getId());
-        return updatedNotification;
+        return notificationRepository.save(existing);
     }
 
     @Transactional
-    public void deleteNotification(Long id) {
-        log.info("Deleting Notification with id: {}", id);
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
-
+    public NotificationEntity markAsRead(Long id) throws IllegalOperationException {
         NotificationEntity notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
-
-        long daysSinceCreation = ChronoUnit.DAYS.between(notification.getTimestamp(), LocalDateTime.now());
-        if (daysSinceCreation < 30) {
-            throw new IllegalStateException("Cannot delete notifications younger than 30 days");
+                .orElseThrow(() -> new EntityNotFoundException(NOTIF_NOT_FOUND + id));
+        
+        if (Boolean.TRUE.equals(notification.getIsRead())) {
+            throw new IllegalOperationException("La notificación ya ha sido leída.");
         }
+        notification.setIsRead(true);
+        return notificationRepository.save(notification);
+    }
 
+    @Transactional
+    public void deleteNotification(Long id) throws IllegalOperationException {
+        NotificationEntity notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(NOTIF_NOT_FOUND + id));
+        
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        if (notification.getTimestamp().isAfter(thirtyDaysAgo)) {
+            throw new IllegalOperationException("No se pueden eliminar notificaciones con menos de 30 días de antigüedad");
+        }
         notificationRepository.delete(notification);
-        log.info("Notification deleted successfully");
     }
 }
