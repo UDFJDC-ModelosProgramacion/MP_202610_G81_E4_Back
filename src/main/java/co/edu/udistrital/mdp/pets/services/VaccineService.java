@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.VaccineEntity;
 import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.repositories.VaccineRepository;
 import co.edu.udistrital.mdp.pets.repositories.VaccinationRecordRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,14 +51,14 @@ public class VaccineService {
     }
 
     @Transactional(readOnly = true)
-    public VaccineEntity getVaccine(Long id) {
+    public VaccineEntity getVaccine(Long id) throws EntityNotFoundException {
         log.info("Buscando vacuna con ID: {}", id);
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VACCINE_NOT_FOUND + id));
     }
 
     @Transactional
-    public VaccineEntity updateVaccine(Long id, VaccineEntity vaccineDetails) throws IllegalOperationException {
+    public VaccineEntity updateVaccine(Long id, VaccineEntity vaccineDetails) throws IllegalOperationException, EntityNotFoundException {
         log.info("Actualizando vacuna con ID: {}", id);
         VaccineEntity existing = repository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(VACCINE_NOT_FOUND + id));
@@ -73,7 +73,7 @@ public class VaccineService {
     }
 
     @Transactional
-    public void deleteVaccine(Long id) {
+    public void deleteVaccine(Long id) throws EntityNotFoundException {
         log.info("Eliminando vacuna con ID: {}", id);
         VaccineEntity vaccineToDelete = repository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(VACCINE_NOT_FOUND + id));
