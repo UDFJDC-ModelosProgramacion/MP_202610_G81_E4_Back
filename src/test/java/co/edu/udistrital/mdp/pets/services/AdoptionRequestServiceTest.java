@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apiguardian.api.API;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +94,7 @@ class AdoptionRequestServiceTest {
         });
     }
     @Test
-    void testCreateWithEmptyStatus() throws Exception {
+    void testCreateWithEmptyStatus(){
         AdoptionRequestEntity entity = factory.manufacturePojo(AdoptionRequestEntity.class);
         entity.setPet(petList.get(0));
         entity.setAdopter(adopterList.get(0));

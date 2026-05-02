@@ -5,7 +5,7 @@ import co.edu.udistrital.mdp.pets.entities.VaccineEntity;
 import co.edu.udistrital.mdp.pets.entities.VaccinationRecordEntity;
 import co.edu.udistrital.mdp.pets.services.VaccineService;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
-import jakarta.persistence.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
