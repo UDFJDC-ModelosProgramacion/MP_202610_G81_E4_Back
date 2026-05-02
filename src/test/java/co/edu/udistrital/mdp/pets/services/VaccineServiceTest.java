@@ -95,6 +95,14 @@ class VaccineServiceTest {
         VaccineEntity entity = new VaccineEntity();
         assertThrows(IllegalOperationException.class, () -> vaccineService.createVaccine(entity));
     }
+    @Test
+    void testCreatewithNullVaccinationRecord(){
+        VaccineEntity entity = vaccineList.get(0);
+        assertThrows(IllegalOperationException.class, () ->{
+            entity.setVaccinationRecord(null);
+        });
+
+    }
 
     @Test
     void testGetVaccines() {
