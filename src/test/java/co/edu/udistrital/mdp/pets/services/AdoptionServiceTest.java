@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ class AdoptionServiceTest {
 
     @Autowired
     private TestEntityManager entityManager;
+
 
     private final PodamFactory factory = new PodamFactoryImpl();
     private List<AdoptionEntity> adoptionList = new ArrayList<>();
@@ -87,6 +89,33 @@ class AdoptionServiceTest {
         assertEquals(newEntity.getAdoptionDate(), entity.getAdoptionDate());
         assertEquals("ADOPTED", entity.getPet().getStatus());
     }
+    @Test
+    void testCreateAdoptionWithNullPet(){
+        ShelterEntity shelter = TestEntityFactory.createShelter(factory);
+        entityManager.persist(shelter);
+        PetEntity pet = null;
+        AdopterEntity adopter = TestEntityFactory.createAdopter(factory);
+        entityManager.persist(adopter);
+        AdoptionEntity newEntity = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
+        
+        assertThrows(IllegalOperationException.class, () -> {
+            adoptionService.createAdoption(newEntity);
+        });
+
+    }
+    @Test
+    void testCreateAdoptionWithNullAdopter(){
+        ShelterEntity shelter = TestEntityFactory.createShelter(factory);
+        entityManager.persist(shelter);
+        PetEntity pet = TestEntityFactory.createPet(factory, shelter, "AVAILABLE");
+        entityManager.persist(pet);
+        AdopterEntity adopter = null;
+        AdoptionEntity newEntity = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
+        
+        assertThrows(IllegalOperationException.class, () -> {
+            adoptionService.createAdoption(newEntity);
+        });
+    }
 
     @Test
     void testCreateAdoptionPetNotAvailable() {
@@ -102,9 +131,47 @@ class AdoptionServiceTest {
 
         AdoptionEntity entity = TestEntityFactory.createAdoption(pet, adopter, "IN_PROGRESS");
         adoptionService.createAdoption(entity);
-    });
-}
+        });
+    }
+    @Test
+    void searchAdoptions(){
+        List<AdoptionEntity> list = adoptionService.searchAdoptions();
+        assertEquals(adoptionList.size(), list.size());
+    }
+    @Test
+    void updateAdoption() throws Exception{
+        AdoptionEntity entity = adoptionList.get(0);
+        AdoptionEntity updateData = factory.manufacturePojo(AdoptionEntity.class);
+        updateData.setStatus("IN_PROGRESS");
+        updateData.setAdoptionDate(LocalDate.now());
+        AdoptionEntity result = adoptionService.updateAdoption(entity.getId(), updateData);
+        assertNotNull(result);
+        AdoptionEntity updated = entityManager.find(AdoptionEntity.class, entity.getId());
+        assertEquals("IN_PROGRESS", updated.getStatus());
+        assertEquals(LocalDate.now(), updated.getAdoptionDate());
 
+    }
+    @Test
+    void testUpdateAdoptionInvalid(){
+        AdoptionEntity adoptionEntity = adoptionList.get(0);
+        assertThrows(EntityNotFoundException.class, () ->{
+            adoptionService.updateAdoption(999L, adoptionEntity);
+        });
+    }
+    @Test
+    void testUpdateAdoptionFinishedAdoption(){
+        AdoptionEntity entity = adoptionList.get(0);
+        entity.setStatus("FINISHED");
+        AdoptionEntity updateData = factory.manufacturePojo(AdoptionEntity.class);
+        updateData.setStatus("AVAILABLE");
+        updateData.setAdoptionDate(LocalDate.now());
+        entityManager.merge(entity);
+        entityManager.flush();
+        entityManager.clear();
+        assertThrows(IllegalOperationException.class,()-> {
+            adoptionService.updateAdoption(entity.getId(), updateData);
+        });
+    }
     @Test
     void testDeleteAdoption() throws EntityNotFoundException, IllegalOperationException {
         AdoptionEntity entity = adoptionList.get(0);
@@ -118,7 +185,14 @@ class AdoptionServiceTest {
         AdoptionEntity deleted = entityManager.find(AdoptionEntity.class, entity.getId());
         assertNull(deleted);
     }
-
+    @Test
+    void testDeleteAdoptionInvalid(){
+        AdoptionEntity entity = adoptionList.get(0);
+        entity.setStatus("AVAILABLE");
+        assertThrows(IllegalOperationException.class, () ->{
+            adoptionService.deleteAdoption(entity.getId());
+        });
+    }
     @Test
     void testSearchAdoptionNotFound() {
         assertThrows(EntityNotFoundException.class, () -> {
