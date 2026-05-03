@@ -211,7 +211,7 @@ class MessageServiceTest {
         updateData.setRecipientId(4L);
         updateData.setSubject("Updated Subject");
         updateData.setContent("Updated Content");
-         Long existingId = existing.getId();
+        Long existingId = existing.getId();
         assertThrows(IllegalArgumentException.class, () ->{
             messageService.updateMessage(existingId,updateData);
         });
@@ -229,7 +229,7 @@ class MessageServiceTest {
     @Test
     void testDeleteMessageWrongSender(){
         MessageEntity message = messageList.get(0);
-         Long messageId = message.getId();
+        Long messageId = message.getId();
         assertThrows(IllegalArgumentException.class, () -> {
             messageService.deleteMessage(messageId, 3L);
         });
