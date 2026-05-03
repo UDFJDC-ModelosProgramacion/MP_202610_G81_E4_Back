@@ -64,7 +64,7 @@ class MessageServiceTest {
     }
 
     @Test
-    void testCreateMessage() {
+    void testCreateMessage(){
         MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
         newEntity.setSenderId(senderId);
         newEntity.setRecipientId(recipientId);
@@ -76,6 +76,39 @@ class MessageServiceTest {
         assertNotNull(result);
         MessageEntity found = entityManager.find(MessageEntity.class, result.getId());
         assertEquals("Test Subject", found.getSubject());
+    }
+    @Test
+    void testCreateMessageWithSenderIdNull(){
+        MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
+        newEntity.setSenderId(null);
+        newEntity.setRecipientId(recipientId);
+        newEntity.setSubject("Test Subject");
+        newEntity.setContent("Test Content");
+        assertThrows(IllegalArgumentException.class, () ->{
+            messageService.createMessage(newEntity);
+        });
+    }
+    @Test 
+    void testCreateMessageWithSubjectNull(){
+        MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
+        newEntity.setSenderId(senderId);
+        newEntity.setRecipientId(recipientId);
+        newEntity.setSubject(null);
+        newEntity.setContent("Test Content");
+        assertThrows(IllegalArgumentException.class, () ->{
+            messageService.createMessage(newEntity);
+        });
+    }
+    @Test
+    void testCreateMessageWithContentinvalid(){
+        MessageEntity newEntity = factory.manufacturePojo(MessageEntity.class);
+        newEntity.setSenderId(senderId);
+        newEntity.setRecipientId(recipientId);
+        newEntity.setSubject("Test Subject");
+        newEntity.setContent("a".repeat(1001));
+        assertThrows(IllegalArgumentException.class, () ->{
+            messageService.createMessage(newEntity);
+        });
     }
 
     @Test
@@ -90,6 +123,12 @@ class MessageServiceTest {
     @Test
     void testSearchMessageNotFound() {
         assertThrows(RuntimeException.class, () -> messageService.searchMessage(999L));
+    }
+    @Test
+    void testSearchMessageWithIdNull(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.searchMessage(null);
+        });
     }
 
     @Test
@@ -120,6 +159,18 @@ class MessageServiceTest {
         assertNotNull(result);
         assertEquals("Updated Subject", result.getSubject());
     }
+    @Test
+    void testUpdateMessageDifferentSender(){
+        MessageEntity existing = messageList.get(0);
+        MessageEntity updateData = new MessageEntity();
+        updateData.setSenderId(3L); 
+        updateData.setRecipientId(recipientId);
+        updateData.setSubject("Updated Subject");
+        updateData.setContent("Updated Content");
+        assertThrows(IllegalArgumentException.class, () ->{
+            messageService.updateMessage(existing.getId(),updateData);
+        });
+    }
 
     @Test
     void testUpdateMessageAfter15Minutes() {
@@ -134,6 +185,35 @@ class MessageServiceTest {
         Long idToUpdate = oldMessage.getId(); 
         assertThrows(IllegalArgumentException.class, () -> messageService.updateMessage(idToUpdate, updateData));
     }
+    @Test 
+    void testUpdateMessageRead(){
+        MessageEntity message = messageList.get(0);
+        MessageEntity update = new MessageEntity();
+        message.setIsRead(true);
+        entityManager.persist(message);
+        entityManager.flush();
+        entityManager.clear();
+        update.setSenderId(senderId); 
+        update.setRecipientId(recipientId);
+        update.setSubject("Updated Subject");
+        update.setContent("Updated Content");
+        
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.updateMessage(message.getId(), update);
+        });
+    }
+    @Test
+    void testUpdateMessageDifferentRecipient(){
+        MessageEntity existing = messageList.get(0);
+        MessageEntity updateData = new MessageEntity();
+        updateData.setSenderId(senderId); 
+        updateData.setRecipientId(4L);
+        updateData.setSubject("Updated Subject");
+        updateData.setContent("Updated Content");
+        assertThrows(IllegalArgumentException.class, () ->{
+            messageService.updateMessage(existing.getId(),updateData);
+        });
+    }
 
     @Test
     void testDeleteMessageBySender() {
@@ -143,5 +223,18 @@ class MessageServiceTest {
         entityManager.flush();
         MessageEntity found = entityManager.find(MessageEntity.class, message.getId());
         assertNull(found);
+    }
+    @Test
+    void testDeleteMessageWrongSender(){
+        MessageEntity message = messageList.get(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            messageService.deleteMessage(message.getId(), 3L);
+        });
+    }
+    @Test
+    void testDeleteMessageNullId(){
+        assertThrows(RuntimeException.class, () -> {
+            messageService.deleteMessage(999L, senderId);
+        });
     }
 }
