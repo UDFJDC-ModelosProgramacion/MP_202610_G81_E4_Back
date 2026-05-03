@@ -24,7 +24,7 @@ public class MessageService {
     private MessageRepository messageRepository;
 
     @Transactional
-    public MessageEntity createMessage(MessageEntity message) {
+    public MessageEntity createMessage(MessageEntity message){
         Long senderId = extractUserId(message, SENDER_ROLE);
         Long recipientId = extractUserId(message, RECIPIENT_ROLE);
 
