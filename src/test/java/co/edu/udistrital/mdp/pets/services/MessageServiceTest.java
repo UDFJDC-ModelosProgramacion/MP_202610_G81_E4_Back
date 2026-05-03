@@ -163,12 +163,13 @@ class MessageServiceTest {
     void testUpdateMessageDifferentSender(){
         MessageEntity existing = messageList.get(0);
         MessageEntity updateData = new MessageEntity();
+        Long existingId = existing.getId();
         updateData.setSenderId(3L); 
         updateData.setRecipientId(recipientId);
         updateData.setSubject("Updated Subject");
         updateData.setContent("Updated Content");
         assertThrows(IllegalArgumentException.class, () ->{
-            messageService.updateMessage(existing.getId(),updateData);
+            messageService.updateMessage(existingId,updateData);
         });
     }
 
@@ -197,9 +198,9 @@ class MessageServiceTest {
         update.setRecipientId(recipientId);
         update.setSubject("Updated Subject");
         update.setContent("Updated Content");
-        
+        Long messageId = message.getId();
         assertThrows(IllegalArgumentException.class, () -> {
-            messageService.updateMessage(message.getId(), update);
+            messageService.updateMessage(messageId, update);
         });
     }
     @Test
@@ -210,8 +211,9 @@ class MessageServiceTest {
         updateData.setRecipientId(4L);
         updateData.setSubject("Updated Subject");
         updateData.setContent("Updated Content");
+         Long existingId = existing.getId();
         assertThrows(IllegalArgumentException.class, () ->{
-            messageService.updateMessage(existing.getId(),updateData);
+            messageService.updateMessage(existingId,updateData);
         });
     }
 
@@ -227,8 +229,9 @@ class MessageServiceTest {
     @Test
     void testDeleteMessageWrongSender(){
         MessageEntity message = messageList.get(0);
+         Long messageId = message.getId();
         assertThrows(IllegalArgumentException.class, () -> {
-            messageService.deleteMessage(message.getId(), 3L);
+            messageService.deleteMessage(messageId, 3L);
         });
     }
     @Test
