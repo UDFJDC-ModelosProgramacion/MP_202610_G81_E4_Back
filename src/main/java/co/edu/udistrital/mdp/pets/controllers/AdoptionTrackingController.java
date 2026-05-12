@@ -1,78 +1,59 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
-import co.edu.udistrital.mdp.pets.dto.AdoptionDTO;
-import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDTO;
-import co.edu.udistrital.mdp.pets.entities.AdoptionEntity; // Importación necesaria
-import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
-import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDTO;
+import co.edu.udistrital.mdp.pets.dto.AdoptionTrackingDetailDTO;
+import co.edu.udistrital.mdp.pets.entities.AdoptionTrackingEntity;
+import co.edu.udistrital.mdp.pets.services.AdoptionTrackingService;
 
 @RestController
-@RequestMapping("/adoption-trackings")
+@RequestMapping("/adoptiontrackings")
 public class AdoptionTrackingController {
-    private static final String ERR_MSG = "message";
 
     @Autowired
-    private AdoptionTrackingService service;
+    private AdoptionTrackingService adoptionTrackingService;
 
-    @PostMapping
-    public ResponseEntity<AdoptionTrackingDTO> create(@RequestBody AdoptionTrackingDTO trackingDTO) {
-        AdoptionTrackingEntity created = service.createAdoptionTracking(toEntity(trackingDTO));
-        return new ResponseEntity<>(new AdoptionTrackingDTO(created), HttpStatus.CREATED);
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<AdoptionTrackingDTO>> getAll() {
-        // Implementación real usando streams y .toList() para evitar mutabilidad
-        List<AdoptionTrackingDTO> list = service.getAdoptionTrackings().stream()
-                .map(AdoptionTrackingDTO::new)
-                .toList();
-        return ResponseEntity.ok(list);
+    @ResponseStatus(HttpStatus.OK)
+    public List<AdoptionTrackingDetailDTO> findAll() {
+        List<AdoptionTrackingEntity> entities = adoptionTrackingService.getAdoptionTrackings();
+        return modelMapper.map(entities, new TypeToken<List<AdoptionTrackingDetailDTO>>() {}.getType());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        try {
-            AdoptionTrackingEntity entity = service.getAdoptionTracking(id);
-            return ResponseEntity.ok(new AdoptionTrackingDTO(entity));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(ERR_MSG, e.getMessage()));
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public AdoptionTrackingDetailDTO findOne(@PathVariable Long id) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.getAdoptionTracking(id);
+        return modelMapper.map(entity, AdoptionTrackingDetailDTO.class);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdoptionTrackingDTO create(@RequestBody AdoptionTrackingDTO adoptionTrackingDTO) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.createAdoptionTracking(
+                modelMapper.map(adoptionTrackingDTO, AdoptionTrackingEntity.class));
+        return modelMapper.map(entity, AdoptionTrackingDTO.class);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AdoptionTrackingDTO update(@PathVariable Long id, @RequestBody AdoptionTrackingDTO adoptionTrackingDTO) {
+        AdoptionTrackingEntity entity = adoptionTrackingService.updateAdoptionTracking(id,
+                modelMapper.map(adoptionTrackingDTO, AdoptionTrackingEntity.class));
+        return modelMapper.map(entity, AdoptionTrackingDTO.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
-        try {
-            service.deleteAdoptionTracking(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(ERR_MSG, e.getMessage()));
-        }
-    }
-
-    private AdoptionTrackingEntity toEntity(AdoptionTrackingDTO dto) {
-        if (dto == null) return null;
-        
-        AdoptionTrackingEntity e = new AdoptionTrackingEntity();
-        e.setId(dto.getId());
-        e.setFrequency(dto.getFrequency());
-        e.setNotes(dto.getNotes());
-        e.setNextReview(dto.getNextReview());
-
-        if (dto.getAdoptionId() != null) {
-            AdoptionEntity adoption = new AdoptionEntity();
-            adoption.setId(dto.getAdoptionId());
-            e.setAdoption(adoption);
-        }
-        return e;
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        adoptionTrackingService.deleteAdoptionTracking(id);
     }
 }
