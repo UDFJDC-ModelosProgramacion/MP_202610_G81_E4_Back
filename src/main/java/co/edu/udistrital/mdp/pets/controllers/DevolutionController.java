@@ -24,14 +24,14 @@ public class DevolutionController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<DevolutionDetailDTO> findAll() {
-        List<DevolutionEntity> entities = devolutionService.getDevolutions();
+        List<DevolutionEntity> entities = devolutionService.searchDevolutions();
         return modelMapper.map(entities, new TypeToken<List<DevolutionDetailDTO>>() {}.getType());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DevolutionDetailDTO findOne(@PathVariable Long id) {
-        DevolutionEntity entity = devolutionService.getDevolution(id);
+        DevolutionEntity entity = devolutionService.searchDevolution(id);
         return modelMapper.map(entity, DevolutionDetailDTO.class);
     }
 
